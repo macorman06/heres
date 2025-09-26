@@ -87,7 +87,6 @@ export const LoginForm: React.FC = () => {
             <Button
               type="submit"
               label={isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-              className="w-full bg-red-600 hover:bg-red-700 border-red-600"
               loading={isLoading}
               disabled={isLoading}
             />
