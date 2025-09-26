@@ -75,7 +75,6 @@ export const LoginForm: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Tu contraseña"
-                inputClassName="w-full"
                 feedback={false}
                 toggleMask
                 disabled={isLoading}
