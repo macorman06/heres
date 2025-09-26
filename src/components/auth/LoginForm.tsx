@@ -62,7 +62,6 @@ export const LoginForm: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu.email@juvenliber.es"
-                className="w-full"
                 disabled={isLoading}
               />
             </div>
