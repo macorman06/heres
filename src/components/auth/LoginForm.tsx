@@ -61,7 +61,7 @@ export const LoginForm: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu.email@juvenliber.es"
+                  placeholder="nombre.apellido@salesianos.es"
                   disabled={isLoading}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
@@ -75,7 +75,7 @@ export const LoginForm: React.FC = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Tu contraseña"
+                  placeholder="Contraseña"
                   feedback={false}
                   toggleMask
                   disabled={isLoading}
