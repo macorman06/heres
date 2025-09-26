@@ -123,6 +123,8 @@ export const Members: React.FC = () => {
     return <LoadingSpinner message="Cargando miembros..." />;
   }
 
+  console.log("Renderizando Members");
+  
   const header = (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
       <div className="flex items-center space-x-4">
