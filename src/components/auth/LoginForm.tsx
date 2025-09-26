@@ -52,7 +52,7 @@ export const LoginForm: React.FC = () => {
               <Message severity="error" text={error} className="w-full" />
             )}
 
-            <div>
+            <div className="mt-8 pt-6 border-t border-gray-200">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Correo Electrónico
               </label>
