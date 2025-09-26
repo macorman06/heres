@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Member, Activity, Group, Material } from '../types';
 
 // Mock data
@@ -7,7 +7,7 @@ const mockMembers: Member[] = [
     id: '1',
     name: 'Emmanuel Lokossou',
     email: 'emmanuel.lokossou@juvenliber.es',
-    role: 'Director CJ',
+    role: 'director',
     status: 'active',
     joinDate: '2020-01-15',
     center: 'Centro Juvenil Salesianos',
@@ -17,7 +17,7 @@ const mockMembers: Member[] = [
     id: '2',
     name: 'David Corpas',
     email: 'david.corpas@juvenliber.es',
-    role: 'Animador',
+    role: 'animador',
     status: 'active',
     joinDate: '2021-03-10',
     center: 'Centro Juvenil Salesianos',
@@ -27,7 +27,7 @@ const mockMembers: Member[] = [
     id: '3',
     name: 'Olaya Corral',
     email: 'olaya.corral@juvenliber.es',
-    role: 'Coordinadora CJ',
+    role: 'coordinador',
     status: 'active',
     joinDate: '2020-09-05',
     center: 'Centro Juvenil Salesianos',
@@ -37,7 +37,7 @@ const mockMembers: Member[] = [
     id: '4',
     name: 'Marcos Corpas',
     email: 'marcos.corpas@juvenliber.es',
-    role: 'Animador',
+    role: 'animador',
     status: 'active',
     joinDate: '2021-11-20',
     center: 'Centro Juvenil Salesianos',
@@ -47,7 +47,7 @@ const mockMembers: Member[] = [
     id: '5',
     name: 'Fernando Gracia',
     email: 'fernando.gracia@juvenliber.es',
-    role: 'Coordinador Chiqui',
+    role: 'coordinador',
     status: 'active',
     joinDate: '2019-06-12',
     center: 'Centro Juvenil Salesianos',
@@ -57,7 +57,7 @@ const mockMembers: Member[] = [
     id: '6',
     name: 'Ricardo Fernandez',
     email: 'ricardo.fernandez@juvenliber.es',
-    role: 'Animador',
+    role: 'animador',
     status: 'active',
     joinDate: '2022-02-28',
     center: 'Centro Juvenil Salesianos',
