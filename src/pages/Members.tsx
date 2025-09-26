@@ -43,7 +43,7 @@ export const Members: React.FC = () => {
     }
 
     if (statusFilter) {
-      filtered = filtered.filter(member => member.status === statusFilter);
+      filtered = filtered.filter(member => member.status.toLowerCase() === statusFilter.toLowerCase());
     }
 
     if (roleFilter) {
