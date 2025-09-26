@@ -1,0 +1,19 @@
+.p-button {
+  background-color: #d32f2f !important; /* un rojo fuerte */
+  border-radius: 0.5rem !important;    /* bordes más redondeados */
+  border: 2px solid #b71c1c !important;
+  font-weight: 600 !important;
+  transition: background-color 0.3s ease;
+}
+
+.p-button:hover {
+  background-color: #b71c1c !important;
+}
+
+.p-chip {
+  background-color: #f44336 !important;
+  color: white !important;
+  padding: 0.4rem 0.8rem !important;
+  font-size: 0.875rem !important;
+  border-radius: 9999px !important; /* pill shape */
+}
