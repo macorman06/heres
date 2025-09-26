@@ -44,7 +44,7 @@ export const LoginForm: React.FC = () => {
               className="w-16 h-16 mx-auto mb-4"
             />
             <h1 className="text-3xl font-bold text-gray-800 mb-2">HERES</h1>
-            <p className="text-gray-600">Centro Juvenil Salesianos</p>
+            <p className="text-gray-600">Herramienta de Recursos Salesianos</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
