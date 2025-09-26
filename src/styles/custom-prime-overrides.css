@@ -1,14 +1,15 @@
-/* Estilo global para botones PrimeReact con ancho completo y colores personalizados */
+/* custom-prime-overrides.css */
 
+/* Botones PrimeReact - estilo rojo completo ancho con texto blanco */
 .p-button {
-  width: 100% !important;                /* w-full */
+  width: 100% !important;                /* ancho completo similar a w-full */
   background-color: #dc2626 !important;  /* bg-red-600 */
   border-color: #dc2626 !important;      /* border-red-600 */
   color: #ffffff !important;              /* texto blanco */
   font-weight: 600;
   transition: background-color 0.3s ease;
   box-shadow: none !important;
-  /* si quieres más estilo puedes añadir border-radius, fuente, etc */
+  border-radius: 0.375rem !important;    /* Rounded-md, ajusta si quieres */
 }
 
 .p-button:hover,
@@ -20,9 +21,41 @@
 
 .p-button:disabled,
 .p-button[disabled] {
-  background-color: #f87171 !important;  /* rojo claro cuando está deshabilitado */
+  background-color: #f87171 !important;  /* rojo claro para disabled */
   border-color: #f87171 !important;
   color: #ffffff !important;
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+/* InputText PrimeReact - estilos personalizados */
+.p-inputtext {
+  width: 100% !important;                 /* ancho completo */
+  border: 2px solid #dc2626 !important;  /* borde rojo */
+  border-radius: 0.375rem !important;     /* bordes redondeados */
+  padding: 0.5rem 0.75rem !important;     /* padding cómodo */
+  font-size: 1rem !important;
+  color: #111827 !important;               /* gris oscuro para texto */
+  transition: border-color 0.3s ease;
+}
+
+.p-inputtext:focus {
+  outline: none;
+  border-color: #b91c1c !important;       /* foco rojo oscuro */
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.5) !important; /* halo foco */
+}
+
+/* Disabled input */
+.p-inputtext[disabled],
+.p-inputtext.disabled {
+  background-color: #fef2f2 !important;    /* rojo muy claro fondo para disabled */
+  border-color: #fca5a5 !important;
+  cursor: not-allowed;
+  color: #9ca3af !important;                /* texto gris */
+}
+
+/* Placeholder con color más claro */
+.p-inputtext::placeholder {
+  color: #fca5a5 !important; /* rojo claro */
+  opacity: 1;
 }
