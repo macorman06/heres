@@ -38,3 +38,11 @@
   margin-left: -2.5rem; /* Ajusta para posicionar dentro del input */
   cursor: pointer;
 }
+
+.p-avatar-image {
+  border-radius: 9999px;   /* círculo completo */
+  object-fit: cover;       /* recorta y adapta la imagen */
+  width: 100%;             /* ocupa todo el contenedor */
+  height: 100%;            /* ocupa todo el contenedor */
+  display: block;          /* elimina espacio blanco extra */
+}
