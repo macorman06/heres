@@ -39,10 +39,21 @@
   cursor: pointer;
 }
 
-.p-avatar-image {
-  border-radius: 9999px;   /* círculo completo */
-  object-fit: cover;       /* recorta y adapta la imagen */
-  width: 100%;             /* ocupa todo el contenedor */
-  height: 100%;            /* ocupa todo el contenedor */
-  display: block;          /* elimina espacio blanco extra */
+/* Contenedor del avatar: cuadrado y tamaño fijo */
+.p-avatar {
+  width: 2.5rem;               /* Ajusta a tamaño deseado */
+  height: 2.5rem;
+  position: relative;          /* Para que img se ajuste */
+  overflow: hidden;
+  border-radius: 9999px;       /* círculo completo */
+  flex-shrink: 0;              /* No permita reducirse en flex layouts */
+}
+
+/* Imagen dentro del avatar - ajuste correcto sin distorsión */
+.p-avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block;
+  border-radius: 9999px !important;
 }
