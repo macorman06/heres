@@ -6,19 +6,19 @@ interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
-  message = 'Cargando...', 
-  size = 'medium' 
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  message = 'Cargando...',
+  size = 'medium',
 }) => {
   const sizeMap = {
     small: '30px',
     medium: '50px',
-    large: '70px'
+    large: '70px',
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-8">
-      <ProgressSpinner 
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white bg-opacity-90 z-50">
+      <ProgressSpinner
         style={{ width: sizeMap[size], height: sizeMap[size] }}
         strokeWidth="4"
         animationDuration="1s"
