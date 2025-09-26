@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from 'primereact/card';
-import { Chart } from 'primereact/chart';
 import { Badge } from 'primereact/badge';
 import { useApi } from '../hooks/useApi';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -26,28 +25,6 @@ export const Dashboard: React.FC = () => {
 
     loadData();
   }, []);
-
-  const chartData = {
-    labels: ['Chiquicentro', 'Preadolescentes', 'Juvenil'],
-    datasets: [
-      {
-        label: 'Miembros por Grupo',
-        data: groups.map(g => g.memberCount),
-        backgroundColor: ['#ef4444', '#f97316', '#eab308'],
-        borderColor: ['#dc2626', '#ea580c', '#ca8a04'],
-        borderWidth: 1
-      }
-    ]
-  };
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'bottom' as const
-      }
-    }
-  };
 
   if (loading) {
     return <LoadingSpinner message="Cargando dashboard..." />;
@@ -136,10 +113,6 @@ export const Dashboard: React.FC = () => {
           </div>
         </Card>
 
-        {/* Groups Chart */}
-        <Card title="Distribución por Grupos" className="border-0 shadow-md">
-          <Chart type="doughnut" data={chartData} options={chartOptions} className="w-full h-64" />
-        </Card>
       </div>
 
       {/* Recent Members */}

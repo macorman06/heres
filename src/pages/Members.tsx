@@ -11,8 +11,11 @@ import { useApi } from '../hooks/useApi';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { MemberCard } from '../components/common/MemberCard';
 import { Member } from '../types';
+import { formatRole, formatStatus, getAvailableRoles, getAvailableStatuses } from '../utils/roleTranslations';
 
 export const Members: React.FC = () => {
+  console.log("🚀🚀🚀 MEMBERS COMPONENT RENDERIZADO");
+
   const { loading, getMembers } = useApi();
   const [members, setMembers] = useState<Member[]>([]);
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
@@ -23,13 +26,11 @@ export const Members: React.FC = () => {
 
   useEffect(() => {
     const loadMembers = async () => {
-      console.log("Iniciando carga de miembros...");
       const data = await getMembers();
-      console.log("Datos cargados en Members:", data);
       setMembers(data);
       setFilteredMembers(data);
     };
-  
+
     loadMembers();
   }, []);
 
@@ -55,18 +56,16 @@ export const Members: React.FC = () => {
     setFilteredMembers(filtered);
   }, [members, globalFilter, statusFilter, roleFilter]);
 
+  // Opciones de estado usando las traducciones
   const statusOptions = [
     { label: 'Todos los estados', value: '' },
-    { label: 'Activo', value: 'active' },
-    { label: 'Inactivo', value: 'inactive' },
-    { label: 'Pendiente', value: 'pending' }
+    ...getAvailableStatuses()
   ];
 
+  // Opciones de rol usando las traducciones
   const roleOptions = [
     { label: 'Todos los roles', value: '' },
-    { label: 'Director', value: 'director' },
-    { label: 'Coordinador', value: 'coordinador' },
-    { label: 'Animador', value: 'animador' }
+    ...getAvailableRoles()
   ];
 
   const avatarBodyTemplate = (member: Member) => {
@@ -82,12 +81,14 @@ export const Members: React.FC = () => {
   };
 
   const statusBodyTemplate = (member: Member) => {
-    const severity = member.status === 'active' ? 'success' : 
-                    member.status === 'inactive' ? 'danger' : 'warning';
-    const label = member.status === 'active' ? 'Activo' : 
-                 member.status === 'inactive' ? 'Inactivo' : 'Pendiente';
-    
-    return <Badge value={label} severity={severity} />;
+    const severity = member.status === 'active' ? 'success' :
+      member.status === 'inactive' ? 'danger' : 'warning';
+
+    return <Badge value={formatStatus(member.status)} severity={severity} />;
+  };
+
+  const roleBodyTemplate = (member: Member) => {
+    return <span>{formatRole(member.role)}</span>;
   };
 
   const actionBodyTemplate = (member: Member) => {
@@ -123,8 +124,6 @@ export const Members: React.FC = () => {
     return <LoadingSpinner message="Cargando miembros..." />;
   }
 
-  console.log("Renderizando Members");
-  
   const header = (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
       <div className="flex items-center space-x-4">
@@ -148,7 +147,7 @@ export const Members: React.FC = () => {
           />
         </div>
       </div>
-      
+
       <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
         <div className="relative">
           <i className="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -159,7 +158,7 @@ export const Members: React.FC = () => {
             className="pl-10"
           />
         </div>
-        
+
         <Dropdown
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.value)}
@@ -167,7 +166,7 @@ export const Members: React.FC = () => {
           placeholder="Estado"
           className="w-full sm:w-auto"
         />
-        
+
         <Dropdown
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.value)}
@@ -175,7 +174,7 @@ export const Members: React.FC = () => {
           placeholder="Rol"
           className="w-full sm:w-auto"
         />
-        
+
         <Button
           label="Nuevo Miembro"
           icon="pi pi-plus"
@@ -216,11 +215,11 @@ export const Members: React.FC = () => {
             <Column body={avatarBodyTemplate} style={{ width: '4rem' }} />
             <Column field="name" header="Nombre" sortable />
             <Column field="email" header="Email" sortable />
-            <Column field="role" header="Rol" sortable />
+            <Column field="role" header="Rol" sortable body={roleBodyTemplate} />
             <Column body={statusBodyTemplate} header="Estado" sortable />
-            <Column 
-              field="joinDate" 
-              header="Fecha de Ingreso" 
+            <Column
+              field="joinDate"
+              header="Fecha de Ingreso"
               sortable
               body={(member) => new Date(member.joinDate).toLocaleDateString('es-ES')}
             />

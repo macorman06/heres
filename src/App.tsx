@@ -13,12 +13,11 @@ import { Contact } from './pages/Contact';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 
 // PrimeReact theme
-import 'primereact/resources/themes/lara-light-blue/theme.css';  // tema PrimeReact
-import 'primereact/resources/primereact.min.css';               // estilos PrimeReact base
-import 'primeicons/primeicons.css';                             // iconos PrimeReact
-import './styles/custom-prime-overrides.css';                   // tus sobrescrituras personalizadas
-import './index.css';                                            // estilos globales (Tailwind)
-
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import './styles/custom-prime-overrides.css';
+import './index.css';
 
 const AppContent: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -32,18 +31,18 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/members" element={<Members />} />
-        <Route path="/activities" element={<Activities />} />
-        <Route path="/groups" element={<Groups />} />
-        <Route path="/materials" element={<Materials />} />
-        <Route path="/contact" element={<Contact />} />
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="members" element={<Members />} />
+        <Route path="activities" element={<Activities />} />
+        <Route path="groups" element={<Groups />} />
+        <Route path="materials" element={<Materials />} />
+        <Route path="contact" element={<Contact />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </Layout>
+      </Route>
+    </Routes>
   );
 };
 

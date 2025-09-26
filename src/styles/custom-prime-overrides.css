@@ -57,3 +57,78 @@
   display: block;
   border-radius: 9999px !important;
 }
+
+/* Corrección para centrar verticalmente el texto en los badges */
+.p-badge.p-badge-success,
+.p-badge.p-badge-danger,
+.p-badge.p-badge-warning,
+.p-badge.p-badge-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    vertical-align: middle;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+/* Botones rojos con texto blanco y padding adecuado */
+.p-button.bg-red-600,
+.p-button.bg-red-600:enabled:hover,
+.p-button.bg-red-600:enabled:active {
+    color: white !important;
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+    padding: 0.5rem 1rem !important; /* Padding vertical y horizontal */
+    min-height: 2.5rem; /* Altura mínima consistente */
+    width: auto; /* Ancho automático para comprimir contenido */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* Espaciado entre ícono y texto */
+}
+
+.p-button.bg-red-600:enabled:hover {
+    background-color: #b91c1c !important;
+    border-color: #b91c1c !important;
+}
+
+.p-button.bg-red-600:enabled:active {
+    background-color: #991b1b !important;
+    border-color: #991b1b !important;
+}
+
+/* Texto e ícono en blanco */
+.p-button.bg-red-600 .p-button-label,
+.p-button.bg-red-600 .p-button-icon {
+    color: white !important;
+}
+
+/* Para botones pequeños */
+.p-button.bg-red-600.p-button-sm {
+    padding: 0.375rem 0.75rem !important;
+    min-height: 2rem;
+    font-size: 0.875rem;
+}
+
+/* Para botones con solo ícono */
+.p-button.bg-red-600.p-button-icon-only {
+    padding: 0.5rem !important;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.p-button.bg-red-600.p-button-icon-only.p-button-sm {
+    padding: 0.375rem !important;
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Espaciado entre ícono y texto */
+.p-button.bg-red-600 .p-button-icon.p-button-icon-left {
+    margin-right: 0.5rem !important;
+}
+
+.p-button.bg-red-600 .p-button-icon.p-button-icon-right {
+    margin-left: 0.5rem !important;
+}

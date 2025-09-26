@@ -53,19 +53,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-    
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     const foundUser = mockUsers.find(u => u.email === email);
-    
     if (foundUser && password === 'password') {
       setUser(foundUser);
       localStorage.setItem('heres_user', JSON.stringify(foundUser));
       setIsLoading(false);
       return true;
     }
-    
+
     setIsLoading(false);
     return false;
   };
