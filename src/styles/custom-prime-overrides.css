@@ -1,15 +1,17 @@
 /* custom-prime-overrides.css */
 
-/* Botones PrimeReact - estilo rojo completo ancho con texto blanco */
+/* =========================
+   Botones PrimeReact (.p-button)
+   ========================= */
 .p-button {
-  width: 100% !important;                /* ancho completo similar a w-full */
+  width: 100% !important;                /* w-full */
   background-color: #dc2626 !important;  /* bg-red-600 */
   border-color: #dc2626 !important;      /* border-red-600 */
   color: #ffffff !important;              /* texto blanco */
   font-weight: 600;
   transition: background-color 0.3s ease;
   box-shadow: none !important;
-  border-radius: 0.375rem !important;    /* Rounded-md, ajusta si quieres */
+  border-radius: 0.375rem !important;    /* rounded-md */
 }
 
 .p-button:hover,
@@ -21,41 +23,66 @@
 
 .p-button:disabled,
 .p-button[disabled] {
-  background-color: #f87171 !important;  /* rojo claro para disabled */
+  background-color: #f87171 !important;  /* rojo claro disabled */
   border-color: #f87171 !important;
   color: #ffffff !important;
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-/* InputText PrimeReact - estilos personalizados */
-.p-inputtext {
-  width: 100% !important;                 /* ancho completo */
-  border: 2px solid #dc2626 !important;  /* borde rojo */
-  border-radius: 0.375rem !important;     /* bordes redondeados */
-  padding: 0.5rem 0.75rem !important;     /* padding cómodo */
+/* =========================
+   Inputs de Texto y Password (.p-inputtext, .p-password-input)
+   ========================= */
+
+/* Estilo base bordes y tamaño */
+.p-inputtext,
+.p-password-input {
+  width: 100% !important;
+  border: 1px solid #d1d5db !important;  /* borde fino gris - Tailwind gray-300 */
+  border-radius: 0.375rem !important;    /* rounded-md */
+  padding: 0.5rem 0.75rem !important;
   font-size: 1rem !important;
-  color: #111827 !important;               /* gris oscuro para texto */
+  color: #111827 !important;              /* texto gris oscuro */
   transition: border-color 0.3s ease;
+  background-color: #fff !important;
 }
 
-.p-inputtext:focus {
+/* Foco en inputs */
+.p-inputtext:focus,
+.p-password-input:focus {
   outline: none;
-  border-color: #b91c1c !important;       /* foco rojo oscuro */
-  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.5) !important; /* halo foco */
+  border-color: #f87171 !important;       /* focus rojo claro - Tailwind red-400 */
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5) !important; /* halo */
 }
 
-/* Disabled input */
+/* Inputs deshabilitados */
 .p-inputtext[disabled],
-.p-inputtext.disabled {
-  background-color: #fef2f2 !important;    /* rojo muy claro fondo para disabled */
-  border-color: #fca5a5 !important;
+.p-inputtext.disabled,
+.p-password-input[disabled],
+.p-password-input.disabled {
+  background-color: #fef2f2 !important;   /* rojo muy claro fondo */
+  border-color: #fca5a5 !important;       /* rojo suave borde */
   cursor: not-allowed;
-  color: #9ca3af !important;                /* texto gris */
+  color: #9ca3af !important;               /* texto gris */
 }
 
-/* Placeholder con color más claro */
-.p-inputtext::placeholder {
-  color: #fca5a5 !important; /* rojo claro */
+/* Placeholders */
+.p-inputtext::placeholder,
+.p-password-input::placeholder {
+  color: #9ca3af !important;               /* placeholder gris */
   opacity: 1;
 }
+
+/* =========================
+   Labels (texto de las etiquetas)
+   ========================= */
+
+/* Para etiquetas asociadas a los inputs (se asume etiquetas externas o label HTML) */
+label {
+  color: #6b7280; /* Tailwind gray-500 */
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem; /* espacio pequeño debajo para separación */
+  font-size: 0.875rem;    /* tamaño texto pequeño */
+}
+
