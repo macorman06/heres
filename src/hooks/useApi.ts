@@ -180,7 +180,13 @@ export const useApi = () => {
     return data;
   };
 
-  const getMembers = () => simulateApiCall(mockMembers);
+  const getMembers = async () => {
+    console.log("Llamada a getMembers iniciada");
+    const result = await simulateApiCall(mockMembers);
+    console.log("Datos recibidos en getMembers:", result);
+    return result;
+  };
+
   const getActivities = () => simulateApiCall(mockActivities);
   const getGroups = () => simulateApiCall(mockGroups);
   const getMaterials = () => simulateApiCall(mockMaterials);
