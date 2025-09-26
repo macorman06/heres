@@ -13,9 +13,12 @@ import { Contact } from './pages/Contact';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 
 // PrimeReact theme
-import 'primereact/resources/themes/lara-light-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/lara-light-blue/theme.css';  // tema PrimeReact
+import 'primereact/resources/primereact.min.css';               // estilos PrimeReact base
+import 'primeicons/primeicons.css';                             // iconos PrimeReact
+import './styles/custom-prime-overrides.css';                   // tus sobrescrituras personalizadas
+import './index.css';                                            // estilos globales (Tailwind)
+
 
 const AppContent: React.FC = () => {
   const { user, isLoading } = useAuth();
