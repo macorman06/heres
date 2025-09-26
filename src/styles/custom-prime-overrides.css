@@ -1,23 +1,26 @@
-/* Sobrescribe estilo global para todos los botones PrimeReact */
+/* Estilo global para botones PrimeReact con ancho completo y colores personalizados */
+
 .p-button {
-  background-color: #dc2626 !important; /* rojo (Tailwind: red-600) */
-  color: #ffffff !important; /* texto blanco */
-  border-color: #dc2626 !important;
+  width: 100% !important;                /* w-full */
+  background-color: #dc2626 !important;  /* bg-red-600 */
+  border-color: #dc2626 !important;      /* border-red-600 */
+  color: #ffffff !important;              /* texto blanco */
   font-weight: 600;
   transition: background-color 0.3s ease;
   box-shadow: none !important;
+  /* si quieres más estilo puedes añadir border-radius, fuente, etc */
 }
 
 .p-button:hover,
 .p-button:focus {
-  background-color: #b91c1c !important; /* rojo oscuro (Tailwind: red-700) */
+  background-color: #b91c1c !important;  /* hover:bg-red-700 */
   border-color: #b91c1c !important;
   color: #ffffff !important;
 }
 
 .p-button:disabled,
 .p-button[disabled] {
-  background-color: #f87171 !important; /* rojo claro (Tailwind: red-400) */
+  background-color: #f87171 !important;  /* rojo claro cuando está deshabilitado */
   border-color: #f87171 !important;
   color: #ffffff !important;
   opacity: 0.7;
