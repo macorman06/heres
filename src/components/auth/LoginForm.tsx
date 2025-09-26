@@ -87,7 +87,7 @@ export const LoginForm: React.FC = () => {
                 label={isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                 loading={isLoading}
                 disabled={isLoading}
-                className="px-3 bg-red-600 hover:bg-red-700 border-red-600 text-white w-auto"
+                className="px-2 py-1 bg-red-600 hover:bg-red-700 border-red-600 text-white w-auto"
               />
             </div>
 
