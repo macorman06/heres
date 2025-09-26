@@ -52,34 +52,37 @@ export const LoginForm: React.FC = () => {
               <Message severity="error" text={error} className="w-full" />
             )}
 
-            <div className="mt-8 pt-4 border-t border-gray-200">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Correo Electrónico
-              </label>
-              <InputText
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu.email@juvenliber.es"
-                disabled={isLoading}
-              />
-            </div>
+              <div className="mt-8 pt-4 border-t border-gray-200">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Correo Electrónico
+                </label>
+                <InputText
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="tu.email@juvenliber.es"
+                  disabled={isLoading}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Contraseña
+                </label>
+                <Password
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Tu contraseña"
+                  feedback={false}
+                  toggleMask
+                  disabled={isLoading}
+                  inputClassName="w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                />
+              </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Contraseña
-              </label>
-              <Password
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Tu contraseña"
-                feedback={false}
-                toggleMask
-                disabled={isLoading}
-              />
-            </div>
 
             <div className="w-full flex justify-center">
               <Button
