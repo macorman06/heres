@@ -32,17 +32,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         {!collapsed && (
           <div className="flex items-center space-x-3">
-            {/* Logo adaptivo para light/dark mode */}
+            {/* Logo adaptivo con esquinas redondeadas */}
             <div className="w-8 h-8 flex-shrink-0">
               <img 
                 src="/logos/favicon-96x96.png" 
                 alt="HERES Logo" 
-                className="w-full h-full object-contain block dark:hidden"
+                className="w-full h-full object-contain rounded-lg block dark:hidden shadow-sm"
               />
               <img 
                 src="/logos/favicon-96x96.png" 
                 alt="HERES Logo" 
-                className="w-full h-full object-contain hidden dark:block filter brightness-110"
+                className="w-full h-full object-contain rounded-lg hidden dark:block filter brightness-110 shadow-sm"
               />
             </div>
             <div>
@@ -52,19 +52,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           </div>
         )}
         
-        {/* Logo collapsed version */}
+        {/* Logo collapsed version con esquinas redondeadas */}
         {collapsed && (
           <div className="w-8 h-8 mx-auto">
             <img 
               src="/logos/favicon-96x96.png" 
               alt="HERES" 
-              className="w-full h-full object-contain block dark:hidden"
+              className="w-full h-full object-contain rounded-lg block dark:hidden shadow-sm"
               title="HERES - Herramienta de Recursos Salesianos"
             />
             <img 
               src="/logos/favicon-96x96.png" 
               alt="HERES" 
-              className="w-full h-full object-contain hidden dark:block filter brightness-110"
+              className="w-full h-full object-contain rounded-lg hidden dark:block filter brightness-110 shadow-sm"
               title="HERES - Herramienta de Recursos Salesianos"
             />
           </div>
