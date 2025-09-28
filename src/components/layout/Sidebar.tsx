@@ -29,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       collapsed ? 'w-16' : 'w-64'
     }`}>
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         {!collapsed && (
           <div className="flex items-center space-x-3">
             {/* Logo adaptivo con esquinas redondeadas */}
@@ -42,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
               <img 
                 src="/logos/favicon-96x96.png" 
                 alt="HERES Logo" 
-                className="w-full h-full object-contain rounded-lg hidden dark:block filter brightness-110 shadow-sm"
+                className="w-full h-full object-contain rounded-md hidden dark:block filter brightness-110 shadow-sm"
               />
             </div>
             <div>
@@ -51,6 +51,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
             </div>
           </div>
         )}
+        
+        {/* Logo collapsed version con esquinas redondeadas */}
+        {collapsed && (
+          <div className="w-8 h-8 mx-auto">
+            <img 
+              src="/logos/favicon-96x96.png" 
+              alt="HERES" 
+              className="w-full h-full object-contain rounded-md block dark:hidden shadow-sm"
+              title="HERES - Herramienta de Recursos Salesianos"
+            />
+            <img 
+              src="/logos/favicon-96x96.png" 
+              alt="HERES" 
+              className="w-full h-full object-contain rounded-md hidden dark:block filter brightness-110 shadow-sm"
+              title="HERES - Herramienta de Recursos Salesianos"
+            />
+          </div>
+        )}
+        
+        <button
+          onClick={onToggle}
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+          aria-label={collapsed ? 'Expandir sidebar' : 'Contraer sidebar'}
+        >
+          <i className={`pi ${collapsed ? 'pi-angle-right' : 'pi-angle-left'} text-gray-600 dark:text-gray-300`} />
+        </button>
+      </div>
+
         
         {/* Logo collapsed version con esquinas redondeadas */}
         {collapsed && (
