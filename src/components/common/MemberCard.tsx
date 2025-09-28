@@ -1,91 +1,101 @@
 import React from 'react';
 import { Card } from 'primereact/card';
-import { Badge } from 'primereact/badge';
+import { Chip } from 'primereact/chip';
 import { Button } from 'primereact/button';
 import { Avatar } from 'primereact/avatar';
-import { Member } from '../../types';
-import { formatRole, formatStatus } from '../../utils/roleTranslations';
+import { RecentMember, getSectionColor } from '../../data';
 
 interface MemberCardProps {
-  member: Member;
-  onView: (member: Member) => void;
-  onEdit: (member: Member) => void;
+  member: RecentMember & { joinDate?: string };
+  onView: (member: RecentMember & { joinDate?: string }) => void;
+  onEdit: (member: RecentMember & { joinDate?: string }) => void;
 }
 
 export const MemberCard: React.FC<MemberCardProps> = ({ member, onView, onEdit }) => {
-  const getStatusSeverity = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'success';
-      case 'inactive':
-        return 'danger';
-      case 'pending':
-        return 'warning';
+  const getRoleColor = (role: string): string => {
+    switch (role) {
+      case 'Director':
+        return 'bg-red-500';
+      case 'Coordinador':
+      case 'Coordinadora':
+        return 'bg-blue-500';
+      case 'Animador':
+        return 'bg-green-500';
+      case 'Miembro Activo':
+        return 'bg-yellow-500';
+      case 'Miembro Nuevo':
+        return 'bg-purple-500';
       default:
-        return 'info';
+        return 'bg-gray-500';
     }
   };
 
+  const handleCardClick = () => {
+    onView(member);
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit(member);
+  };
+
+  const handleSectionClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita que se dispare el click de la card
+  };
+
   return (
-    <Card className="border-0 shadow-md hover:shadow-lg transition-shadow duration-200">
-      <div className="p-4">
-        <div className="flex items-center space-x-3 mb-4">
-          <Avatar
-            image={member.avatar}
-            label={member.name.charAt(0)}
-            size="large"
-            shape="circle"
-            className="bg-red-500 text-white"
+    <Card
+      className="pt-1 border-0 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white rounded-xl overflow-hidden cursor-pointer"
+      onClick={handleCardClick}
+      pt={{
+        body: { className: 'p-3' },
+        content: { className: 'p-0' }
+      }}
+    >
+      <div className="relative">
+        {/* Section Chip - Top Left */}
+        <div className="absolute top-2 left-2" onClick={handleSectionClick}>
+          <Chip
+            label={member.section}
+            className={`${getSectionColor(member.section)} text-xs px-2 py-0 font-medium rounded-xxl`}
           />
-          <div className="flex-1">
-            <h3 className="font-semibold text-gray-900 text-lg">{member.name}</h3>
-            <p className="text-sm text-gray-600 font-medium">{formatRole(member.role)}</p>
+        </div>
+
+        {/* Edit Button - Top Right */}
+        <Button
+          icon="pi pi-pencil"
+          className="absolute top-2 right-2 p-0 bg-transparent border-0 text-gray-400 hover:text-red-500 transition-colors duration-200"
+          onClick={handleEditClick}
+          aria-label="Editar miembro"
+        />
+
+        {/* Header with Avatar, Name and Email */}
+        <div className="text-center mb-4"> {/* ✅ Añadido mt-6 para dar espacio al chip */}
+          <div className="relative inline-block mb-4">
+            <Avatar
+              image={member.avatar}
+              label={member.name.charAt(0)}
+              size="xlarge"
+              shape="circle"
+              className="bg-red-500 text-white border-4 border-white shadow-lg"
+              style={{ width: '80px', height: '80px', fontSize: '2rem' }}
+            />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            {member.name}
+          </h3>
+          <div className="flex items-center justify-center text-sm text-gray-600 mb-3">
+            <i className="pi pi-envelope mr-2 text-gray-400"></i>
+            <span className="break-all">{member.email}</span>
           </div>
         </div>
 
-        <div className="space-y-3 mb-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <i className="pi pi-envelope text-gray-400 mr-2 w-4"></i>
-            <span className="truncate">{member.email}</span>
-          </div>
-
-          <div className="flex items-center text-sm text-gray-600">
-            <i className="pi pi-calendar text-gray-400 mr-2 w-4"></i>
-            <span>Desde {new Date(member.joinDate).toLocaleDateString('es-ES')}</span>
-          </div>
-
-          <div className="flex items-center text-sm text-gray-600">
-            <i className="pi pi-building text-gray-400 mr-2 w-4"></i>
-            <span className="truncate">{member.center}</span>
-          </div>
-        </div>
-
-        <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-          <Badge
-            value={formatStatus(member.status)}
-            severity={getStatusSeverity(member.status)}
-            className="text-xs"
+        {/* Role Chip - Center Bottom */}
+        <div className="flex justify-center">
+          <Chip
+            label={member.role}
+            className={`${getRoleColor(member.role)} text-white text-sm px-4 py-0 font-medium rounded-xxl`}
           />
-
-          <div className="flex space-x-2">
-            <Button
-              icon="pi pi-eye"
-              size="small"
-              outlined
-              tooltip="Ver detalles"
-              tooltipOptions={{ position: 'top' }}
-              onClick={() => onView(member)}
-              className="p-button-sm"
-            />
-            <Button
-              icon="pi pi-pencil"
-              size="small"
-              tooltip="Editar"
-              tooltipOptions={{ position: 'top' }}
-              className="bg-red-600 border-red-600 hover:bg-red-700 p-button-sm"
-              onClick={() => onEdit(member)}
-            />
-          </div>
         </div>
       </div>
     </Card>

@@ -7,28 +7,31 @@ import { Button } from 'primereact/button';
 import { Badge } from 'primereact/badge';
 import { Avatar } from 'primereact/avatar';
 import { Card } from 'primereact/card';
-import { useApi } from '../hooks/useApi';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { MemberCard } from '../components/common/MemberCard';
-import { Member } from '../types';
-import { formatRole, formatStatus, getAvailableRoles, getAvailableStatuses } from '../utils/roleTranslations';
+import { mockRecentMembers, getRoleColor, getSectionColor, RecentMember } from '../data/RecentMembers';
 
 export const Members: React.FC = () => {
   console.log("🚀🚀🚀 MEMBERS COMPONENT RENDERIZADO");
 
-  const { loading, getMembers } = useApi();
-  const [members, setMembers] = useState<Member[]>([]);
-  const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<RecentMember[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<RecentMember[]>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [sectionFilter, setSectionFilter] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Simular carga de datos
     const loadMembers = async () => {
-      const data = await getMembers();
-      setMembers(data);
-      setFilteredMembers(data);
+      setLoading(true);
+      // Simular delay de API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setMembers(mockRecentMembers);
+      setFilteredMembers(mockRecentMembers);
+      setLoading(false);
     };
 
     loadMembers();
@@ -40,35 +43,53 @@ export const Members: React.FC = () => {
     if (globalFilter) {
       filtered = filtered.filter(member =>
         member.name.toLowerCase().includes(globalFilter.toLowerCase()) ||
-        member.email.toLowerCase().includes(globalFilter.toLowerCase()) ||
+        member.email?.toLowerCase().includes(globalFilter.toLowerCase()) ||
         member.role.toLowerCase().includes(globalFilter.toLowerCase())
       );
     }
 
     if (statusFilter) {
-      filtered = filtered.filter(member => member.status.toLowerCase() === statusFilter.toLowerCase());
+      filtered = filtered.filter(member => member.status === statusFilter);
     }
 
     if (roleFilter) {
       filtered = filtered.filter(member => member.role.toLowerCase().includes(roleFilter.toLowerCase()));
     }
 
-    setFilteredMembers(filtered);
-  }, [members, globalFilter, statusFilter, roleFilter]);
+    if (sectionFilter) {
+      filtered = filtered.filter(member => member.section === sectionFilter);
+    }
 
-  // Opciones de estado usando las traducciones
+    setFilteredMembers(filtered);
+  }, [members, globalFilter, statusFilter, roleFilter, sectionFilter]);
+
+  // Opciones de estado
   const statusOptions = [
     { label: 'Todos los estados', value: '' },
-    ...getAvailableStatuses()
+    { label: 'Activo', value: 'active' },
+    { label: 'Inactivo', value: 'inactive' }
   ];
 
-  // Opciones de rol usando las traducciones
+  // Opciones de rol (basado en los datos)
   const roleOptions = [
     { label: 'Todos los roles', value: '' },
-    ...getAvailableRoles()
+    { label: 'Coordinador General', value: 'coordinador general' },
+    { label: 'Responsable de Formación', value: 'responsable de formación' },
+    { label: 'Coordinadora de CJ', value: 'coordinadora de cj' },
+    { label: 'Responsable de Oración', value: 'responsable de oración' },
+    { label: 'Miembro Activo', value: 'miembro activo' },
+    { label: 'Miembro Nuevo', value: 'miembro nuevo' }
   ];
 
-  const avatarBodyTemplate = (member: Member) => {
+  // Opciones de sección
+  const sectionOptions = [
+    { label: 'Todas las secciones', value: '' },
+    { label: 'Chiqui', value: 'Chiqui' },
+    { label: 'CJ', value: 'CJ' },
+    { label: 'Animador', value: 'Animador' }
+  ];
+
+  const avatarBodyTemplate = (member: RecentMember) => {
     return (
       <Avatar
         image={member.avatar}
@@ -80,18 +101,36 @@ export const Members: React.FC = () => {
     );
   };
 
-  const statusBodyTemplate = (member: Member) => {
-    const severity = member.status === 'active' ? 'success' :
-      member.status === 'inactive' ? 'danger' : 'warning';
+  const statusBodyTemplate = (member: RecentMember) => {
+    const severity = member.status === 'active' ? 'success' : 'danger';
+    const label = member.status === 'active' ? 'Activo' : 'Inactivo';
 
-    return <Badge value={formatStatus(member.status)} severity={severity} />;
+    return <Badge value={label} severity={severity} />;
   };
 
-  const roleBodyTemplate = (member: Member) => {
-    return <span>{formatRole(member.role)}</span>;
+  const roleBodyTemplate = (member: RecentMember) => {
+    return (
+      <Badge
+        value={member.role}
+        className={`${getRoleColor(member.role)} text-xs !flex !items-center !justify-center !leading-none px-2 py-1`}
+      />
+    );
   };
 
-  const actionBodyTemplate = (member: Member) => {
+  const sectionBodyTemplate = (member: RecentMember) => {
+    return (
+      <Badge
+        value={member.section}
+        className={`${getSectionColor(member.section)} text-xs !flex !items-center !justify-center !leading-none px-2 py-1`}
+      />
+    );
+  };
+
+  const joinDateBodyTemplate = (member: RecentMember) => {
+    return new Date(member.joinedDate).toLocaleDateString('es-ES');
+  };
+
+  const actionBodyTemplate = (member: RecentMember) => {
     return (
       <div className="flex space-x-2">
         <Button
@@ -112,12 +151,16 @@ export const Members: React.FC = () => {
     );
   };
 
-  const handleView = (member: Member) => {
+  const handleView = (member: RecentMember) => {
     console.log('Ver miembro:', member);
   };
 
-  const handleEdit = (member: Member) => {
+  const handleEdit = (member: RecentMember) => {
     console.log('Editar miembro:', member);
+  };
+
+  const handleAddMember = () => {
+    console.log('Añadir nuevo miembro');
   };
 
   if (loading) {
@@ -175,10 +218,19 @@ export const Members: React.FC = () => {
           className="w-full sm:w-auto"
         />
 
+        <Dropdown
+          value={sectionFilter}
+          onChange={(e) => setSectionFilter(e.value)}
+          options={sectionOptions}
+          placeholder="Sección"
+          className="w-full sm:w-auto"
+        />
+
         <Button
           label="Nuevo Miembro"
           icon="pi pi-plus"
           className="bg-red-600 border-red-600"
+          onClick={handleAddMember}
         />
       </div>
     </div>
@@ -192,14 +244,24 @@ export const Members: React.FC = () => {
 
       {viewMode === 'cards' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredMembers.map((member) => (
-            <MemberCard
-              key={member.id}
-              member={member}
-              onView={handleView}
-              onEdit={handleEdit}
-            />
-          ))}
+          {filteredMembers.length === 0 ? (
+            <div className="col-span-full text-center py-8 text-gray-500">
+              <i className="pi pi-users text-4xl mb-4 block"></i>
+              <p>No se encontraron miembros</p>
+            </div>
+          ) : (
+            filteredMembers.map((member) => (
+              <MemberCard
+                key={member.id}
+                member={{
+                  ...member,
+                  joinDate: member.joinedDate // Mapear campo
+                }}
+                onView={handleView}
+                onEdit={handleEdit}
+              />
+            ))
+          )}
         </div>
       ) : (
         <Card className="border-0 shadow-md">
@@ -215,13 +277,14 @@ export const Members: React.FC = () => {
             <Column body={avatarBodyTemplate} style={{ width: '4rem' }} />
             <Column field="name" header="Nombre" sortable />
             <Column field="email" header="Email" sortable />
-            <Column field="role" header="Rol" sortable body={roleBodyTemplate} />
+            <Column body={roleBodyTemplate} header="Rol" sortable />
+            <Column body={sectionBodyTemplate} header="Sección" sortable />
             <Column body={statusBodyTemplate} header="Estado" sortable />
             <Column
-              field="joinDate"
+              field="joinedDate"
               header="Fecha de Ingreso"
               sortable
-              body={(member) => new Date(member.joinDate).toLocaleDateString('es-ES')}
+              body={joinDateBodyTemplate}
             />
             <Column body={actionBodyTemplate} header="Acciones" style={{ width: '8rem' }} />
           </DataTable>

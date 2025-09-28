@@ -132,3 +132,7 @@
 .p-button.bg-red-600 .p-button-icon.p-button-icon-right {
     margin-left: 0.5rem !important;
 }
+
+.p-card .p-card-content {
+    padding: 0;
+}

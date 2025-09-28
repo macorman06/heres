@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MenuItem } from '../../types';
 
@@ -39,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
             />
             <div>
               <h2 className="text-lg font-bold text-gray-800">HERES</h2>
-              <p className="text-xs text-gray-500">Centro Juvenil</p>
+              <p className="text-xs text-gray-500">Salesianos</p>
             </div>
           </div>
         )}
