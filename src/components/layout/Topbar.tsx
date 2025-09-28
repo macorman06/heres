@@ -43,7 +43,6 @@ const getPageTitle = (pathname: string): string => {
   const routes: Record<string, string> = {
     '/dashboard': 'Dashboard',
     '/activities': 'Actividades',
-    '/groups': 'Grupos',
     '/materials': 'Materiales',
     '/members': 'Miembros',
     '/contact': 'Contacto'
