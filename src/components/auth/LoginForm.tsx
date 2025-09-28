@@ -116,6 +116,9 @@ export const LoginForm: React.FC = () => {
                 <div className="text-gray-500 dark:text-gray-400">{cred.role} • password: password</div>
               ))}
             </div>
+              )
+              )
+              }
           </div>
         </Card>
       </div>
