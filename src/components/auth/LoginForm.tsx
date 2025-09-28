@@ -52,48 +52,45 @@ export const LoginForm: React.FC = () => {
               <Message severity="error" text={error} className="w-full" />
             )}
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Correo Electrónico
-                </label>
-                <InputText
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="nombre.apellido@salesianos.es"
-                  disabled={isLoading}
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Contraseña
-                </label>
-                <Password
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Contraseña"
-                  feedback={false}
-                  toggleMask
-                  disabled={isLoading}
-                  inputClassName="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                />
-              </div>
-
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Correo Electrónico
+              </label>
+              <InputText
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="nombre.apellido@salesianos.es"
+                disabled={isLoading}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Contraseña
+              </label>
+              <Password
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Contraseña"
+                feedback={false}
+                toggleMask
+                disabled={isLoading}
+                inputClassName="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              />
+            </div>
 
             <div className="w-full flex justify-center">
               <Button
                 type="submit"
                 label={isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-                className="w-full text-left p-2 text-xs bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded border border-gray-200 dark:border-gray-600 transition-colors"
                 disabled={isLoading}
-                className="px-2 py-1 bg-red-600 hover:bg-red-700 border-red-600 text-white w-auto"
+                className="px-2 py-1 bg-red-600 hover:bg-red-700 border-red-600 text-white w-full"
               />
             </div>
-
           </form>
 
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
@@ -108,17 +105,14 @@ export const LoginForm: React.FC = () => {
                     setEmail(cred.email);
                     setPassword('password');
                   }}
-                  className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border transition-colors"
+                  className="w-full text-left p-2 text-xs bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded border border-gray-200 dark:border-gray-600 transition-colors"
                   disabled={isLoading}
                 >
-                  <div className="font-medium">{cred.email}</div>
-                <div className="font-medium text-gray-800 dark:text-gray-100">{cred.email}</div>
-                <div className="text-gray-500 dark:text-gray-400">{cred.role} • password: password</div>
+                  <div className="font-medium text-gray-800 dark:text-gray-100">{cred.email}</div>
+                  <div className="text-gray-500 dark:text-gray-400">{cred.role} • password: password</div>
+                </button>
               ))}
             </div>
-              )
-              )
-              }
           </div>
         </Card>
       </div>
