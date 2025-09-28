@@ -37,7 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
               <img 
                 src="/logos/favicon-96x96.png" 
                 alt="HERES Logo" 
-                className="w-full h-full object-contain rounded-lg block dark:hidden shadow-sm"
+                className="w-full h-full object-contain rounded-md block dark:hidden shadow-sm"
               />
               <img 
                 src="/logos/favicon-96x96.png" 
