@@ -3,6 +3,80 @@
   width: 100% !important;
 }
 
+/* Dark mode styles for PrimeReact components */
+.dark .p-inputtext,
+.dark .p-password-input,
+.dark .p-dropdown,
+.dark .p-dropdown-panel {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .p-inputtext:focus,
+.dark .p-password-input:focus,
+.dark .p-dropdown:focus {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+}
+
+.dark .p-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .p-datatable {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .p-datatable .p-datatable-header {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #334155 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #475569 !important;
+}
+
+.dark .p-menu {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.dark .p-menu .p-menuitem-link {
+  color: #f1f5f9 !important;
+}
+
+.dark .p-menu .p-menuitem-link:hover {
+  background-color: #334155 !important;
+}
+
+.dark .p-button.p-button-text {
+  color: #f1f5f9 !important;
+}
+
+.dark .p-button.p-button-outlined {
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .p-button.p-button-outlined:hover {
+  background-color: #334155 !important;
+  border-color: #64748b !important;
+}
+
 /* Estilo para el contenedor interno con iconos dentro */
 .p-icon-field {
   width: 100% !important;
