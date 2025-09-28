@@ -3,12 +3,40 @@ import { InputText } from 'primereact/inputtext';
 import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
-import { useAuth } from '../../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
 
 interface TopbarProps {
   sidebarCollapsed: boolean;
 }
+
+// Usuario mockeado (usando datos de Marcos Corpas)
+const mockUser = {
+  id: '7',
+  name: 'Marcos Corpas',
+  email: 'marcos.corpas@salesianos.com',
+  avatar: '/users/marcos_corpas.png',
+  role: 'Animador',
+  section: 'CJ',
+  isAuthenticated: true
+};
+
+// Datos mockeados de notificaciones
+const mockNotifications = [
+  {
+    id: '1',
+    title: 'Nueva actividad programada',
+    message: 'Se ha programado una nueva actividad para el sábado',
+    time: '2 min',
+    read: false
+  },
+  {
+    id: '2',
+    title: 'Recordatorio: Reunión semanal',
+    message: 'La reunión semanal es mañana a las 21:00',
+    time: '1 hora',
+    read: false
+  }
+];
 
 const getPageTitle = (pathname: string): string => {
   const routes: Record<string, string> = {
@@ -23,16 +51,22 @@ const getPageTitle = (pathname: string): string => {
 };
 
 export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
-  const { user, logout } = useAuth();
   const location = useLocation();
   const [searchValue, setSearchValue] = useState('');
   const menuRef = useRef<Menu>(null);
+
+  // Mock logout function
+  const handleLogout = () => {
+    console.log('Cerrando sesión...');
+    // Aquí podrías redirigir a la página de login o limpiar el estado
+  };
 
   const userMenuItems = [
     {
       label: 'Mi Perfil',
       icon: 'pi pi-user',
       command: () => {
+        console.log('Navegar a perfil');
         // Navigate to profile
       }
     },
@@ -40,7 +74,20 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
       label: 'Configuración',
       icon: 'pi pi-cog',
       command: () => {
+        console.log('Navegar a configuración');
         // Navigate to settings
+      }
+    },
+    {
+      separator: true
+    },
+    {
+      label: 'Notificaciones',
+      icon: 'pi pi-bell',
+      badge: mockNotifications.filter(n => !n.read).length.toString(),
+      command: () => {
+        console.log('Ver todas las notificaciones');
+        // Open notifications panel
       }
     },
     {
@@ -50,7 +97,7 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
       label: 'Cerrar Sesión',
       icon: 'pi pi-sign-out',
       command: () => {
-        logout();
+        handleLogout();
       }
     }
   ];
@@ -59,9 +106,23 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
     const badges = {
       director: { label: 'Director', severity: 'danger' as const },
       coordinador: { label: 'Coordinador', severity: 'warning' as const },
-      animador: { label: 'Animador', severity: 'info' as const }
+      animador: { label: 'Animador', severity: 'success' as const }, // ✅ Cambiado a 'success' (verde)
+      miembro: { label: 'Miembro', severity: 'success' as const }
     };
-    return badges[role as keyof typeof badges] || { label: role, severity: 'info' as const };
+    return badges[role.toLowerCase() as keyof typeof badges] || { label: role, severity: 'success' as const };
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchValue(value);
+    if (value.trim()) {
+      console.log('Buscando:', value);
+      // Aquí implementarías la lógica de búsqueda
+    }
+  };
+
+  const handleNotificationClick = () => {
+    console.log('Mostrar notificaciones:', mockNotifications);
+    // Aquí podrías abrir un panel de notificaciones o modal
   };
 
   return (
@@ -70,9 +131,9 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-3">
           {sidebarCollapsed && (
-            <img 
-              src="/salesianos_sticker.png" 
-              alt="Salesianos" 
+            <img
+              src="/salesianos_sticker.png"
+              alt="Salesianos"
               className="w-8 h-8"
             />
           )}
@@ -80,7 +141,7 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
             <h1 className="text-xl font-bold text-gray-800">
               {getPageTitle(location.pathname)}
             </h1>
-            <p className="text-sm text-gray-500">Centro Juvenil Salesianos</p>
+            <p className="text-sm text-gray-500">Herramienta de Recursos Salesianos</p>
           </div>
         </div>
       </div>
@@ -91,7 +152,7 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
           <i className="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <InputText
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             placeholder="Buscar miembros, actividades..."
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
           />
@@ -101,43 +162,54 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
       {/* Right Section */}
       <div className="flex items-center space-x-4">
         {/* Notifications */}
-        <button className="relative p-2 text-gray-600 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors">
+        <button
+          className="relative p-2 text-gray-600 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors"
+          onClick={handleNotificationClick}
+          title="Notificaciones"
+        >
           <i className="pi pi-bell text-lg" />
-          <Badge value="2" severity="danger" className="absolute -top-1 -right-1" />
+          {mockNotifications.filter(n => !n.read).length > 0 && (
+            <Badge
+              value={mockNotifications.filter(n => !n.read).length.toString()}
+              severity="danger"
+              className="absolute -top-1 -right-1"
+            />
+          )}
         </button>
 
         {/* User Menu */}
         <div className="flex items-center space-x-3">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium text-gray-800">{user?.name}</p>
+            <p className="text-sm font-medium text-gray-800">{mockUser.name}</p>
             <div className="flex items-center justify-end space-x-2">
-              <Badge 
-                value={getRoleBadge(user?.role || '').label} 
-                severity={getRoleBadge(user?.role || '').severity}
+              <Badge
+                value={getRoleBadge(mockUser.role).label}
+                severity={getRoleBadge(mockUser.role).severity}
                 className="text-xs"
               />
             </div>
           </div>
-          
+
           <button
             onClick={(e) => menuRef.current?.toggle(e)}
             className="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            title={`Menú de ${mockUser.name}`}
           >
             <Avatar
-              image={user?.avatar}
-              label={user?.name?.charAt(0)}
+              image={mockUser.avatar}
+              label={mockUser.name.charAt(0)}
               size="normal"
               shape="circle"
-              className="bg-red-500 text-white"
+              className="bg-red-500 text-white border-2 border-white shadow-sm"
             />
             <i className="pi pi-angle-down text-gray-600 hidden sm:block" />
           </button>
-          
+
           <Menu
             ref={menuRef}
             model={userMenuItems}
             popup
-            className="mt-2"
+            className="mt-2 shadow-lg"
           />
         </div>
       </div>
