@@ -47,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">HERES</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Herramienta de Recursos</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Salesianos</p>
             </div>
           </div>
         )}
