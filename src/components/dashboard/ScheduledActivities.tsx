@@ -27,7 +27,7 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
 
   if (loading) {
     return (
-      <Card className="border-0 shadow-md">
+      <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <div className="h-6 bg-gray-200 rounded w-48 animate-pulse"></div>
@@ -82,14 +82,14 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
   };
 
   return (
-    <Card className="border-0 shadow-md">
+    <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Actividades Programadas</h2>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Actividades Programadas</h2>
 
           {/* Dropdown Filter */}
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 font-medium">Filtrar por:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">Filtrar por:</span>
             <Dropdown
               value={selectedFilter}
               options={FILTER_OPTIONS}
@@ -103,7 +103,7 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
 
         {/* Contador de resultados */}
         <div className="flex justify-between items-center mb-4">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-300">
             {filteredEvents.length === events.length
               ? `Mostrando todas las actividades (${filteredEvents.length})`
               : `Mostrando ${filteredEvents.length} de ${events.length} actividades`
@@ -112,7 +112,7 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
 
           {/* Leyenda de badges */}
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-gray-500">Leyenda:</span>
+            <span className="text-gray-500 dark:text-gray-400">Leyenda:</span>
             <span className={`px-2 py-1 rounded-full ${getBadgeColor('Chiqui')}`}>
               Chiqui
             </span>
@@ -127,7 +127,7 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
 
         <div className="space-y-4">
           {filteredEvents.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               <i className="pi pi-calendar text-4xl mb-4 block"></i>
               <p className="text-lg mb-2">No hay actividades programadas</p>
               <p className="text-sm">

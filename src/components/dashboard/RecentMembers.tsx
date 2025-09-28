@@ -20,7 +20,7 @@ export const RecentMembers: React.FC<RecentMembersProps> = ({
                                                             }) => {
   if (loading) {
     return (
-      <Card className="border-0 shadow-md">
+      <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <div className="h-6 bg-gray-200 rounded w-32 animate-pulse"></div>
@@ -50,15 +50,15 @@ export const RecentMembers: React.FC<RecentMembersProps> = ({
   };
 
   return (
-    <Card className="border-0 shadow-md">
+    <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Miembros Recientes</h2>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Miembros Recientes</h2>
           {onViewAll && (
             <Button
               label="Ver todos"
               icon="pi pi-users"
-              className="p-button-text p-button-sm text-red-600 !border-0"
+              className="p-button-text p-button-sm text-red-600 dark:text-red-400 !border-0"
               size="small"
               onClick={onViewAll}
             />
@@ -67,7 +67,7 @@ export const RecentMembers: React.FC<RecentMembersProps> = ({
 
         <div className="space-y-3">
           {members.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               <i className="pi pi-users text-4xl mb-4 block"></i>
               <p>No hay miembros registrados</p>
             </div>
@@ -75,7 +75,7 @@ export const RecentMembers: React.FC<RecentMembersProps> = ({
             members.map((member) => (
               <div
                 key={member.id}
-                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer border border-gray-100 hover:border-gray-200"
+                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500"
                 onClick={() => handleMemberClick(member.id)}
               >
                 <div className="relative">
@@ -94,7 +94,7 @@ export const RecentMembers: React.FC<RecentMembersProps> = ({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-1">
-                    <p className="font-medium text-gray-900 text-sm truncate">
+                    <p className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">
                       {member.name}
                     </p>
                     {member.joinedDate && new Date(member.joinedDate) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
@@ -115,7 +115,7 @@ export const RecentMembers: React.FC<RecentMembersProps> = ({
                     />
                   </div>
 
-                  <div className="flex items-center text-xs text-gray-500">
+                  <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                     <i className="pi pi-clock mr-1"></i>
                     <span>{member.lastActivity}</span>
                   </div>
@@ -124,7 +124,7 @@ export const RecentMembers: React.FC<RecentMembersProps> = ({
                 <div className="flex-shrink-0">
                   <Button
                     icon="pi pi-angle-right"
-                    className="p-button-text p-button-sm text-gray-400"
+                    className="p-button-text p-button-sm text-gray-400 dark:text-gray-500"
                     size="small"
                   />
                 </div>
@@ -133,8 +133,8 @@ export const RecentMembers: React.FC<RecentMembersProps> = ({
           )}
 
           {members.length > 0 && (
-            <div className="pt-2 border-t border-gray-100 text-center">
-              <p className="text-xs text-gray-500">
+            <div className="pt-2 border-t border-gray-100 dark:border-gray-600 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Mostrando {members.length} miembros más recientes
               </p>
             </div>

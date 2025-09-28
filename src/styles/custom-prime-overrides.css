@@ -3,53 +3,376 @@
   width: 100% !important;
 }
 
-/* Estilo para el contenedor interno con iconos dentro */
+/* ===========================================
+   DARK MODE STYLES - WCAG AA COMPLIANT
+   =========================================== */
+
+/* Card Components - Dark gray backgrounds with proper contrast */
+.dark .p-card {
+  background-color: #1f2937 !important; /* Dark gray instead of pure black */
+  border-color: #374151 !important; /* Lighter border for visibility */
+  color: #f3f4f6 !important; /* Off-white text for reduced eye strain */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .p-card .p-card-header {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f3f4f6 !important;
+}
+
+.dark .p-card .p-card-body {
+  background-color: #1f2937 !important;
+  color: #f3f4f6 !important;
+}
+
+.dark .p-card .p-card-content {
+  color: #e5e7eb !important; /* Slightly dimmer for body text */
+}
+
+/* Input Components - Proper contrast and visibility */
+.dark .p-inputtext,
+.dark .p-password-input,
+.dark .p-dropdown,
+.dark .p-dropdown-panel {
+  background-color: #374151 !important; /* Medium gray for inputs */
+  border-color: #4b5563 !important; /* Visible borders */
+  color: #f3f4f6 !important; /* High contrast text */
+}
+
+.dark .p-inputtext::placeholder,
+.dark .p-password-input::placeholder {
+  color: #9ca3af !important; /* Accessible placeholder text */
+}
+
+.dark .p-inputtext:focus,
+.dark .p-password-input:focus,
+.dark .p-dropdown:focus {
+  border-color: #f87171 !important; /* Brand red for focus */
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+  background-color: #374151 !important;
+}
+
+.dark .p-inputtext:hover,
+.dark .p-password-input:hover,
+.dark .p-dropdown:hover {
+  border-color: #6b7280 !important;
+  background-color: #4b5563 !important;
+}
+
+/* Dropdown specific styles */
+.dark .p-dropdown-panel {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .p-dropdown-item {
+  color: #f3f4f6 !important;
+}
+
+.dark .p-dropdown-item:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+.dark .p-dropdown-item.p-highlight {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+/* DataTable Components - Layered contrast approach */
+.dark .p-datatable {
+  background-color: #1f2937 !important;
+  color: #f3f4f6 !important;
+  border-color: #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-header {
+  background-color: #111827 !important; /* Darkest layer */
+  border-color: #374151 !important;
+  color: #f9fafb !important; /* Highest contrast for headers */
+}
+
+.dark .p-datatable .p-datatable-thead > tr > th {
+  background-color: #111827 !important;
+  color: #f9fafb !important;
+  border-color: #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr {
+  background-color: #1f2937 !important; /* Base card color */
+  color: #f3f4f6 !important;
+  border-color: #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #374151 !important; /* Subtle alternating rows */
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #4b5563 !important; /* Clear hover state */
+  color: #ffffff !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr > td {
+  border-color: #374151 !important;
+}
+
+/* Paginator */
+.dark .p-paginator {
+  background-color: #1f2937 !important;
+  color: #f3f4f6 !important;
+  border-color: #374151 !important;
+}
+
+.dark .p-paginator .p-paginator-page,
+.dark .p-paginator .p-paginator-next,
+.dark .p-paginator .p-paginator-prev,
+.dark .p-paginator .p-paginator-first,
+.dark .p-paginator .p-paginator-last {
+  color: #f3f4f6 !important;
+  background-color: transparent !important;
+  border-color: #374151 !important;
+}
+
+.dark .p-paginator .p-paginator-page:hover,
+.dark .p-paginator .p-paginator-next:hover,
+.dark .p-paginator .p-paginator-prev:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+.dark .p-paginator .p-paginator-page.p-highlight {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+/* Menu Components */
+.dark .p-menu {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .p-menu .p-menuitem-link {
+  color: #f3f4f6 !important;
+}
+
+.dark .p-menu .p-menuitem-link:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+.dark .p-menu .p-separator {
+  border-color: #374151 !important;
+}
+
+/* Button Components - Proper contrast ratios */
+.dark .p-button.p-button-text {
+  color: #f3f4f6 !important;
+}
+
+.dark .p-button.p-button-text:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+.dark .p-button.p-button-outlined {
+  border-color: #4b5563 !important;
+  color: #f3f4f6 !important;
+  background-color: transparent !important;
+}
+
+.dark .p-button.p-button-outlined:hover {
+  background-color: #374151 !important;
+  border-color: #6b7280 !important;
+  color: #ffffff !important;
+}
+
+.dark .p-button.p-button-outlined:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+}
+
+/* Disabled states - distinguishable but accessible */
+.dark .p-button:disabled {
+  background-color: #374151 !important;
+  color: #6b7280 !important;
+  border-color: #4b5563 !important;
+  opacity: 0.6 !important;
+}
+
+.dark .p-inputtext:disabled,
+.dark .p-dropdown:disabled {
+  background-color: #374151 !important;
+  color: #6b7280 !important;
+  border-color: #4b5563 !important;
+  opacity: 0.7 !important;
+}
+
+/* Badge Components - Desaturated brand colors */
+.dark .p-badge {
+  color: #ffffff !important;
+}
+
+.dark .p-badge.p-badge-success {
+  background-color: #059669 !important; /* Desaturated green */
+}
+
+.dark .p-badge.p-badge-danger {
+  background-color: #dc2626 !important; /* Desaturated red */
+}
+
+.dark .p-badge.p-badge-warning {
+  background-color: #d97706 !important; /* Desaturated orange */
+  color: #ffffff !important;
+}
+
+.dark .p-badge.p-badge-info {
+  background-color: #0284c7 !important; /* Desaturated blue */
+}
+
+/* Progress Components */
+.dark .p-progressbar {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .p-progressbar .p-progressbar-value {
+  background-color: #dc2626 !important;
+}
+
+/* Message Components - Error states with proper contrast */
+.dark .p-message {
+  border-color: #374151 !important;
+}
+
+.dark .p-message.p-message-error {
+  background-color: #7f1d1d !important;
+  border-color: #dc2626 !important;
+  color: #fecaca !important;
+}
+
+.dark .p-message.p-message-success {
+  background-color: #064e3b !important;
+  border-color: #059669 !important;
+  color: #a7f3d0 !important;
+}
+
+.dark .p-message.p-message-warn {
+  background-color: #78350f !important;
+  border-color: #d97706 !important;
+  color: #fed7aa !important;
+}
+
+.dark .p-message.p-message-info {
+  background-color: #0c4a6e !important;
+  border-color: #0284c7 !important;
+  color: #bae6fd !important;
+}
+
+/* Avatar Components */
+.dark .p-avatar {
+  border-color: #374151 !important;
+}
+
+/* Spinner Components */
+.dark .p-progress-spinner-circle {
+  stroke: #dc2626 !important;
+}
+
+/* Chip Components */
+.dark .p-chip {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+}
+
+/* ===========================================
+   LIGHT MODE ENHANCEMENTS
+   =========================================== */
+
+/* Ensure proper contrast in light mode too */
+.p-card {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.p-inputtext,
+.p-password-input,
+.p-dropdown {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #111827 !important;
+}
+
+.p-inputtext::placeholder,
+.p-password-input::placeholder {
+  color: #6b7280 !important;
+}
+
+.p-datatable {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
+
+.p-datatable .p-datatable-header {
+  background-color: #f9fafb !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #f9fafb !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* ===========================================
+   CUSTOM COMPONENT STYLES
+   =========================================== */
+
+/* Password input styling */
 .p-icon-field {
   width: 100% !important;
   display: flex;
   align-items: center;
 }
 
-/* Estilo para el input password que ocupa todo el ancho y con los bordes/padding deseados */
 .p-password-input {
   width: 100% !important;
-  border: 1px solid #d1d5db !important;  /* borde gris claro */
-  border-radius: 0.375rem !important;    /* bordes redondeados */
+  border-radius: 0.375rem !important;
   padding: 0.5rem 0.75rem !important;
   font-size: 1rem !important;
-  color: #111827 !important;              /* texto gris oscuro */
   outline: none;
-  transition: border-color 0.3s ease;
-  box-sizing: border-box;                  /* incluye padding en ancho */
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
-/* Focus y hover para input password */
 .p-password-input:focus {
-  border-color: #f87171 !important;       /* borde rojo claro cuando está enfocado */
-  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
 }
 
-/* Icono al lado derecho dentro del input */
 .p-input-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   color: #9ca3af;
-  margin-left: -2.5rem; /* Ajusta para posicionar dentro del input */
+  margin-left: -2.5rem;
   cursor: pointer;
 }
 
-/* Contenedor del avatar: cuadrado y tamaño fijo */
+/* Avatar styling */
 .p-avatar {
-  width: 2.5rem;               /* Ajusta a tamaño deseado */
-  height: 2.5rem;
-  position: relative;          /* Para que img se ajuste */
+  position: relative;
   overflow: hidden;
-  border-radius: 9999px;       /* círculo completo */
-  flex-shrink: 0;              /* No permita reducirse en flex layouts */
+  border-radius: 9999px;
+  flex-shrink: 0;
 }
 
-/* Imagen dentro del avatar - ajuste correcto sin distorsión */
 .p-avatar img {
   width: 100% !important;
   height: 100% !important;
@@ -58,81 +381,111 @@
   border-radius: 9999px !important;
 }
 
-/* Corrección para centrar verticalmente el texto en los badges */
+/* Badge alignment */
 .p-badge.p-badge-success,
 .p-badge.p-badge-danger,
 .p-badge.p-badge-warning,
 .p-badge.p-badge-info {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    vertical-align: middle;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  vertical-align: middle;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
-/* Botones rojos con texto blanco y padding adecuado */
+/* Red button styling */
 .p-button.bg-red-600,
 .p-button.bg-red-600:enabled:hover,
 .p-button.bg-red-600:enabled:active {
-    color: white !important;
-    background-color: #dc2626 !important;
-    border-color: #dc2626 !important;
-    padding: 0.5rem 1rem !important; /* Padding vertical y horizontal */
-    min-height: 2.5rem; /* Altura mínima consistente */
-    width: auto; /* Ancho automático para comprimir contenido */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem; /* Espaciado entre ícono y texto */
+  color: white !important;
+  background-color: #dc2626 !important;
+  border-color: #dc2626 !important;
+  padding: 0.5rem 1rem !important;
+  min-height: 2.5rem;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .p-button.bg-red-600:enabled:hover {
-    background-color: #b91c1c !important;
-    border-color: #b91c1c !important;
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
 }
 
 .p-button.bg-red-600:enabled:active {
-    background-color: #991b1b !important;
-    border-color: #991b1b !important;
+  background-color: #991b1b !important;
+  border-color: #991b1b !important;
 }
 
-/* Texto e ícono en blanco */
 .p-button.bg-red-600 .p-button-label,
 .p-button.bg-red-600 .p-button-icon {
-    color: white !important;
+  color: white !important;
 }
 
-/* Para botones pequeños */
 .p-button.bg-red-600.p-button-sm {
-    padding: 0.375rem 0.75rem !important;
-    min-height: 2rem;
-    font-size: 0.875rem;
+  padding: 0.375rem 0.75rem !important;
+  min-height: 2rem;
+  font-size: 0.875rem;
 }
 
-/* Para botones con solo ícono */
 .p-button.bg-red-600.p-button-icon-only {
-    padding: 0.5rem !important;
-    width: 2.5rem;
-    height: 2.5rem;
+  padding: 0.5rem !important;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 .p-button.bg-red-600.p-button-icon-only.p-button-sm {
-    padding: 0.375rem !important;
-    width: 2rem;
-    height: 2rem;
+  padding: 0.375rem !important;
+  width: 2rem;
+  height: 2rem;
 }
 
-/* Espaciado entre ícono y texto */
 .p-button.bg-red-600 .p-button-icon.p-button-icon-left {
-    margin-right: 0.5rem !important;
+  margin-right: 0.5rem !important;
 }
 
 .p-button.bg-red-600 .p-button-icon.p-button-icon-right {
-    margin-left: 0.5rem !important;
+  margin-left: 0.5rem !important;
 }
 
+/* Card content padding reset */
 .p-card .p-card-content {
-    padding: 0;
+  padding: 0;
+}
+
+/* Focus indicators for accessibility */
+.dark .p-button:focus,
+.dark .p-inputtext:focus,
+.dark .p-dropdown:focus {
+  outline: 2px solid #f87171 !important;
+  outline-offset: 2px !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dark .p-card {
+    border-width: 2px !important;
+    border-color: #6b7280 !important;
+  }
+  
+  .dark .p-inputtext,
+  .dark .p-dropdown {
+    border-width: 2px !important;
+  }
+  
+  .dark .p-button.p-button-outlined {
+    border-width: 2px !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dark * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

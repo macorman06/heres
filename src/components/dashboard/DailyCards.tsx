@@ -38,18 +38,18 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
   return (
     <div className="flex gap-6">
       {/* Calendar Card - Cuadrado blanco */}
-      <Card className="border-0 shadow-md bg-white flex-shrink-0">
+      <Card className="border-0 shadow-md bg-white dark:bg-gray-800 flex-shrink-0">
         <div className="p-8 flex flex-col items-center justify-center text-center h-full" style={{ width: '200px', height: '200px' }}>
-          <div className="text-sm font-medium uppercase mb-2 text-gray-600">
+          <div className="text-sm font-medium uppercase mb-2 text-gray-600 dark:text-gray-300">
             {date.toLocaleDateString('es-ES', { month: 'long' })}
           </div>
-          <div className="text-6xl font-bold leading-none mb-2 text-gray-800">
+          <div className="text-6xl font-bold leading-none mb-2 text-gray-800 dark:text-gray-100">
             {date.getDate()}
           </div>
-          <div className="text-sm text-gray-600 mb-1">
+          <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
             {date.toLocaleDateString('es-ES', { weekday: 'long' })}
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             {date.getFullYear()}
           </div>
         </div>
@@ -58,25 +58,25 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
       {/* Right Column - Two Cards */}
       <div className="flex-grow flex flex-col space-y-3">
         {/* Salesian Ephemeris Card */}
-        <Card className="border-0 shadow-md bg-white flex-1">
+        <Card className="border-0 shadow-md bg-white dark:bg-gray-800 flex-1">
           <div className="flex items-center space-x-4 h-full">
-            <div className="bg-red-100 rounded-full p-3 flex-shrink-0">
-              <i className={`${salesianInfo.icon} text-red-600 text-xl`}></i>
+            <div className="bg-red-100 dark:bg-red-900/30 rounded-full p-3 flex-shrink-0">
+              <i className={`${salesianInfo.icon} text-red-600 dark:text-red-400 text-xl`}></i>
             </div>
             <div className="flex-grow">
               <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Efeméride Salesiana
                 </h3>
                 <Badge
                   value="Salesiano"
-                  className="bg-red-100 text-red-800 text-xs !flex !items-center !justify-center !leading-none px-2 py-1"
+                  className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-xs !flex !items-center !justify-center !leading-none px-2 py-1"
                 />
               </div>
-              <h4 className="font-semibold text-gray-900 mb-1 text-sm">
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 text-sm">
                 {salesianInfo.title}
               </h4>
-              <p className="text-xs text-gray-600 leading-relaxed">
+              <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                 {salesianInfo.description}
               </p>
             </div>
@@ -84,25 +84,25 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
         </Card>
 
         {/* Catholic Saint Card */}
-        <Card className="border-0 shadow-md bg-white flex-1">
+        <Card className="border-0 shadow-md bg-white dark:bg-gray-800 flex-1">
             <div className="flex items-center space-x-4 h-full">
-              <div className="bg-blue-100 rounded-full p-3 flex-shrink-0">
-                <i className={`${catholicInfo.icon} text-blue-600 text-xl`}></i>
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full p-3 flex-shrink-0">
+                <i className={`${catholicInfo.icon} text-blue-600 dark:text-blue-400 text-xl`}></i>
               </div>
               <div className="flex-grow">
                 <div className="flex items-center space-x-2 mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Santoral Católico
                   </h3>
                   <Badge
                     value="Santoral"
-                    className="bg-blue-100 text-blue-800 text-xs !flex !items-center !justify-center !leading-none px-2 py-1"
+                    className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs !flex !items-center !justify-center !leading-none px-2 py-1"
                   />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 text-sm">
                   {catholicInfo.title}
                 </h4>
-                <p className="text-xs text-gray-600 leading-relaxed">
+                <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                   {catholicInfo.description}
                 </p>
             </div>

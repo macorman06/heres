@@ -17,13 +17,13 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white bg-opacity-90 z-50">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-900 bg-opacity-90 dark:bg-opacity-90 z-50">
       <ProgressSpinner
         style={{ width: sizeMap[size], height: sizeMap[size] }}
         strokeWidth="4"
         animationDuration="1s"
       />
-      <p className="mt-4 text-gray-600 text-sm">{message}</p>
+      <p className="mt-4 text-gray-600 dark:text-gray-300 text-sm">{message}</p>
     </div>
   );
 };

@@ -45,7 +45,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onView, onEdit }
 
   return (
     <Card
-      className="pt-1 border-0 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white rounded-xl overflow-hidden cursor-pointer"
+      className="pt-1 border-0 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white dark:bg-gray-800 rounded-xl overflow-hidden cursor-pointer"
       onClick={handleCardClick}
       pt={{
         body: { className: 'p-3' },
@@ -64,7 +64,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onView, onEdit }
         {/* Edit Button - Top Right */}
         <Button
           icon="pi pi-pencil"
-          className="absolute top-2 right-2 p-0 bg-transparent border-0 text-gray-400 hover:text-red-500 transition-colors duration-200"
+          className="absolute top-2 right-2 p-0 bg-transparent border-0 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200"
           onClick={handleEditClick}
           aria-label="Editar miembro"
         />
@@ -84,8 +84,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onView, onEdit }
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             {member.name}
           </h3>
-          <div className="flex items-center justify-center text-sm text-gray-600 mb-3">
-            <i className="pi pi-envelope mr-2 text-gray-400"></i>
+          <div className="flex items-center justify-center text-sm text-gray-600 dark:text-gray-300 mb-3">
+            <i className="pi pi-envelope mr-2 text-gray-400 dark:text-gray-500"></i>
             <span className="break-all">{member.email}</span>
           </div>
         </div>

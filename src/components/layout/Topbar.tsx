@@ -4,6 +4,7 @@ import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
 import { useLocation } from 'react-router-dom';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 interface TopbarProps {
   sidebarCollapsed: boolean;
@@ -126,7 +127,7 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
   };
 
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+    <div className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-dark-700 px-6 py-4 flex items-center justify-between transition-colors duration-200">
       {/* Left Section */}
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-3">
@@ -138,10 +139,10 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
             />
           )}
           <div>
-            <h1 className="text-xl font-bold text-gray-800">
+            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {getPageTitle(location.pathname)}
             </h1>
-            <p className="text-sm text-gray-500">Herramienta de Recursos Salesianos</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Herramienta de Recursos Salesianos</p>
           </div>
         </div>
       </div>
@@ -154,16 +155,19 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
             value={searchValue}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Buscar miembros, actividades..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
           />
         </div>
       </div>
 
       {/* Right Section */}
       <div className="flex items-center space-x-4">
+        {/* Theme Toggle */}
+        <ThemeToggle />
+
         {/* Notifications */}
         <button
-          className="relative p-2 text-gray-600 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors"
+          className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition-colors duration-200"
           onClick={handleNotificationClick}
           title="Notificaciones"
         >
@@ -180,7 +184,7 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
         {/* User Menu */}
         <div className="flex items-center space-x-3">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium text-gray-800">{mockUser.name}</p>
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{mockUser.name}</p>
             <div className="flex items-center justify-end space-x-2">
               <Badge
                 value={getRoleBadge(mockUser.role).label}
@@ -192,7 +196,7 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
 
           <button
             onClick={(e) => menuRef.current?.toggle(e)}
-            className="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 transition-colors duration-200"
             title={`Menú de ${mockUser.name}`}
           >
             <Avatar
@@ -202,7 +206,7 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
               shape="circle"
               className="bg-red-500 text-white border-2 border-white shadow-sm"
             />
-            <i className="pi pi-angle-down text-gray-600 hidden sm:block" />
+            <i className="pi pi-angle-down text-gray-600 dark:text-gray-300 hidden sm:block" />
           </button>
 
           <Menu
