@@ -170,7 +170,7 @@ export const Members: React.FC = () => {
   const header = (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
       <div className="flex items-center space-x-4">
-        <h2 className="text-xl font-bold text-gray-800">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
           Miembros ({filteredMembers.length})
         </h2>
         <div className="flex space-x-2">
@@ -238,14 +238,14 @@ export const Members: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="border-0 shadow-md">
+      <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
         {header}
       </Card>
 
       {viewMode === 'cards' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredMembers.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-gray-500">
+            <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
               <i className="pi pi-users text-4xl mb-4 block"></i>
               <p>No se encontraron miembros</p>
             </div>
@@ -264,7 +264,7 @@ export const Members: React.FC = () => {
           )}
         </div>
       ) : (
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
           <DataTable
             value={filteredMembers}
             paginator

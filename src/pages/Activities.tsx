@@ -143,7 +143,7 @@ export const Activities: React.FC = () => {
 
   const header = (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-      <h2 className="text-xl font-bold text-gray-800">
+      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
         Actividades ({filteredActivities.length})
       </h2>
       
@@ -180,26 +180,26 @@ export const Activities: React.FC = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total', value: activities.length, color: 'bg-blue-500' },
-          { label: 'Programadas', value: activities.filter(a => a.status === 'scheduled').length, color: 'bg-yellow-500' },
-          { label: 'En Curso', value: activities.filter(a => a.status === 'ongoing').length, color: 'bg-orange-500' },
-          { label: 'Completadas', value: activities.filter(a => a.status === 'completed').length, color: 'bg-green-500' }
+          { label: 'Total', value: activities.length, color: 'bg-blue-500', icon: 'pi-calendar' },
+          { label: 'Programadas', value: activities.filter(a => a.status === 'scheduled').length, color: 'bg-yellow-500', icon: 'pi-clock' },
+          { label: 'En Curso', value: activities.filter(a => a.status === 'ongoing').length, color: 'bg-orange-500', icon: 'pi-play' },
+          { label: 'Completadas', value: activities.filter(a => a.status === 'completed').length, color: 'bg-green-500', icon: 'pi-check' }
         ].map((stat, index) => (
-          <Card key={index} className="border-0 shadow-md">
+          <Card key={index} className="border-0 shadow-md bg-white dark:bg-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{stat.label}</p>
-                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{stat.label}</p>
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
-                <i className="pi pi-calendar text-white text-xl" />
+                <i className={`pi ${stat.icon} text-white text-xl`} />
               </div>
             </div>
           </Card>
         ))}
       </div>
 
-      <Card className="border-0 shadow-md">
+      <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
         <div className="mb-4">{header}</div>
         
         <DataTable

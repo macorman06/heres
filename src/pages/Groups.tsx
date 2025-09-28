@@ -143,7 +143,7 @@ export const Groups: React.FC = () => {
 
   const header = (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-      <h2 className="text-xl font-bold text-gray-800">
+      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
         Grupos ({filteredGroups.length})
       </h2>
       
@@ -195,11 +195,11 @@ export const Groups: React.FC = () => {
           { label: 'Total Miembros', value: totalMembers, color: 'bg-blue-500', icon: 'pi-users' },
           { label: 'Promedio por Grupo', value: Math.round(totalMembers / groups.length) || 0, color: 'bg-orange-500', icon: 'pi-chart-bar' }
         ].map((stat, index) => (
-          <Card key={index} className="border-0 shadow-md">
+          <Card key={index} className="border-0 shadow-md bg-white dark:bg-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{stat.label}</p>
-                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{stat.label}</p>
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
                 <i className={`pi ${stat.icon} text-white text-xl`} />
@@ -212,12 +212,12 @@ export const Groups: React.FC = () => {
       {/* Groups Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredGroups.map((group) => (
-          <Card key={group.id} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+          <Card key={group.id} className="border-0 shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-800">
             <div className="space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1">{group.name}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{group.description}</p>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">{group.name}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{group.description}</p>
                 </div>
                 <Badge 
                   value={group.status === 'active' ? 'Activo' : 'Inactivo'} 
@@ -227,13 +227,13 @@ export const Groups: React.FC = () => {
 
               <div className="flex items-center justify-between">
                 {categoryBodyTemplate(group)}
-                <div className="flex items-center space-x-2 text-gray-600">
+                <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
                   <i className="pi pi-users" />
                   <span className="font-medium">{group.memberCount} miembros</span>
                 </div>
               </div>
 
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
                 <p className="mb-1">
                   <i className="pi pi-user mr-2" />
                   Coordinador: {group.coordinator}
@@ -244,7 +244,7 @@ export const Groups: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex space-x-2 pt-2 border-t border-gray-200">
+              <div className="flex space-x-2 pt-2 border-t border-gray-200 dark:border-gray-600">
                 <Button
                   label="Ver Detalles"
                   icon="pi pi-eye"

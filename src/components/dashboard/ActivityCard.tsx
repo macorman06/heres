@@ -20,15 +20,15 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   };
 
   return (
-    <div className="border bg-gray-50 border-gray-200 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+    <div className="border bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
       <div className="flex">
         {/* Date and Responsible Section */}
         <div className="flex-shrink-0 text-center mr-4">
           {/* Date */}
-          <div className="text-sm font-medium text-gray-600 uppercase mb-1">
+          <div className="text-sm font-medium text-gray-600 dark:text-gray-300 uppercase mb-1">
             {event.date.dayName}
           </div>
-          <div className="text-2xl font-bold text-gray-800 mb-3">
+          <div className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">
             {event.date.day}
           </div>
 
@@ -56,20 +56,20 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 />
               </div>
 
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 {event.title}
               </h3>
 
-              <div className="flex items-center text-sm text-gray-600 mb-3">
-                <i className="pi pi-clock mr-2"></i>
+              <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-3">
+                <i className="pi pi-clock mr-2 text-gray-500 dark:text-gray-400"></i>
                 <span className="mr-4">{event.time}</span>
-                <i className="pi pi-map-marker mr-2"></i>
+                <i className="pi pi-map-marker mr-2 text-gray-500 dark:text-gray-400"></i>
                 <span>{event.location}</span>
               </div>
 
               {/* Participants */}
               <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-500 mr-2">Participantes:</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 mr-2">Participantes:</span>
                 {event.participants.slice(0, 4).map((participant, idx) => (
                   <Avatar
                     key={idx}
@@ -82,7 +82,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                   />
                 ))}
                 {event.participants.length > 4 && (
-                  <span className="text-xs text-gray-500 ml-2 bg-gray-100 px-2 py-1 rounded-full">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-2 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                     +{event.participants.length - 4} más
                   </span>
                 )}

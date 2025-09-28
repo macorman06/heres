@@ -147,7 +147,7 @@ export const Materials: React.FC = () => {
 
   const header = (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-      <h2 className="text-xl font-bold text-gray-800">
+      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
         Materiales ({filteredMaterials.length})
       </h2>
       
@@ -199,11 +199,11 @@ export const Materials: React.FC = () => {
           { label: 'Videos', value: materials.filter(m => m.type === 'video').length, color: 'bg-blue-500', icon: 'pi-video' },
           { label: 'Total Descargas', value: totalDownloads, color: 'bg-green-500', icon: 'pi-download' }
         ].map((stat, index) => (
-          <Card key={index} className="border-0 shadow-md">
+          <Card key={index} className="border-0 shadow-md bg-white dark:bg-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{stat.label}</p>
-                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{stat.label}</p>
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
                 <i className={`pi ${stat.icon} text-white text-xl`} />
@@ -213,7 +213,7 @@ export const Materials: React.FC = () => {
         ))}
       </div>
 
-      <Card className="border-0 shadow-md">
+      <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
         <div className="mb-4">{header}</div>
         
         <DataTable

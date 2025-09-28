@@ -34,17 +34,17 @@ export const LoginForm: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Card className="shadow-2xl border-0">
+        <Card className="shadow-2xl border-0 bg-white dark:bg-gray-800">
           <div className="text-center mb-8">
             <img 
               src="/salesianos_sticker.png" 
               alt="Salesianos" 
               className="w-16 h-16 mx-auto mb-4"
             />
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">HERES</h1>
-            <p className="text-gray-600">Herramienta de Recursos Salesianos</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">HERES</h1>
+            <p className="text-gray-600 dark:text-gray-300">Herramienta de Recursos Salesianos</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -53,7 +53,7 @@ export const LoginForm: React.FC = () => {
             )}
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Correo Electrónico
                 </label>
                 <InputText
@@ -63,12 +63,12 @@ export const LoginForm: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nombre.apellido@salesianos.es"
                   disabled={isLoading}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
               </div>
               
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Contraseña
                 </label>
                 <Password
@@ -79,7 +79,7 @@ export const LoginForm: React.FC = () => {
                   feedback={false}
                   toggleMask
                   disabled={isLoading}
-                  inputClassName="w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  inputClassName="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
               </div>
 
@@ -88,7 +88,7 @@ export const LoginForm: React.FC = () => {
               <Button
                 type="submit"
                 label={isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-                loading={isLoading}
+                className="w-full text-left p-2 text-xs bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded border border-gray-200 dark:border-gray-600 transition-colors"
                 disabled={isLoading}
                 className="px-2 py-1 bg-red-600 hover:bg-red-700 border-red-600 text-white w-auto"
               />
@@ -96,8 +96,8 @@ export const LoginForm: React.FC = () => {
 
           </form>
 
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-sm text-gray-600 mb-4 text-center">
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center">
               <strong>Demo - Credenciales de prueba:</strong>
             </p>
             <div className="space-y-2">
@@ -112,8 +112,8 @@ export const LoginForm: React.FC = () => {
                   disabled={isLoading}
                 >
                   <div className="font-medium">{cred.email}</div>
-                  <div className="text-gray-500">{cred.role} • password: password</div>
-                </button>
+                <div className="font-medium text-gray-800 dark:text-gray-100">{cred.email}</div>
+                <div className="text-gray-500 dark:text-gray-400">{cred.role} • password: password</div>
               ))}
             </div>
           </div>
