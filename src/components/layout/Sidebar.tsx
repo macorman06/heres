@@ -10,7 +10,6 @@ interface SidebarProps {
 const menuItems: MenuItem[] = [
   { label: 'Dashboard', icon: 'pi pi-home', route: '/dashboard', subtitle: 'Inicio' },
   { label: 'Actividades', icon: 'pi pi-calendar', route: '/activities', subtitle: 'Eventos y talleres', badge: 3 },
-  { label: 'Grupos', icon: 'pi pi-users', route: '/groups', subtitle: 'Gestión de grupos' },
   { label: 'Materiales', icon: 'pi pi-folder', route: '/materials', subtitle: 'Recursos y documentos' },
   { label: 'Miembros', icon: 'pi pi-user', route: '/members', subtitle: 'Animadores y coordinadores' },
   { label: 'Contacto', icon: 'pi pi-phone', route: '/contact', subtitle: 'Información de contacto' }
