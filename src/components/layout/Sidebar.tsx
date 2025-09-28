@@ -79,34 +79,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
         </button>
       </div>
 
-        
-        {/* Logo collapsed version con esquinas redondeadas */}
-        {collapsed && (
-          <div className="w-8 h-8 mx-auto">
-            <img 
-              src="/logos/favicon-96x96.png" 
-              alt="HERES" 
-              className="w-full h-full object-contain rounded-lg block dark:hidden shadow-sm"
-              title="HERES - Herramienta de Recursos Salesianos"
-            />
-            <img 
-              src="/logos/favicon-96x96.png" 
-              alt="HERES" 
-              className="w-full h-full object-contain rounded-lg hidden dark:block filter brightness-110 shadow-sm"
-              title="HERES - Herramienta de Recursos Salesianos"
-            />
-          </div>
-        )}
-        
-        <button
-          onClick={onToggle}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-          aria-label={collapsed ? 'Expandir sidebar' : 'Contraer sidebar'}
-        >
-          <i className={`pi ${collapsed ? 'pi-angle-right' : 'pi-angle-left'} text-gray-600 dark:text-gray-300`} />
-        </button>
-      </div>
-
       {/* Menu Items */}
       <nav className="flex-1 p-2" role="navigation" aria-label="Menú principal">
         <ul className="space-y-1">
