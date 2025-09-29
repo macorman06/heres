@@ -1,70 +1,92 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { apiService, User, LoginRequest, RegisterRequest, ApiError } from '../services/api';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { apiService, User, LoginRequest, RegisterRequest, ROLES } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
+  isLoading: boolean;
+  error: string | null;
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
-  isLoading: boolean;
-  error: string | null;
   clearError: () => void;
-  isAuthenticated: boolean;
-  hasPermission: (action: 'create' | 'edit' | 'delete', resource: 'users' | 'members') => boolean;
+  // Permission functions for users only
+  hasPermission: (requiredRole: number) => boolean;
+  canCreateUsers: () => boolean;
+  canEditUsers: () => boolean;
+  canDeleteUsers: () => boolean;
+  hasAdminAccess: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for existing authentication on app start
-    const initAuth = () => {
+    const checkAuth = () => {
       try {
         if (apiService.isAuthenticated()) {
           const currentUser = apiService.getCurrentUser();
-          setUser(currentUser);
+          if (currentUser) {
+            setUser(currentUser);
+            console.log('✅ Usuario autenticado encontrado:', currentUser.nombre);
+          }
         }
-      } catch (err) {
-        console.error('Error initializing auth:', err);
+      } catch (error) {
+        console.error('❌ Error checking auth:', error);
         apiService.logout();
       } finally {
         setIsLoading(false);
       }
     };
 
-    initAuth();
+    checkAuth();
   }, []);
 
-  const login = async (credentials: LoginRequest): Promise<void> => {
+  const login = async (credentials: LoginRequest) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
+      console.log('🔐 Iniciando login para:', credentials.email);
       const response = await apiService.login(credentials);
+
       setUser(response.usuario);
-    } catch (err) {
-      const apiError = err as ApiError;
-      setError(apiError.message || 'Error al iniciar sesión');
+      console.log('✅ Login exitoso:', response.usuario.nombre);
+
+      return response;
+    } catch (err: any) {
+      const errorMessage = err.message || 'Error de autenticación';
+      setError(errorMessage);
+      console.error('❌ Error de login:', errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (userData: RegisterRequest): Promise<void> => {
+  const register = async (userData: RegisterRequest) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
+      console.log('📝 Iniciando registro para:', userData.email);
       const response = await apiService.register(userData);
+
       setUser(response.usuario);
-    } catch (err) {
-      const apiError = err as ApiError;
-      setError(apiError.message || 'Error al registrar usuario');
+      console.log('✅ Registro exitoso:', response.usuario.nombre);
+
+      return response;
+    } catch (err: any) {
+      const errorMessage = err.message || 'Error de registro';
+      setError(errorMessage);
+      console.error('❌ Error de registro:', errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
@@ -72,56 +94,58 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    apiService.logout();
-    setUser(null);
-    setError(null);
+    try {
+      console.log('👋 Cerrando sesión para:', user?.nombre);
+      apiService.logout();
+      setUser(null);
+      setError(null);
+      console.log('✅ Sesión cerrada exitosamente');
+      return true;
+    } catch (error) {
+      console.error('❌ Error durante logout:', error);
+      setUser(null);
+      return false;
+    }
   };
 
   const clearError = () => {
     setError(null);
   };
 
-  const hasPermission = (action: 'create' | 'edit' | 'delete', resource: 'users' | 'members'): boolean => {
-    if (!user) return false;
+  // Permission functions - users only
+  const hasPermission = (requiredRole: number): boolean => {
+    if (!user || !user.rol_id) return false;
+    return user.rol_id <= requiredRole;
+  };
 
-    const userRole = user.rol_id;
+  const canCreateUsers = () => hasPermission(ROLES.COORDINADOR);
+  const canEditUsers = () => hasPermission(ROLES.ANIMADOR);
+  const canDeleteUsers = () => hasPermission(ROLES.COORDINADOR);
+  const hasAdminAccess = () => hasPermission(ROLES.DIRECTOR);
 
-    if (resource === 'users') {
-      switch (action) {
-        case 'create':
-          return apiService.canCreateUsers(userRole);
-        case 'edit':
-          return apiService.canEditUsers(userRole);
-        case 'delete':
-          return apiService.canDeleteUsers(userRole);
-        default:
-          return false;
-      }
-    } else if (resource === 'members') {
-      return apiService.canManageMembers(userRole);
-    }
-
-    return false;
+  const value: AuthContextType = {
+    user,
+    isLoading,
+    error,
+    login,
+    register,
+    logout,
+    clearError,
+    hasPermission,
+    canCreateUsers,
+    canEditUsers,
+    canDeleteUsers,
+    hasAdminAccess,
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      login,
-      register,
-      logout,
-      isLoading,
-      error,
-      clearError,
-      isAuthenticated: !!user,
-      hasPermission
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
