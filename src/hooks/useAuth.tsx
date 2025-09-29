@@ -5,11 +5,11 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   error: string | null;
-  login: (credentials: LoginRequest) => Promise<void>;
-  register: (userData: RegisterRequest) => Promise<void>;
+  login: (credentials: LoginRequest) => Promise<any>;
+  register: (userData: RegisterRequest) => Promise<any>;
   logout: () => void;
   clearError: () => void;
-  // Permission functions for users only
+  // ✅ SOLO PERMISOS DE USUARIOS (sin miembros)
   hasPermission: (requiredRole: number) => boolean;
   canCreateUsers: () => boolean;
   canEditUsers: () => boolean;
@@ -28,14 +28,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // ✅ FIXED: Check for existing authentication on mount
   useEffect(() => {
     const checkAuth = () => {
       try {
         if (apiService.isAuthenticated()) {
           const currentUser = apiService.getCurrentUser();
-          if (currentUser) {
+
+          // ✅ FIXED: Verificar que el usuario existe y tiene propiedades básicas
+          if (currentUser && currentUser.id && currentUser.nombre) {
             setUser(currentUser);
             console.log('✅ Usuario autenticado encontrado:', currentUser.nombre);
+          } else {
+            console.warn('⚠️ Usuario encontrado pero sin datos válidos:', currentUser);
+            apiService.logout(); // Limpiar datos inválidos
           }
         }
       } catch (error) {
@@ -49,6 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
+  // ✅ FIXED: Login function with better error handling
   const login = async (credentials: LoginRequest) => {
     setIsLoading(true);
     setError(null);
@@ -57,20 +64,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('🔐 Iniciando login para:', credentials.email);
       const response = await apiService.login(credentials);
 
-      setUser(response.usuario);
-      console.log('✅ Login exitoso:', response.usuario.nombre);
+      // ✅ FIXED: Verificar que la respuesta tiene estructura correcta
+      if (!response) {
+        throw new Error('Respuesta de login vacía del servidor');
+      }
 
+      if (!response.usuario) {
+        throw new Error('No se recibieron datos de usuario del servidor');
+      }
+
+      const usuario = response.usuario;
+
+      // ✅ FIXED: Verificar que el usuario tiene propiedades requeridas
+      if (!usuario.id || !usuario.nombre || !usuario.email) {
+        console.error('❌ Usuario recibido tiene datos incompletos:', usuario);
+        throw new Error('Los datos del usuario están incompletos');
+      }
+
+      setUser(usuario);
+      console.log('✅ Login exitoso:', usuario.nombre);
       return response;
+
     } catch (err: any) {
-      const errorMessage = err.message || 'Error de autenticación';
+      const errorMessage = err?.message || 'Error de autenticación desconocido';
       setError(errorMessage);
       console.error('❌ Error de login:', errorMessage);
+
+      // ✅ FIXED: Log detallado para debugging en producción
+      if (err?.response?.data) {
+        console.error('❌ Detalles del error del servidor:', err.response.data);
+      }
+
       throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ✅ FIXED: Register function with better error handling
   const register = async (userData: RegisterRequest) => {
     setIsLoading(true);
     setError(null);
@@ -79,12 +110,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('📝 Iniciando registro para:', userData.email);
       const response = await apiService.register(userData);
 
-      setUser(response.usuario);
-      console.log('✅ Registro exitoso:', response.usuario.nombre);
+      // ✅ FIXED: Verificar que la respuesta tiene estructura correcta
+      if (!response?.usuario) {
+        throw new Error('No se recibieron datos de usuario del servidor');
+      }
 
+      const usuario = response.usuario;
+
+      // ✅ FIXED: Verificar que el usuario tiene propiedades requeridas
+      if (!usuario.nombre) {
+        console.error('❌ Usuario registrado tiene datos incompletos:', usuario);
+        throw new Error('Los datos del usuario registrado están incompletos');
+      }
+
+      setUser(usuario);
+      console.log('✅ Registro exitoso:', usuario.nombre);
       return response;
+
     } catch (err: any) {
-      const errorMessage = err.message || 'Error de registro';
+      const errorMessage = err?.message || 'Error de registro desconocido';
       setError(errorMessage);
       console.error('❌ Error de registro:', errorMessage);
       throw err;
@@ -93,9 +137,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // ✅ FIXED: Logout function
   const logout = () => {
     try {
-      console.log('👋 Cerrando sesión para:', user?.nombre);
+      console.log('👋 Cerrando sesión para:', user?.nombre || 'usuario desconocido');
       apiService.logout();
       setUser(null);
       setError(null);
@@ -103,7 +148,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return true;
     } catch (error) {
       console.error('❌ Error durante logout:', error);
-      setUser(null);
+      setUser(null); // Limpiar estado incluso si hay error
       return false;
     }
   };
@@ -112,12 +157,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
   };
 
-  // Permission functions - users only
+  // ✅ FUNCIONES DE PERMISOS - SOLO USUARIOS
   const hasPermission = (requiredRole: number): boolean => {
-    if (!user || !user.rol_id) return false;
+    if (!user || typeof user.rol_id !== 'number') return false;
     return user.rol_id <= requiredRole;
   };
 
+  // ✅ SOLO PERMISOS DE USUARIOS
   const canCreateUsers = () => hasPermission(ROLES.COORDINADOR);
   const canEditUsers = () => hasPermission(ROLES.ANIMADOR);
   const canDeleteUsers = () => hasPermission(ROLES.COORDINADOR);
