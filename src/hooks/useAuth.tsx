@@ -1,80 +1,121 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { User } from '../types';
+import { apiService, User, LoginRequest, RegisterRequest, ApiError } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (credentials: LoginRequest) => Promise<void>;
+  register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  error: string | null;
+  clearError: () => void;
+  isAuthenticated: boolean;
+  hasPermission: (action: 'create' | 'edit' | 'delete', resource: 'users' | 'members') => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for demonstration
-const mockUsers: User[] = [
-  {
-    id: '1',
-    name: 'Emmanuel Lokossou',
-    email: 'emmanuel.lokossou@juvenliber.es',
-    role: 'director',
-    center: 'Centro Juvenil Salesianos',
-    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1'
-  },
-  {
-    id: '2',
-    name: 'David Corpas',
-    email: 'david.corpas@juvenliber.es',
-    role: 'animador',
-    center: 'Centro Juvenil Salesianos',
-    avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1'
-  },
-  {
-    id: '3',
-    name: 'Olaya Corral',
-    email: 'olaya.corral@juvenliber.es',
-    role: 'coordinador',
-    center: 'Centro Juvenil Salesianos',
-    avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1'
-  }
-];
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for stored session
-    const storedUser = localStorage.getItem('heres_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    // Check for existing authentication on app start
+    const initAuth = () => {
+      try {
+        if (apiService.isAuthenticated()) {
+          const currentUser = apiService.getCurrentUser();
+          setUser(currentUser);
+        }
+      } catch (err) {
+        console.error('Error initializing auth:', err);
+        apiService.logout();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (credentials: LoginRequest): Promise<void> => {
     setIsLoading(true);
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const foundUser = mockUsers.find(u => u.email === email);
-    if (foundUser && password === 'password') {
-      setUser(foundUser);
-      localStorage.setItem('heres_user', JSON.stringify(foundUser));
+    setError(null);
+    
+    try {
+      const response = await apiService.login(credentials);
+      setUser(response.usuario);
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || 'Error al iniciar sesión');
+      throw err;
+    } finally {
       setIsLoading(false);
-      return true;
     }
+  };
 
-    setIsLoading(false);
-    return false;
+  const register = async (userData: RegisterRequest): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await apiService.register(userData);
+      setUser(response.usuario);
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || 'Error al registrar usuario');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {
+    apiService.logout();
     setUser(null);
-    localStorage.removeItem('heres_user');
+    setError(null);
+  };
+
+  const clearError = () => {
+    setError(null);
+  };
+
+  const hasPermission = (action: 'create' | 'edit' | 'delete', resource: 'users' | 'members'): boolean => {
+    if (!user) return false;
+
+    const userRole = user.rol_id;
+
+    if (resource === 'users') {
+      switch (action) {
+        case 'create':
+          return apiService.canCreateUsers(userRole);
+        case 'edit':
+          return apiService.canEditUsers(userRole);
+        case 'delete':
+          return apiService.canDeleteUsers(userRole);
+        default:
+          return false;
+      }
+    } else if (resource === 'members') {
+      return apiService.canManageMembers(userRole);
+    }
+
+    return false;
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{
+      user,
+      login,
+      register,
+      logout,
+      isLoading,
+      error,
+      clearError,
+      isAuthenticated: !!user,
+      hasPermission
+    }}>
       {children}
     </AuthContext.Provider>
   );
