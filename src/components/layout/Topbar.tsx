@@ -69,7 +69,9 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
   };
 
   // ✅ NEW: Check if profile image exists
+// En Topbar.tsx - useEffect actualizado
   useEffect(() => {
+    // ✅ FIXED: Solo verificar imagen si el usuario y sus datos están disponibles
     if (!user?.nombre || !user?.apellido1) {
       setImageLoaded(true);
       return;
@@ -77,29 +79,21 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
 
     const checkImageExists = async () => {
       const baseFilename = generateImageFilename(user.nombre, user.apellido1);
-      console.log(`🔍 [Topbar] Buscando imagen para: ${baseFilename}`); // Debug
+      console.log(`🔍 [Topbar] Buscando imagen para: ${baseFilename}`);
 
       const extensions = ['png', 'jpg', 'jpeg', 'webp'];
 
       for (const ext of extensions) {
         const imagePath = `/users/${baseFilename}.${ext}`;
-        console.log(`🔍 [Topbar] Verificando: ${imagePath}`); // Debug
 
         try {
           const img = new Image();
           await new Promise<void>((resolve, reject) => {
-            img.onload = () => {
-              console.log(`✅ [Topbar] Imagen encontrada: ${imagePath}`); // Debug
-              resolve();
-            };
-            img.onerror = () => {
-              console.log(`❌ [Topbar] Imagen no encontrada: ${imagePath}`); // Debug
-              reject();
-            };
+            img.onload = () => resolve();
+            img.onerror = () => reject();
             img.src = imagePath;
           });
 
-          // Si llegamos aquí, la imagen existe
           setProfileImage(imagePath);
           setImageLoaded(true);
           return;
@@ -108,14 +102,13 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
         }
       }
 
-      // No se encontró ninguna imagen
-      console.log(`❌ [Topbar] Ninguna imagen encontrada para: ${baseFilename}`); // Debug
       setProfileImage(null);
       setImageLoaded(true);
     };
 
     checkImageExists();
-  }, [user?.nombre, user?.apellido1]);
+  }, [user?.nombre, user?.apellido1]); // ✅ FIXED: Dependencias con optional chaining
+
 
   // ✅ Función real de logout
   const handleLogout = async () => {
