@@ -8,7 +8,6 @@ import { LoginForm } from './components/auth/LoginForm';
 import { Dashboard } from './pages/Dashboard';
 import { Members } from './pages/Members';
 import { Activities } from './pages/Activities';
-import { Groups } from './pages/Groups';
 import { Materials } from './pages/Materials';
 import { Contact } from './pages/Contact';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
@@ -38,7 +37,6 @@ const AppContent: React.FC = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="members" element={<Members />} />
         <Route path="activities" element={<Activities />} />
-        <Route path="groups" element={<Groups />} />
         <Route path="materials" element={<Materials />} />
         <Route path="contact" element={<Contact />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

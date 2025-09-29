@@ -1,0 +1,198 @@
+/* ===========================================
+   FORM INPUT CONSISTENCY FIX
+   =========================================== */
+
+/* Fix: InputText and Password input height consistency */
+.p-inputtext,
+.p-password .p-password-input {
+    padding: 8px !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+    border-radius: 0.375rem !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    min-height: 2.5rem !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Password wrapper takes full width */
+.p-password {
+    width: 100% !important;
+}
+
+/* Password input specific overrides */
+.p-password .p-password-input {
+    width: 100% !important;
+    outline: none !important;
+}
+
+/* Focus states for consistency */
+.p-inputtext:focus,
+.p-password .p-password-input:focus {
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+    border-color: #f87171 !important;
+}
+
+/* ===========================================
+   DROPDOWN FIXES - RESTORE PROPER APPEARANCE
+   =========================================== */
+
+/* ✅ FIX: Restore dropdown proper styling */
+.p-dropdown {
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 0.375rem !important;
+    padding: 0 !important; /* Remove padding override */
+    min-height: 2.75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    position: relative !important;
+    cursor: pointer !important;
+}
+
+.p-dropdown .p-dropdown-label {
+    background: transparent !important;
+    border: 0 none !important;
+    padding: 0.5rem 0.75rem !important;
+    margin: 0 !important;
+    outline: 0 none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: calc(2.75rem - 2px) !important; /* Account for border */
+    line-height: 1.5 !important;
+    color: #374151 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.p-dropdown .p-dropdown-trigger {
+    background: transparent !important;
+    color: #6b7280 !important;
+    width: 3rem !important;
+    height: 100% !important;
+    text-align: center !important;
+    padding: 0 !important;
+    border: 0 none !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+}
+
+.p-dropdown .p-dropdown-trigger .p-dropdown-trigger-icon {
+    transition: transform 0.2s ease !important;
+}
+
+.p-dropdown.p-dropdown-open .p-dropdown-trigger .p-dropdown-trigger-icon {
+    transform: rotate(180deg) !important;
+}
+
+/* Hover states */
+.p-dropdown:hover {
+    border-color: #9ca3af !important;
+}
+
+.p-dropdown:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+    outline: 0 none !important;
+}
+
+/* Panel styling */
+.p-dropdown-panel {
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 0.375rem !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    padding: 0.25rem !important;
+}
+
+.p-dropdown-item {
+    margin: 0 !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 0.25rem !important;
+    color: #374151 !important;
+    cursor: pointer !important;
+    font-weight: normal !important;
+    white-space: nowrap !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.p-dropdown-item:hover {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+}
+
+.p-dropdown-item.p-highlight {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+/* Placeholder styling */
+.p-dropdown .p-dropdown-label.p-placeholder {
+    color: #9ca3af !important;
+}
+
+/* ===========================================
+   OTHER FORM ELEMENTS HEIGHT CONSISTENCY
+   =========================================== */
+
+/* MultiSelect height consistency */
+.p-multiselect {
+    min-height: 2.75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    border-radius: 0.375rem !important;
+}
+
+.p-multiselect .p-multiselect-label-container {
+    min-height: calc(2.75rem - 2px) !important;
+    align-items: center !important;
+    padding: 0.25rem 0.5rem !important;
+    flex: 1 1 auto !important;
+}
+
+/* Calendar specific height fix */
+.p-calendar {
+    width: 100% !important;
+    display: inline-flex !important;
+}
+
+.p-calendar .p-inputtext {
+    height: 2.75rem !important;
+    line-height: 1.5 !important;
+    padding: 0.5rem 0.75rem !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+}
+
+/* Chips height consistency */
+.p-chips .p-chips-multiple-container {
+    min-height: 2.75rem !important;
+    align-items: center !important;
+    border-radius: 0.375rem !important;
+    padding: 0.25rem 0.5rem !important;
+}
+
+/* View mode consistency */
+.view-mode-field {
+    height: 2.75rem !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 0.75rem !important;
+    border-radius: 0.375rem !important;
+    border: 1px solid #e5e7eb !important;
+    background-color: #f9fafb !important;
+    color: #374151 !important;
+}

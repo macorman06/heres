@@ -1,17 +1,22 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "heres-frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --mode development",
+    "dev:local": "vite --mode localhost",
+    "build": "vite build --mode production",
+    "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start:local": "vite --mode localhost --host",
+    "start:dev": "vite --mode development --host"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.12.2",
     "chart.js": "^4.5.0",
     "lucide-react": "^0.344.0",
     "primeicons": "^7.0.0",

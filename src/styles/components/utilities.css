@@ -1,0 +1,116 @@
+/* ===========================================
+   UTILITY CLASSES & HELPERS
+   =========================================== */
+
+/* View mode fields */
+.view-mode-field {
+    height: var(--field-height) !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 0.75rem !important;
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: var(--border-radius-md) !important;
+    color: #374151 !important;
+}
+
+.dark .view-mode-field {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+}
+
+/* Loading states */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Text utilities */
+.text-muted {
+    color: #6b7280 !important;
+}
+
+.dark .text-muted {
+    color: #9ca3af !important;
+}
+
+/* Spacing utilities */
+.section-divider {
+    border-color: #e5e7eb !important;
+    margin: 1.5rem 0 !important;
+}
+
+.dark .section-divider {
+    border-color: #374151 !important;
+}
+
+/* Interactive elements */
+.clickable {
+    cursor: pointer !important;
+    transition: all var(--transition-fast) !important;
+}
+
+.clickable:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+/* Focus states */
+.focus-ring:focus {
+    outline: 2px solid var(--gecos-primary) !important;
+    outline-offset: 2px !important;
+}
+
+/* Status indicators */
+.status-online {
+    background-color: #10b981 !important;
+}
+
+.status-offline {
+    background-color: #6b7280 !important;
+}
+
+.status-warning {
+    background-color: #f59e0b !important;
+}
+
+.status-error {
+    background-color: var(--gecos-primary) !important;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+    .p-dialog {
+        margin: 1rem !important;
+        width: calc(100vw - 2rem) !important;
+        max-width: none !important;
+    }
+
+    .p-dialog .p-dialog-content {
+        padding: 1rem !important;
+    }
+
+    .p-dialog .p-dialog-header,
+    .p-dialog .p-dialog-footer {
+        padding: 1rem !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .p-button,
+    .p-dialog-header-icon,
+    .no-print {
+        display: none !important;
+    }
+
+    .p-dialog {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+}

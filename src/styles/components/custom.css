@@ -1,0 +1,80 @@
+/* ===========================================
+   CUSTOM COMPONENT STYLES
+   =========================================== */
+
+/* Icon field styling */
+.p-icon-field {
+    width: 100% !important;
+    display: flex;
+    align-items: center;
+}
+
+.p-input-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    margin-left: -2.5rem;
+    cursor: pointer;
+}
+
+/* Avatar styling */
+.p-avatar {
+    position: relative;
+    overflow: hidden;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.p-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block;
+    border-radius: 9999px !important;
+}
+
+/* Badge alignment */
+.p-badge.p-badge-success,
+.p-badge.p-badge-danger,
+.p-badge.p-badge-warning,
+.p-badge.p-badge-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    vertical-align: middle;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+/* Red button styling */
+.p-button.bg-red-600,
+.p-button.bg-red-600:enabled:hover,
+.p-button.bg-red-600:enabled:active {
+    color: white !important;
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+    padding: 0.5rem 1rem !important;
+    min-height: 2.5rem;
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.p-button.bg-red-600:enabled:hover {
+    background-color: #b91c1c !important;
+    border-color: #b91c1c !important;
+}
+
+.p-button.bg-red-600:enabled:active {
+    background-color: #991b1b !important;
+    border-color: #991b1b !important;
+}
+
+.p-button.bg-red-600 .p-button-label,
+.p-button.bg-red-600 .p-button-icon {
+    color: white !important;
+}

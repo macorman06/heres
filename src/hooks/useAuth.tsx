@@ -1,86 +1,151 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { User } from '../types';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { apiService, User, LoginRequest, RegisterRequest, ROLES } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
   isLoading: boolean;
+  error: string | null;
+  login: (credentials: LoginRequest) => Promise<void>;
+  register: (userData: RegisterRequest) => Promise<void>;
+  logout: () => void;
+  clearError: () => void;
+  // Permission functions for users only
+  hasPermission: (requiredRole: number) => boolean;
+  canCreateUsers: () => boolean;
+  canEditUsers: () => boolean;
+  canDeleteUsers: () => boolean;
+  hasAdminAccess: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for demonstration
-const mockUsers: User[] = [
-  {
-    id: '1',
-    name: 'Emmanuel Lokossou',
-    email: 'emmanuel.lokossou@juvenliber.es',
-    role: 'director',
-    center: 'Centro Juvenil Salesianos',
-    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1'
-  },
-  {
-    id: '2',
-    name: 'David Corpas',
-    email: 'david.corpas@juvenliber.es',
-    role: 'animador',
-    center: 'Centro Juvenil Salesianos',
-    avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1'
-  },
-  {
-    id: '3',
-    name: 'Olaya Corral',
-    email: 'olaya.corral@juvenliber.es',
-    role: 'coordinador',
-    center: 'Centro Juvenil Salesianos',
-    avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1'
-  }
-];
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for stored session
-    const storedUser = localStorage.getItem('heres_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    const checkAuth = () => {
+      try {
+        if (apiService.isAuthenticated()) {
+          const currentUser = apiService.getCurrentUser();
+          if (currentUser) {
+            setUser(currentUser);
+            console.log('✅ Usuario autenticado encontrado:', currentUser.nombre);
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error checking auth:', error);
+        apiService.logout();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (credentials: LoginRequest) => {
     setIsLoading(true);
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    setError(null);
 
-    const foundUser = mockUsers.find(u => u.email === email);
-    if (foundUser && password === 'password') {
-      setUser(foundUser);
-      localStorage.setItem('heres_user', JSON.stringify(foundUser));
+    try {
+      console.log('🔐 Iniciando login para:', credentials.email);
+      const response = await apiService.login(credentials);
+
+      setUser(response.usuario);
+      console.log('✅ Login exitoso:', response.usuario.nombre);
+
+      return response;
+    } catch (err: any) {
+      const errorMessage = err.message || 'Error de autenticación';
+      setError(errorMessage);
+      console.error('❌ Error de login:', errorMessage);
+      throw err;
+    } finally {
       setIsLoading(false);
-      return true;
     }
+  };
 
-    setIsLoading(false);
-    return false;
+  const register = async (userData: RegisterRequest) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      console.log('📝 Iniciando registro para:', userData.email);
+      const response = await apiService.register(userData);
+
+      setUser(response.usuario);
+      console.log('✅ Registro exitoso:', response.usuario.nombre);
+
+      return response;
+    } catch (err: any) {
+      const errorMessage = err.message || 'Error de registro';
+      setError(errorMessage);
+      console.error('❌ Error de registro:', errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('heres_user');
+    try {
+      console.log('👋 Cerrando sesión para:', user?.nombre);
+      apiService.logout();
+      setUser(null);
+      setError(null);
+      console.log('✅ Sesión cerrada exitosamente');
+      return true;
+    } catch (error) {
+      console.error('❌ Error durante logout:', error);
+      setUser(null);
+      return false;
+    }
+  };
+
+  const clearError = () => {
+    setError(null);
+  };
+
+  // Permission functions - users only
+  const hasPermission = (requiredRole: number): boolean => {
+    if (!user || !user.rol_id) return false;
+    return user.rol_id <= requiredRole;
+  };
+
+  const canCreateUsers = () => hasPermission(ROLES.COORDINADOR);
+  const canEditUsers = () => hasPermission(ROLES.ANIMADOR);
+  const canDeleteUsers = () => hasPermission(ROLES.COORDINADOR);
+  const hasAdminAccess = () => hasPermission(ROLES.DIRECTOR);
+
+  const value: AuthContextType = {
+    user,
+    isLoading,
+    error,
+    login,
+    register,
+    logout,
+    clearError,
+    hasPermission,
+    canCreateUsers,
+    canEditUsers,
+    canDeleteUsers,
+    hasAdminAccess,
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');

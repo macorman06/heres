@@ -1,0 +1,58 @@
+/* ===========================================
+   BUTTON OVERRIDES
+   =========================================== */
+
+/* Primary Button Styling */
+.p-button.p-button-danger,
+.p-button.p-button-primary {
+    background: var(--gecos-primary) !important;
+    border-color: var(--gecos-primary) !important;
+    transition: all var(--transition-fast) !important;
+}
+
+.p-button.p-button-danger:hover,
+.p-button.p-button-primary:hover {
+    background: var(--gecos-primary-hover) !important;
+    border-color: var(--gecos-primary-hover) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+.p-button.p-button-danger:active,
+.p-button.p-button-primary:active {
+    transform: translateY(0) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Button sizes */
+.p-button.p-button-sm {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.875rem !important;
+}
+
+.p-button.p-button-lg {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1.125rem !important;
+}
+
+/* Icon buttons */
+.p-button.p-button-rounded {
+    width: 3rem !important;
+    height: 3rem !important;
+}
+
+.p-button.p-button-rounded.p-button-lg {
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+}
+
+/* Floating action button */
+.p-button.p-button-rounded.p-button-info {
+    background: var(--gecos-primary) !important;
+    border-color: var(--gecos-primary) !important;
+}
+
+.p-button.p-button-rounded.p-button-info:hover {
+    background: var(--gecos-primary-hover) !important;
+    border-color: var(--gecos-primary-hover) !important;
+}

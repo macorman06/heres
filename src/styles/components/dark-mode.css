@@ -1,0 +1,411 @@
+/* ===========================================
+   DARK MODE STYLES - WCAG AA COMPLIANT
+   =========================================== */
+
+/* Card Components - Dark gray backgrounds with proper contrast */
+.dark .p-card {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f3f4f6 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .p-card .p-card-header {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark .p-card .p-card-body {
+    background-color: #1f2937 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark .p-card .p-card-content {
+    color: #e5e7eb !important;
+    padding: 0 !important;
+}
+
+/* Input Components - Proper contrast and visibility */
+.dark .p-inputtext,
+.dark .p-password .p-password-input,
+.dark .p-dropdown,
+.dark .p-dropdown-panel {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+    padding: 8px !important; /* Consistent padding */
+}
+
+.dark .p-inputtext::placeholder,
+.dark .p-password .p-password-input::placeholder {
+    color: #9ca3af !important;
+}
+
+.dark .p-inputtext:focus,
+.dark .p-password .p-password-input:focus,
+.dark .p-dropdown:focus {
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+    background-color: #374151 !important;
+}
+
+.dark .p-inputtext:hover,
+.dark .p-password .p-password-input:hover,
+.dark .p-dropdown:hover {
+    border-color: #6b7280 !important;
+    background-color: #4b5563 !important;
+}
+
+/* Dropdown specific styles */
+.dark .p-dropdown-panel {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+.dark .p-dropdown-item {
+    color: #f3f4f6 !important;
+}
+
+.dark .p-dropdown-item:hover {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-dropdown-item.p-highlight {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+/* DataTable Components */
+.dark .p-datatable {
+    background-color: #1f2937 !important;
+    color: #f3f4f6 !important;
+    border-color: #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-header {
+    background-color: #111827 !important;
+    border-color: #374151 !important;
+    color: #f9fafb !important;
+}
+
+.dark .p-datatable .p-datatable-thead > tr > th {
+    background-color: #111827 !important;
+    color: #f9fafb !important;
+    border-color: #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr {
+    background-color: #1f2937 !important;
+    color: #f3f4f6 !important;
+    border-color: #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:hover {
+    background-color: #4b5563 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr > td {
+    border-color: #374151 !important;
+}
+
+/* Paginator */
+.dark .p-paginator {
+    background-color: #1f2937 !important;
+    color: #f3f4f6 !important;
+    border-color: #374151 !important;
+}
+
+.dark .p-paginator .p-paginator-page,
+.dark .p-paginator .p-paginator-next,
+.dark .p-paginator .p-paginator-prev,
+.dark .p-paginator .p-paginator-first,
+.dark .p-paginator .p-paginator-last {
+    color: #f3f4f6 !important;
+    background-color: transparent !important;
+    border-color: #374151 !important;
+}
+
+.dark .p-paginator .p-paginator-page:hover,
+.dark .p-paginator .p-paginator-next:hover,
+.dark .p-paginator .p-paginator-prev:hover {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-paginator .p-paginator-page.p-highlight {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+/* Menu Components */
+.dark .p-menu {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .p-menu .p-menuitem-link {
+    color: #f3f4f6 !important;
+}
+
+.dark .p-menu .p-menuitem-link:hover {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-menu .p-separator {
+    border-color: #374151 !important;
+}
+
+/* Button Components */
+.dark .p-button.p-button-text {
+    color: #f3f4f6 !important;
+}
+
+.dark .p-button.p-button-text:hover {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-button.p-button-outlined {
+    border-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+    background-color: transparent !important;
+}
+
+.dark .p-button.p-button-outlined:hover {
+    background-color: #374151 !important;
+    border-color: #6b7280 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-button.p-button-outlined:focus {
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+}
+
+/* Disabled states */
+.dark .p-button:disabled {
+    background-color: #374151 !important;
+    color: #6b7280 !important;
+    border-color: #4b5563 !important;
+    opacity: 0.6 !important;
+}
+
+.dark .p-inputtext:disabled,
+.dark .p-dropdown:disabled {
+    background-color: #374151 !important;
+    color: #6b7280 !important;
+    border-color: #4b5563 !important;
+    opacity: 0.7 !important;
+}
+
+/* Badge Components */
+.dark .p-badge {
+    color: #ffffff !important;
+}
+
+.dark .p-badge.p-badge-success {
+    background-color: #059669 !important;
+}
+
+.dark .p-badge.p-badge-danger {
+    background-color: #dc2626 !important;
+}
+
+.dark .p-badge.p-badge-warning {
+    background-color: #d97706 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-badge.p-badge-info {
+    background-color: #0284c7 !important;
+}
+
+/* Progress Components */
+.dark .p-progressbar {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+}
+
+.dark .p-progressbar .p-progressbar-value {
+    background-color: #dc2626 !important;
+}
+
+/* Message Components */
+.dark .p-message {
+    border-color: #374151 !important;
+}
+
+.dark .p-message.p-message-error {
+    background-color: #7f1d1d !important;
+    border-color: #dc2626 !important;
+    color: #fecaca !important;
+}
+
+.dark .p-message.p-message-success {
+    background-color: #064e3b !important;
+    border-color: #059669 !important;
+    color: #a7f3d0 !important;
+}
+
+.dark .p-message.p-message-warn {
+    background-color: #78350f !important;
+    border-color: #d97706 !important;
+    color: #fed7aa !important;
+}
+
+.dark .p-message.p-message-info {
+    background-color: #0c4a6e !important;
+    border-color: #0284c7 !important;
+    color: #bae6fd !important;
+}
+
+/* Avatar Components */
+.dark .p-avatar {
+    border-color: #374151 !important;
+}
+
+/* Spinner Components */
+.dark .p-progress-spinner-circle {
+    stroke: #dc2626 !important;
+}
+
+/* Chip Components */
+.dark .p-chip {
+    background-color: #374151 !important;
+    color: #f3f4f6 !important;
+}
+
+/* MultiSelect dark mode fixes */
+.dark .p-multiselect,
+.dark .p-multiselect .p-multiselect-label {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark .p-multiselect:hover {
+    border-color: #6b7280 !important;
+    background-color: #4b5563 !important;
+}
+
+.dark .p-multiselect:focus {
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+    background-color: #374151 !important;
+}
+
+.dark .p-multiselect-panel {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark .p-multiselect-item {
+    color: #f3f4f6 !important;
+}
+
+.dark .p-multiselect-item:hover {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-multiselect-item.p-highlight {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+/* MultiSelect chips styling */
+.dark .p-multiselect-token {
+    background-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+    border: 1px solid #6b7280 !important;
+}
+
+.dark .p-multiselect-token-label {
+    color: #f3f4f6 !important;
+}
+
+/* Calendar dark mode fixes */
+.dark .p-calendar .p-inputtext {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark .p-calendar .p-inputtext:focus {
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+}
+
+.dark .p-datepicker {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark .p-datepicker .p-datepicker-header {
+    background-color: #111827 !important;
+    border-color: #374151 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark .p-datepicker .p-datepicker-title {
+    color: #f3f4f6 !important;
+}
+
+.dark .p-datepicker table td > span {
+    color: #f3f4f6 !important;
+}
+
+.dark .p-datepicker table td > span:hover {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-datepicker table td > span.p-highlight {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+/* Chips component dark mode */
+.dark .p-chips .p-chips-multiple-container {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+}
+
+.dark .p-chips .p-chips-multiple-container:focus {
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+}
+
+.dark .p-chips .p-chips-token {
+    background-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark .p-chips .p-chips-input-token input {
+    color: #f3f4f6 !important;
+    background: transparent !important;
+}
+
+.dark .p-chips .p-chips-input-token input::placeholder {
+    color: #9ca3af !important;
+}
+
+/* Divider styling */
+.dark .p-divider {
+    border-color: #374151 !important;
+}
+
+.dark .p-divider .p-divider-content {
+    background-color: #1f2937 !important;
+    color: #f3f4f6 !important;
+}

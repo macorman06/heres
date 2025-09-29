@@ -1,0 +1,44 @@
+/* ===========================================
+   LIGHT MODE ENHANCEMENTS
+   =========================================== */
+
+.p-card {
+    background-color: #ffffff !important;
+    border-color: #e5e7eb !important;
+    color: #111827 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.p-inputtext,
+.p-password .p-password-input,
+.p-dropdown {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+    padding: 8px !important; /* Consistent padding */
+}
+
+.p-inputtext::placeholder,
+.p-password .p-password-input::placeholder {
+    color: #6b7280 !important;
+}
+
+.p-datatable {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    border-color: #e5e7eb !important;
+}
+
+.p-datatable .p-datatable-header {
+    background-color: #f9fafb !important;
+    border-color: #e5e7eb !important;
+    color: #111827 !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #f9fafb !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+    background-color: #f3f4f6 !important;
+}

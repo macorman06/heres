@@ -4,7 +4,7 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { DailyCards } from '../components/dashboard/DailyCards';
 import { StatsCards } from '../components/dashboard/StatsCards';
 import { ScheduledActivities } from '../components/dashboard/ScheduledActivities';
-import { RecentMembers } from '../components/dashboard/RecentMembers';
+import { NewsFeed } from '../components/news/NewsFeed';
 import { getDashboardStats, mockCalendarEvents, getRecentMembers } from '../data';
 import { Member, Activity, Group } from '../types';
 
@@ -78,13 +78,13 @@ export const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Recent Members */}
+        {/* News Feed */}
         <div>
-          <RecentMembers
-            members={recentMembers}
-            loading={loading}
-            onViewAll={handleViewAllMembers}
-            onMemberClick={handleMemberClick}
+          <NewsFeed
+            maxItems={4}
+            showHeader={false}
+            showLoadMore={false}
+            compact={true}
           />
         </div>
       </div>

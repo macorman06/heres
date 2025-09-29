@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
@@ -9,29 +9,36 @@ import { useAuth } from '../../hooks/useAuth';
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const { login, isLoading } = useAuth();
+  const [isRegisterMode] = useState(false);
+  const [nombre, setNombre] = useState('');
+
+  const { login, register, isLoading, error, clearError } = useAuth();
+
+  useEffect(() => {
+    // Clear error when switching modes
+    clearError();
+  }, [isRegisterMode, clearError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    clearError();
 
-    if (!email || !password) {
-      setError('Por favor, completa todos los campos');
+    if (!email || !password || (isRegisterMode && !nombre)) {
       return;
     }
 
-    const success = await login(email, password);
-    if (!success) {
-      setError('Credenciales incorrectas. Intenta de nuevo.');
+    try {
+      if (isRegisterMode) {
+        await register({ nombre, email, password });
+      } else {
+        await login({ email, password });
+      }
+    } catch {
+      // Error is handled by the auth context
     }
   };
 
-  const demoCredentials = [
-    { email: 'emmanuel.lokossou@juvenliber.es', role: 'Director' },
-    { email: 'david.corpas@juvenliber.es', role: 'Animador' },
-    { email: 'olaya.corral@juvenliber.es', role: 'Coordinador' }
-  ];
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
@@ -39,9 +46,9 @@ export const LoginForm: React.FC = () => {
         <Card className="shadow-2xl border-0 bg-white dark:bg-gray-800">
           <div className="text-center mb-8">
             <img 
-              src="/salesianos_sticker.png" 
-              alt="Salesianos" 
-              className="w-16 h-16 mx-auto mb-4"
+              src="/logos/favicon-96x96.png" 
+              alt="HERES Logo" 
+              className="w-16 h-16 mx-auto mb-4 rounded-md"
             />
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">HERES</h1>
             <p className="text-gray-600 dark:text-gray-300">Herramienta de Recursos Salesianos</p>
@@ -49,7 +56,28 @@ export const LoginForm: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <Message severity="error" text={error} className="w-full" />
+              <Message 
+                severity="error" 
+                text={error} 
+                className="w-full" 
+              />
+            )}
+
+            {isRegisterMode && (
+              <div>
+                <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nombre Completo
+                </label>
+                <InputText
+                  id="nombre"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Tu nombre completo"
+                  disabled={isLoading}
+                  className="w-full"
+                  required
+                />
+              </div>
             )}
 
             <div>
@@ -61,9 +89,10 @@ export const LoginForm: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="nombre.apellido@salesianos.es"
+                placeholder="tu@email.com"
                 disabled={isLoading}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full"
+                required
               />
             </div>
             
@@ -76,44 +105,24 @@ export const LoginForm: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Contraseña"
-                feedback={false}
+                feedback={isRegisterMode}
                 toggleMask
                 disabled={isLoading}
-                inputClassName="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full"
+                inputClassName="w-full"
+                required
               />
             </div>
-
-            <div className="w-full flex justify-center">
+            <div className="w-full flex-auto grid content-center justify-center">
               <Button
                 type="submit"
-                label={isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                label={isLoading ? 'Procesando...' : (isRegisterMode ? 'Crear Cuenta' : 'Iniciar Sesión')}
                 disabled={isLoading}
-                className="px-2 py-1 bg-red-600 hover:bg-red-700 border-red-600 text-white w-full"
+                className="w-full bg-red-600 border-red-600 hover:bg-red-700"
+                loading={isLoading}
               />
             </div>
           </form>
-
-          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center">
-              <strong>Demo - Credenciales de prueba:</strong>
-            </p>
-            <div className="space-y-2">
-              {demoCredentials.map((cred, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setEmail(cred.email);
-                    setPassword('password');
-                  }}
-                  className="w-full text-left p-2 text-xs bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded border border-gray-200 dark:border-gray-600 transition-colors"
-                  disabled={isLoading}
-                >
-                  <div className="font-medium text-gray-800 dark:text-gray-100">{cred.email}</div>
-                  <div className="text-gray-500 dark:text-gray-400">{cred.role} • password: password</div>
-                </button>
-              ))}
-            </div>
-          </div>
         </Card>
       </div>
     </div>
