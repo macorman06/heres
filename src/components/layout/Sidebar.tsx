@@ -9,10 +9,11 @@ interface SidebarProps {
 
 const menuItems: MenuItem[] = [
   { label: 'Dashboard', icon: 'pi pi-home', route: '/', subtitle: 'Inicio' },
-  { label: 'Actividades', icon: 'pi pi-calendar', route: '/actividades', subtitle: 'Eventos y talleres', badge: 3 },
+  { label: 'Miembros', icon: 'pi pi-users', route: '/miembros', subtitle: 'Gestión de usuarios' },
+  { label: 'Actividades', icon: 'pi pi-calendar', route: '/actividades', subtitle: 'Eventos y talleres' },
   { label: 'Materiales', icon: 'pi pi-folder', route: '/materiales', subtitle: 'Recursos y documentos' },
-  { label: 'Miembros', icon: 'pi pi-user', route: '/miembros', subtitle: 'Animadores y coordinadores' },
-  { label: 'Contacto', icon: 'pi pi-phone', route: '/contacto', subtitle: 'Información de contacto' }
+  { label: 'Contacto', icon: 'pi pi-phone', route: '/contacto', subtitle: 'Información de contacto' },
+  { label: 'Acerca de HERES', icon: 'pi pi-info-circle', route: '/about', subtitle: 'Conoce el proyecto',}
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
