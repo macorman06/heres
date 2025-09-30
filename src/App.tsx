@@ -1,10 +1,11 @@
+// src/App.tsx (ASEGÚRATE DE USAR ESTA VERSIÓN)
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { PrimeReactProvider } from 'primereact/api';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ThemeProvider } from './hooks/useTheme';
 import { Layout } from './components/layout/Layout';
-import { LoginForm } from './components/auth/LoginForm';
+import { LoginPage } from './pages/LoginPage';
 import { Dashboard } from './pages/Dashboard';
 import { Members } from './pages/Members';
 import { Activities } from './pages/Activities';
@@ -16,45 +17,51 @@ import { LoadingSpinner } from './components/common/LoadingSpinner';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import './styles/custom-prime-overrides.css';
+
+import './styles/variables.css';
+import './styles/fonts.css';
+import './styles/typography.css';    // 3. Tipografía tercero
+import './styles/buttons.css';       // 4. Componentes después
+import './styles/inputs.css';
+import './styles/dropdowns.css';
+import './styles/menus.css';
+import './styles/cards-dialogs.css';
+import './styles/login.css';
+import './styles/construction.css';
 import './index.css';
 
-const AppContent: React.FC = () => {
-  const { user, isLoading } = useAuth();
+const PrivateRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
+  const { isAuthenticated, isLoading } = useAuth();
 
-  if (isLoading) {
-    return <LoadingSpinner message="Cargando aplicación..." />;
-  }
+  if (isLoading) return <LoadingSpinner message="Verificando..." />;
 
-  if (!user) {
-    return <LoginForm />;
-  }
-
-  return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="members" element={<Members />} />
-        <Route path="activities" element={<Activities />} />
-        <Route path="materials" element={<Materials />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Route>
-    </Routes>
-  );
+  return isAuthenticated ? element : <Navigate to="/login" replace />;
 };
+
+const AppRoutes: React.FC = () => (
+  <Routes>
+    <Route path="/login" element={<LoginPage />} />
+    <Route path="/" element={<PrivateRoute element={<Layout />} />}>
+      <Route index element={<Dashboard />} />
+      <Route path="miembros" element={<Members />} />
+      <Route path="actividades" element={<Activities />} />
+      <Route path="materiales" element={<Materials />} />
+      <Route path="contacto" element={<Contact />} />
+    </Route>
+    <Route path="*" element={<Navigate to="/" replace />} />
+  </Routes>
+);
 
 function App() {
   return (
     <PrimeReactProvider>
-      <ThemeProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <ThemeProvider>
           <Router>
-            <AppContent />
+            <AppRoutes />
           </Router>
-        </AuthProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </PrimeReactProvider>
   );
 }

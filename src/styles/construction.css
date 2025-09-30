@@ -1,0 +1,309 @@
+/* ===========================================
+   PÁGINAS EN CONSTRUCCIÓN
+   =========================================== */
+
+.under-construction-page {
+    min-height: calc(100vh - 4rem);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.dark .under-construction-page {
+    background: transparent;
+}
+
+.construction-container {
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+}
+
+/* ✅ LOGO ANIMADO */
+.construction-logo {
+    margin-bottom: 2rem;
+    position: relative;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gear-animation {
+    position: relative;
+    display: inline-block;
+}
+
+.gear-animation .pi-cog {
+    animation: rotate 4s linear infinite;
+}
+
+.gear-animation .gear-small {
+    position: absolute;
+    top: 50%;
+    right: -1rem;
+    transform: translateY(-50%);
+    animation: rotate-reverse 3s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes rotate-reverse {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(-360deg); }
+}
+
+/* ✅ CARD PRINCIPAL */
+.construction-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 1.5rem !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+    padding: 3rem 2rem !important;
+}
+
+.dark .construction-card {
+    background: rgba(26, 32, 44, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.construction-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ✅ TÍTULOS */
+.construction-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--gecos-primary);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.construction-subtitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 1rem 0;
+}
+
+.dark .construction-subtitle {
+    color: var(--dark-text-primary);
+}
+
+/* ✅ ÍCONO PRINCIPAL */
+.construction-icon {
+    margin: 2rem 0;
+    opacity: 0.8;
+}
+
+/* ✅ DESCRIPCIÓN */
+.construction-description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.dark .construction-description {
+    color: var(--dark-text-secondary);
+}
+
+/* ✅ CARACTERÍSTICAS PREVIEW */
+.features-preview {
+    margin: 2rem 0;
+}
+
+.features-preview h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.dark .features-preview h3 {
+    color: var(--dark-text-primary);
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.features-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.dark .features-list li {
+    color: var(--dark-text-secondary);
+}
+
+.features-list li .pi-check-circle {
+    color: #10b981;
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+}
+
+/* ✅ INFORMACIÓN DE CONTACTO TEMPORAL */
+.temp-contact-info {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(220, 38, 38, 0.05);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(220, 38, 38, 0.1);
+}
+
+.dark .temp-contact-info {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
+.temp-contact-info h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--gecos-primary);
+    margin-bottom: 1rem;
+}
+
+.contact-quick-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.dark .contact-item {
+    color: var(--dark-text-secondary);
+}
+
+.contact-item .pi {
+    color: var(--gecos-primary);
+}
+
+/* ✅ BARRA DE PROGRESO */
+.construction-progress {
+    margin: 2rem 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.dark .progress-label {
+    color: var(--dark-text-secondary);
+}
+
+.progress-percentage {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gecos-primary);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dark .progress-bar {
+    background-color: #374151;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gecos-primary), var(--gecos-primary-hover));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* ✅ ACCIONES */
+.construction-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+}
+
+/* ✅ FOOTER */
+.construction-footer {
+    margin-top: 2rem;
+}
+
+.construction-note {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-style: italic;
+}
+
+.dark .construction-note {
+    color: var(--dark-text-muted);
+}
+
+.construction-note .pi {
+    color: var(--gecos-primary);
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 640px) {
+    .construction-card {
+        padding: 2rem 1.5rem !important;
+    }
+
+    .construction-title {
+        font-size: 1.5rem;
+    }
+
+    .construction-actions {
+        flex-direction: column;
+    }
+
+    .contact-quick-info {
+        align-items: center;
+    }
+
+    .gear-animation .gear-small {
+        right: -0.5rem;
+    }
+}

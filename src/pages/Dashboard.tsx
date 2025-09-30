@@ -1,93 +1,104 @@
+// src/pages/Dashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { useApi } from '../hooks/useApi';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+import { Avatar } from 'primereact/avatar';
+import { Badge } from 'primereact/badge';
+
+// ✅ NUEVOS IMPORTS: Sistema de autenticación y API
+import { useAuth } from '../hooks/useAuth';
+import { useUsers } from '../hooks/useApi';
+
+// Imports existentes
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { DailyCards } from '../components/dashboard/DailyCards';
 import { StatsCards } from '../components/dashboard/StatsCards';
 import { ScheduledActivities } from '../components/dashboard/ScheduledActivities';
-import { NewsFeed } from '../components/news/NewsFeed';
-import { getDashboardStats, mockCalendarEvents, getRecentMembers } from '../data';
-import { Member, Activity, Group } from '../types';
+import { getDashboardStats, mockCalendarEvents } from '../data';
 
 export const Dashboard: React.FC = () => {
-  const { loading, getMembers, getActivities, getGroups } = useApi();
-  const [members, setMembers] = useState<Member[]>([]);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [groups, setGroups] = useState<Group[]>([]);
+  const navigate = useNavigate();
 
+  // ✅ NUEVO: Usar sistema de autenticación
+  const { user: currentUser, logout } = useAuth();
+
+  // ✅ NUEVO: Usar hook especializado de usuarios
+  const { users, loading: usersLoading, error: usersError, fetchAllUsers } = useUsers();
+
+  // Estados locales para otras entidades (actividades, grupos)
+  const [activities, setActivities] = useState<any[]>([]);
+  const [groups, setGroups] = useState<any[]>([]);
+  const [dashboardLoading, setDashboardLoading] = useState(true);
+
+  // ✅ NUEVO: Cargar datos al montar el componente
   useEffect(() => {
-    const loadData = async () => {
-      const [membersData, activitiesData, groupsData] = await Promise.all([
-        getMembers(),
-        getActivities(),
-        getGroups()
-      ]);
-      setMembers(membersData);
-      setActivities(activitiesData);
-      setGroups(groupsData);
+    const loadDashboardData = async () => {
+      try {
+        setDashboardLoading(true);
+
+        // Cargar usuarios reales desde la API
+        await fetchAllUsers();
+
+        // TODO: Reemplazar con APIs reales cuando estén disponibles
+        // const [activitiesData, groupsData] = await Promise.all([
+        //   fetchActivities(),
+        //   fetchGroups()
+        // ]);
+
+        // Por ahora, datos mock para actividades y grupos
+        setActivities([]);
+        setGroups([]);
+
+      } catch (error) {
+        console.error('Error cargando datos del dashboard:', error);
+      } finally {
+        setDashboardLoading(false);
+      }
     };
 
-    loadData();
-  }, []);
+    loadDashboardData();
+  }, [fetchAllUsers]);
 
-  if (loading) {
-    return <LoadingSpinner message="Cargando dashboard..." />;
-  }
-
-  // Calcular estadísticas dinámicamente
   const dashboardStats = getDashboardStats(
-    members.length,
+    users.length,
     activities.filter(a => a.status === 'scheduled' || a.status === 'ongoing').length,
     groups.filter(g => g.status === 'active').length
   );
 
-  // Obtener miembros recientes mockeados
-  const recentMembers = getRecentMembers(6);
-
-  // Handlers
-  const handleActivityAction = (eventId: string) => {
-    console.log('Acción en actividad:', eventId);
-    // Aquí podrías abrir un modal con detalles de la actividad
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
-  const handleViewAllMembers = () => {
-    console.log('Navegar a la página de miembros');
-    // Aquí podrías navegar a la página completa de miembros
-  };
+  // Loading state
+  if (dashboardLoading || usersLoading) {
+    return <LoadingSpinner message="Cargando dashboard..." />;
+  }
 
-  const handleMemberClick = (memberId: string) => {
-    console.log('Ver perfil del miembro:', memberId);
-    // Aquí podrías abrir el perfil del miembro o navegar a su página
-  };
+  // Error state
+  if (usersError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <i className="pi pi-exclamation-triangle text-4xl text-orange-500 mb-4"></i>
+        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          Error cargando datos
+        </h3>
+        <p className="text-gray-500 dark:text-gray-400 mb-4">{usersError}</p>
+        <Button
+          label="Reintentar"
+          icon="pi pi-refresh"
+          onClick={() => fetchAllUsers()}
+          className="p-button-outlined"
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Daily Cards */}
+    <div className="dashboard-container space-y-6">
       <DailyCards />
-
-      {/* Stats Cards */}
-      <StatsCards stats={dashboardStats} loading={loading} />
-
-      {/* Calendar Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Scheduled Activities */}
-        <div className="lg:col-span-2">
-          <ScheduledActivities
-            events={mockCalendarEvents}
-            loading={loading}
-            onActivityAction={handleActivityAction}
-          />
-        </div>
-
-        {/* News Feed */}
-        <div>
-          <NewsFeed
-            maxItems={4}
-            showHeader={false}
-            showLoadMore={false}
-            compact={true}
-          />
-        </div>
-      </div>
+      <StatsCards stats={dashboardStats} />
+      <ScheduledActivities events={mockCalendarEvents}/>
     </div>
   );
 };

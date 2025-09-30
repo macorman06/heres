@@ -1,3 +1,4 @@
+// src/components/auth/LoginForm.tsx
 import React, { useState, useEffect } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
@@ -38,93 +39,83 @@ export const LoginForm: React.FC = () => {
     }
   };
 
-
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <Card className="shadow-2xl border-0 bg-white dark:bg-gray-800">
-          <div className="text-center mb-8">
-            <img 
-              src="/logos/favicon-96x96.png" 
-              alt="HERES Logo" 
-              className="w-16 h-16 mx-auto mb-4 rounded-md"
+    <div className="login-form-wrapper">
+      <Card className="login-card">
+        <div className="login-header">
+          {/* ✅ LOGO DE LA APP */}
+          <div className="login-logo">
+            <img
+              src="/logos/favicon-96x96.png"
+              alt="HERES Logo"
+              className="app-logo"
             />
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">HERES</h1>
-            <p className="text-gray-600 dark:text-gray-300">Herramienta de Recursos Salesianos</p>
+          </div>
+          <h1 className="login-title">HERES</h1>
+          <p className="login-subtitle">Herramienta de Recursos Salesianos</p>
+        </div>
+
+        {error && (
+          <div className="login-error">
+            <Message severity="error" text={error} />
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="login-form">
+          {isRegisterMode && (
+            <div className="form-field">
+              <label htmlFor="nombre">Nombre</label>
+              <InputText
+                id="nombre"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                placeholder="Tu nombre completo"
+                required={isRegisterMode}
+              />
+            </div>
+          )}
+
+          <div className="form-field">
+            <label htmlFor="email">Email</label>
+            <InputText
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="tu@email.com"
+              required
+            />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <Message 
-                severity="error" 
-                text={error} 
-                className="w-full" 
-              />
-            )}
+          <div className="form-field">
+            <label htmlFor="password">Contraseña</label>
+            <Password
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Tu contraseña"
+              feedback={false}
+              toggleMask
+              required
+            />
+          </div>
 
-            {isRegisterMode && (
-              <div>
-                <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Nombre Completo
-                </label>
-                <InputText
-                  id="nombre"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  placeholder="Tu nombre completo"
-                  disabled={isLoading}
-                  className="w-full"
-                  required
-                />
-              </div>
-            )}
+          <div className="form-actions">
+            <Button
+              type="submit"
+              label={isRegisterMode ? 'Registrarse' : 'Iniciar Sesión'}
+              loading={isLoading}
+              className="login-button"
+            />
+          </div>
+        </form>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Correo Electrónico
-              </label>
-              <InputText
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@email.com"
-                disabled={isLoading}
-                className="w-full"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Contraseña
-              </label>
-              <Password
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Contraseña"
-                feedback={isRegisterMode}
-                toggleMask
-                disabled={isLoading}
-                className="w-full"
-                inputClassName="w-full"
-                required
-              />
-            </div>
-            <div className="w-full flex-auto grid content-center justify-center">
-              <Button
-                type="submit"
-                label={isLoading ? 'Procesando...' : (isRegisterMode ? 'Crear Cuenta' : 'Iniciar Sesión')}
-                disabled={isLoading}
-                className="w-full bg-red-600 border-red-600 hover:bg-red-700"
-                loading={isLoading}
-              />
-            </div>
-          </form>
-        </Card>
-      </div>
+        <div className="login-footer">
+          <p className="login-help">
+            ¿Problemas para acceder? Contacta al administrador.
+          </p>
+        </div>
+      </Card>
     </div>
   );
 };
