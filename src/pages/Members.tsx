@@ -136,12 +136,11 @@ export const Members: React.FC = () => {
       {/* filters */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <span className="p-input-icon-left col-span-2">
-          <i className="pi pi-search" />
           <InputText
             value={filters.search}
             onChange={(e) => handleFilter('search', e.target.value)}
             placeholder="Buscar..."
-            className="w-full"
+            className="input-search"
           />
         </span>
         <Dropdown
@@ -156,12 +155,10 @@ export const Members: React.FC = () => {
             { label: 'Miembro', value: 5 },
           ]}
           placeholder="Rol"
-          className="w-full"
         />
         <Button
           icon="pi pi-filter-slash"
           label="Limpiar"
-          className="p-button-outlined"
           onClick={clearFilters}
         />
       </div>

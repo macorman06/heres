@@ -24,7 +24,10 @@ import './styles/typography.css';    // 3. Tipografía tercero
 import './styles/buttons.css';       // 4. Componentes después
 import './styles/inputs.css';
 import './styles/dropdowns.css';
+import './styles/menus.css';
 import './styles/cards-dialogs.css';
+import './styles/login.css';
+import './styles/construction.css';
 import './index.css';
 
 const PrivateRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {

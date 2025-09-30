@@ -40,7 +40,8 @@ const getPageTitle = (pathname: string): string => {
   return routes[pathname] || 'HERES';
 };
 
-export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
+// eslint-disable-next-line no-empty-pattern
+export const Topbar: React.FC<TopbarProps> = ({ }) => {
   const location = useLocation();
   const [searchValue, setSearchValue] = useState('');
   const menuRef = useRef<Menu>(null);
@@ -212,13 +213,12 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
         {/* Center section - Search */}
         <div className="flex-1 max-w-md mx-8">
           <div className="relative">
-            <i className="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
             <InputText
               type="text"
               placeholder="Buscar..."
               value={searchValue}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white"
+              className="input-search"
             />
           </div>
         </div>
@@ -294,7 +294,6 @@ export const Topbar: React.FC<TopbarProps> = ({ sidebarCollapsed }) => {
             model={userMenuItems}
             popup
             ref={menuRef}
-            className="mt-2"
           />
         </div>
       </div>

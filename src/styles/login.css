@@ -1,0 +1,294 @@
+/* ===========================================
+   LOGIN PAGE STYLES
+   =========================================== */
+
+/* ✅ PÁGINA DE LOGIN CON FONDO */
+.login-page {
+    min-height: 100vh;
+    width: 100vw;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ✅ FONDO DE IMAGEN */
+.login-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/assets/backgrounds/white_background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* ✅ OVERLAY PARA MEJOR LEGIBILIDAD */
+.login-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1); /* Overlay sutil blanco */
+    backdrop-filter: blur(1px); /* Desenfoque muy sutil */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+/* ✅ CONTENEDOR DEL FORMULARIO */
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    z-index: 10;
+}
+
+/* ✅ WRAPPER DEL FORMULARIO */
+.login-form-wrapper {
+    width: 100%;
+}
+
+/* ✅ CARD DEL LOGIN */
+.login-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1),
+    0 15px 25px rgba(0, 0, 0, 0.05) !important;
+    padding: 2.5rem !important;
+    width: 100%;
+}
+
+/* ✅ HEADER DEL LOGIN */
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-logo {
+    margin-bottom: 1rem;
+}
+
+.login-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gecos-primary);
+    margin: 0 0 0.5rem 0;
+    font-family: var(--font-family-heading);
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: 300;
+}
+
+/* ✅ ERROR MESSAGE */
+.login-error {
+    margin-bottom: 1.5rem;
+}
+
+.login-error .p-message {
+    margin: 0;
+    border-radius: var(--border-radius-md);
+}
+
+/* ✅ FORMULARIO */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-field label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+/* ✅ INPUTS EN EL LOGIN */
+.login-form .p-inputtext,
+.login-form .p-password input {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    transition: all var(--transition-normal) !important;
+}
+
+.login-form .p-inputtext:focus,
+.login-form .p-password input:focus {
+    background: rgba(255, 255, 255, 1) !important;
+    border-color: var(--gecos-primary) !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+.login-form .p-password {
+    display: block;
+}
+
+/* ✅ BOTÓN DE LOGIN */
+.form-actions {
+    margin-top: 0.5rem;
+}
+
+.login-button {
+    width: 100% !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    background: var(--gecos-primary) !important;
+    border-color: var(--gecos-primary) !important;
+    border-radius: 0.5rem !important;
+    transition: all var(--transition-normal) !important;
+}
+
+.login-button:hover {
+    background: var(--gecos-primary-hover) !important;
+    border-color: var(--gecos-primary-hover) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3) !important;
+}
+
+.login-button:active {
+    transform: translateY(0) !important;
+}
+
+/* ✅ FOOTER DEL LOGIN */
+.login-footer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.login-help {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 640px) {
+    .login-overlay {
+        padding: 1rem;
+    }
+
+    .login-card {
+        padding: 2rem !important;
+    }
+
+    .login-title {
+        font-size: 1.75rem;
+    }
+
+    .login-background {
+        background-attachment: scroll; /* Mejor performance en móvil */
+    }
+}
+
+/* ✅ DARK MODE (si quieres soporte) */
+.dark .login-card {
+    background: rgba(31, 41, 55, 0.95) !important;
+    border: 1px solid rgba(75, 85, 99, 0.3) !important;
+}
+
+.dark .login-title {
+    color: #f87171;
+}
+
+.dark .login-subtitle {
+    color: var(--dark-text-secondary);
+}
+
+.dark .form-field label {
+    color: var(--dark-text-primary);
+}
+
+.dark .login-form .p-inputtext,
+.dark .login-form .p-password input {
+    background: rgba(55, 65, 81, 0.9) !important;
+    border: 1px solid rgba(75, 85, 99, 0.3) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+.dark .login-form .p-inputtext:focus,
+.dark .login-form .p-password input:focus {
+    background: rgba(55, 65, 81, 1) !important;
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2) !important;
+}
+
+.dark .login-help {
+    color: var(--dark-text-muted);
+}
+
+/* ✅ LOADING STATE */
+@keyframes loginPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.login-form.loading {
+    animation: loginPulse 2s ease-in-out infinite;
+}
+
+/* ✅ AGREGAR AL ARCHIVO login.css EXISTENTE */
+
+/* ✅ LOGO DE LA APP */
+.login-logo {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+    transition: all var(--transition-normal);
+}
+
+
+/* ✅ RESPONSIVE DEL LOGO */
+@media (max-width: 640px) {
+    .app-logo {
+        width: 64px;
+        height: 64px;
+    }
+}
+
+/* ✅ DARK MODE DEL LOGO */
+.dark .app-logo {
+    box-shadow: 0 4px 12px rgba(248, 113, 113, 0.2);
+}
+
+
+/* ✅ ANIMACIÓN DE ENTRADA DEL LOGO */
+@keyframes logoFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.app-logo {
+    animation: logoFadeIn 0.6s ease-out;
+}

@@ -267,3 +267,7 @@
     background-color: var(--dark-border-secondary) !important;
     color: #ffffff !important;
 }
+
+.no-padding-card .p-card-content {
+    padding: 0 !important;
+}

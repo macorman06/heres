@@ -2,18 +2,54 @@
    BOTONES - LIGHT & DARK MODE
    =========================================== */
 
-/* Primary & Danger Buttons */
+.p-button {
+    width: auto !important;           /* NO width fijo */
+    min-width: auto !important;       /* NO min-width */
+    max-width: none !important;       /* NO max-width */
+    display: inline-flex !important;  /* Flex inline para contenido */
+    align-items: center !important;   /* Centrar verticalmente */
+    justify-content: center !important; /* Centrar horizontalmente */
+    white-space: nowrap !important;   /* Evitar salto de línea */
+
+    /* Padding ajustado para que se vea compacto */
+    padding: 0.5rem 1rem !important;  /* Menos padding horizontal */
+
+    /* Resto de estilos base */
+    background: var(--gecos-primary) !important;
+    border-color: var(--gecos-primary) !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    border-radius: var(--border-radius-md) !important;
+    transition: all var(--transition-fast) !important;
+    cursor: pointer !important;
+}
+
+.p-button:hover {
+    background: var(--gecos-primary-hover) !important;
+    border-color: var(--gecos-primary-hover) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+.p-button:active {
+    transform: translateY(0) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Primary & Danger Buttons (mismo estilo que base) */
 .p-button.p-button-danger,
 .p-button.p-button-primary {
     background: var(--gecos-primary) !important;
     border-color: var(--gecos-primary) !important;
-    transition: all var(--transition-fast) !important;
+    color: #ffffff !important;
 }
 
 .p-button.p-button-danger:hover,
 .p-button.p-button-primary:hover {
     background: var(--gecos-primary-hover) !important;
     border-color: var(--gecos-primary-hover) !important;
+    color: #ffffff !important;
     transform: translateY(-1px) !important;
     box-shadow: var(--shadow-md) !important;
 }
@@ -46,21 +82,40 @@
     height: 3.5rem !important;
 }
 
-/* Outlined Buttons */
 .p-button.p-button-outlined {
-    border-color: var(--border-secondary) !important;
-    color: var(--text-primary) !important;
     background-color: transparent !important;
+    border-color: var(--gecos-primary) !important;
+    color: var(--gecos-primary) !important;
 }
 
 .p-button.p-button-outlined:hover {
+    background-color: var(--gecos-primary) !important;
+    border-color: var(--gecos-primary) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+.p-button.p-button-outlined:active {
+    transform: translateY(0) !important;
+}
+
+/* ✅ Secondary Buttons - GRIS NEUTRO */
+.p-button.p-button-secondary {
     background-color: var(--bg-secondary) !important;
-    border-color: var(--text-muted) !important;
+    border-color: var(--border-secondary) !important;
     color: var(--text-primary) !important;
 }
 
-/* Text Buttons */
+.p-button.p-button-secondary:hover {
+    background-color: var(--text-muted) !important;
+    border-color: var(--text-muted) !important;
+    color: #ffffff !important;
+}
+
+/* Text Buttons - SIN FONDO */
 .p-button.p-button-text {
+    background-color: transparent !important;
+    border-color: transparent !important;
     color: var(--text-primary) !important;
 }
 
@@ -69,20 +124,44 @@
     color: var(--text-primary) !important;
 }
 
-/* Dark Mode Buttons */
+.dark .p-button {
+    background: var(--gecos-primary) !important;
+    border-color: var(--gecos-primary) !important;
+    color: #ffffff !important;
+}
+
+.dark .p-button:hover {
+    background: #f87171 !important;
+    border-color: #f87171 !important;
+    color: #ffffff !important;
+}
+
 .dark .p-button.p-button-outlined {
-    border-color: var(--dark-border-secondary) !important;
-    color: var(--dark-text-primary) !important;
     background-color: transparent !important;
+    border-color: #f87171 !important;
+    color: #f87171 !important;
 }
 
 .dark .p-button.p-button-outlined:hover {
+    background-color: #f87171 !important;
+    border-color: #f87171 !important;
+    color: #ffffff !important;
+}
+
+.dark .p-button.p-button-secondary {
     background-color: var(--dark-bg-tertiary) !important;
     border-color: var(--dark-border-secondary) !important;
     color: var(--dark-text-primary) !important;
 }
 
+.dark .p-button.p-button-secondary:hover {
+    background-color: var(--dark-text-muted) !important;
+    color: #ffffff !important;
+}
+
 .dark .p-button.p-button-text {
+    background-color: transparent !important;
+    border-color: transparent !important;
     color: var(--dark-text-secondary) !important;
 }
 
@@ -97,6 +176,8 @@
     color: var(--text-muted) !important;
     border-color: var(--border-primary) !important;
     opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
 }
 
 .dark .p-button:disabled {
