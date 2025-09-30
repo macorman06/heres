@@ -67,7 +67,6 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
             <div className="flex-grow">
               <div className="flex items-center space-x-2 mb-2">
                 <h3>Efeméride Salesiana</h3>
-                <Badge value="Efemérides"/>
               </div>
               <h4>{salesianInfo.title}</h4>
               <p>{salesianInfo.description}</p>
@@ -84,7 +83,6 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
               <div className="flex-grow">
                 <div className="flex items-center space-x-2 mb-2">
                   <h3>Santoral Católico</h3>
-                  <Badge value="Santoral"/>
                 </div>
                 <h4>{catholicInfo.title}</h4>
                 <p>{catholicInfo.description}</p>

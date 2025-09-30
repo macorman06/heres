@@ -20,7 +20,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   };
 
   return (
-    <div className="border bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+    <div className="border bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-600 rounded-lg p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors shadow-lg hover:shadow-xl">
       <div className="flex">
         {/* Date and Responsible Section */}
         <div className="flex-shrink-0 text-center mr-4">

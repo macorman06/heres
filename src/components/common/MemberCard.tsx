@@ -44,7 +44,10 @@ export const MemberCard: React.FC<MemberCardProps> = ({
     }
 
     const checkImageExists = async () => {
-      const baseFilename = generateImageFilename(user.nombre, user.apellido1);
+      const baseFilename = generateImageFilename(
+        user.nombre ?? 'sin‐nombre',
+        user.apellido1 ?? 'sin‐apellido'
+      );
       const extensions = ['png', 'jpg', 'jpeg', 'webp'];
 
       for (const ext of extensions) {
