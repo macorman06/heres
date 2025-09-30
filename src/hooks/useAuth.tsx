@@ -20,6 +20,8 @@ interface AuthContextType {
   logout: () => void;
   updateUser: (u: User) => void;
   clearError: () => void;
+  hasPermission: (level: number) => boolean;
+  canCreateUsers: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -122,6 +124,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  /* ----------  helpers de permisos ---------- */
+  const roleLevel: Record<number, number> = {
+    1: 1, // superuser
+    2: 2, // director
+    3: 3, // coordinator
+    4: 4, // animator
+    5: 5  // member
+  };
+
+  /** true si el usuario actual tiene un nivel <= al requerido */
+  const hasPermission = (requiredLevel: number): boolean => {
+    if (!user) return false;
+    const current = roleLevel[user.rol_id] ?? 5;
+    return current <= requiredLevel;
+  };
+
+  /** true si el usuario puede crear / administrar usuarios (coordinador↑) */
+  const canCreateUsers = () => hasPermission(3); // 1-superuser, 2-director, 3-coordinator
+
+
   // ✅ LIMPIAR ERROR
   const clearError = (): void => {
     setError(null);
@@ -136,7 +158,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     register,
     logout,
     updateUser,
-    clearError
+    clearError,
+    hasPermission,
+    canCreateUsers
   };
 
   return (
