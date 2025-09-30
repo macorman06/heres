@@ -1,6 +1,14 @@
 // src/hooks/useAuth.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { loginApi, registerApi, User, LoginCredentials, RegisterData, ApiError } from '../services/api';
+import {
+  loginApi,
+  registerApi,
+  User,
+  LoginCredentials,
+  RegisterData,
+  AuthResponse,
+  ApiError,
+} from '../services/api';
 
 interface AuthContextType {
   user: User | null;
@@ -8,9 +16,9 @@ interface AuthContextType {
   isLoading: boolean;
   error: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
-  register: (userData: RegisterData) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
   logout: () => void;
-  updateUser: (userData: User) => void;
+  updateUser: (u: User) => void;
   clearError: () => void;
 }
 
@@ -18,34 +26,30 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // ✅ CARGAR USUARIO AL INICIALIZAR
   useEffect(() => {
-    const loadUserFromStorage = () => {
-      try {
-        const storedToken = localStorage.getItem('authToken');
-        const storedUser = localStorage.getItem('currentUser');
+    try {
+      const storedToken = localStorage.getItem('authToken');
+      const storedUser = localStorage.getItem('currentUser');
 
-        if (storedToken && storedUser) {
-          const userData = JSON.parse(storedUser);
-          setUser(userData);
-          console.log('👤 Usuario cargado desde localStorage:', userData.nombre);
-        }
-      } catch (error) {
-        console.error('❌ Error cargando usuario desde localStorage:', error);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('currentUser');
-      } finally {
-        setIsLoading(false);
+      if (storedToken && storedUser) {
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
+        console.log('👤 Usuario cargado desde localStorage:', userData.nombre);
       }
-    };
-
-    loadUserFromStorage();
+    } catch (error) {
+      console.error('❌ Error cargando usuario desde localStorage:', error);
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('currentUser');
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  // ✅ FUNCIÓN LOGIN
+  // ✅ FUNCIÓN LOGIN AJUSTADA
   const login = async (credentials: LoginCredentials): Promise<void> => {
     try {
       setIsLoading(true);
@@ -53,14 +57,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const response = await loginApi(credentials);
 
-      // Guardar en localStorage
+      // ✅ USAR response.usuario EN LUGAR DE response.user
       localStorage.setItem('authToken', response.token);
-      localStorage.setItem('currentUser', JSON.stringify(response.user));
+      localStorage.setItem('currentUser', JSON.stringify(response.usuario));
 
-      // Actualizar estado
-      setUser(response.user);
+      // ✅ SETEAR response.usuario
+      setUser(response.usuario);
 
-      console.log('✅ Login exitoso:', response.user.nombre);
+      console.log('✅ Login exitoso:', response.usuario.nombre);
 
     } catch (err: any) {
       const errorMessage = (err as ApiError).message || 'Credenciales inválidas';
@@ -72,7 +76,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // ✅ FUNCIÓN REGISTER
+  // ✅ FUNCIÓN REGISTER AJUSTADA
   const register = async (userData: RegisterData): Promise<void> => {
     try {
       setIsLoading(true);
@@ -80,14 +84,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const response = await registerApi(userData);
 
-      // Guardar en localStorage
+      // ✅ USAR response.usuario
       localStorage.setItem('authToken', response.token);
-      localStorage.setItem('currentUser', JSON.stringify(response.user));
+      localStorage.setItem('currentUser', JSON.stringify(response.usuario));
 
-      // Actualizar estado
-      setUser(response.user);
+      setUser(response.usuario);
 
-      console.log('✅ Registro exitoso:', response.user.nombre);
+      console.log('✅ Registro exitoso:', response.usuario.nombre);
 
     } catch (err: any) {
       const errorMessage = (err as ApiError).message || 'Error en el registro';

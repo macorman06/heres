@@ -1,7 +1,7 @@
 // src/services/api.ts
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-// ✅ TIPOS DE DATOS
+// ✅ TIPOS AJUSTADOS A TU BACKEND
 export interface User {
   id: number;
   nombre: string;
@@ -11,7 +11,7 @@ export interface User {
   rol_id: number;
   rol?: string;
   centro_juvenil?: string;
-  seccion?: string[];
+  seccion?: string;
   edad?: number;
   birthday?: string;
   sexo?: string;
@@ -38,10 +38,11 @@ export interface RegisterData {
   apellido2?: string;
 }
 
+// ✅ AJUSTADO A LA RESPUESTA DE TU BACKEND
 export interface AuthResponse {
-  token: string;
-  user: User;
-  message?: string;
+  mensaje: string;        // "Login exitoso"
+  token: string;         // JWT token
+  usuario: User;         // ✅ TU BACKEND USA "usuario", NO "user"
 }
 
 export interface ApiError {
@@ -51,10 +52,7 @@ export interface ApiError {
 }
 
 // ✅ FUNCIÓN HELPER PARA REQUESTS
-const apiRequest = async (
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<any> => {
+const apiRequest = async (endpoint: string, options: RequestInit = {}): Promise<any> => {
   const token = localStorage.getItem('authToken');
 
   const config: RequestInit = {
@@ -91,19 +89,32 @@ const apiRequest = async (
   }
 };
 
-// ✅ FUNCIONES DE AUTENTICACIÓN
+// ✅ FUNCIONES DE AUTENTICACIÓN AJUSTADAS
 export const loginApi = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  return await apiRequest('/auth/login', {
+  const response = await apiRequest('/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),
   });
+
+  // ✅ RETORNA LA RESPUESTA TAL COMO VIENE DEL BACKEND
+  return {
+    mensaje: response.mensaje,
+    token: response.token,
+    usuario: response.usuario  // ✅ Mantenemos "usuario" como viene del backend
+  };
 };
 
 export const registerApi = async (userData: RegisterData): Promise<AuthResponse> => {
-  return await apiRequest('/auth/register', {
+  const response = await apiRequest('/auth/register', {
     method: 'POST',
     body: JSON.stringify(userData),
   });
+
+  return {
+    mensaje: response.mensaje,
+    token: response.token,
+    usuario: response.usuario
+  };
 };
 
 // ✅ FUNCIONES DE USUARIOS
@@ -131,7 +142,6 @@ export const deleteUser = async (id: number): Promise<{ message: string }> => {
   });
 };
 
-// ✅ FUNCIONES AUXILIARES
 export const uploadProfileImage = async (
   userId: number,
   imageFile: File
@@ -159,16 +169,3 @@ export const uploadProfileImage = async (
 
   return await response.json();
 };
-
-// ✅ EXPORT DEFAULT (para compatibilidad con useApi.ts)
-export const apiService = {
-  loginApi,
-  registerApi,
-  fetchUsers,
-  createUser,
-  updateUser,
-  deleteUser,
-  uploadProfileImage,
-};
-
-export default apiService;

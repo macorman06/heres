@@ -1,4 +1,4 @@
-// src/App.tsx
+// src/App.tsx (ASEGÚRATE DE USAR ESTA VERSIÓN)
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { PrimeReactProvider } from 'primereact/api';
@@ -13,6 +13,7 @@ import { Materials } from './pages/Materials';
 import { Contact } from './pages/Contact';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 
+// PrimeReact theme
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -21,14 +22,16 @@ import './index.css';
 
 const PrivateRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
   const { isAuthenticated, isLoading } = useAuth();
-  if (isLoading) return <LoadingSpinner />;
+
+  if (isLoading) return <LoadingSpinner message="Verificando..." />;
+
   return isAuthenticated ? element : <Navigate to="/login" replace />;
 };
 
 const AppRoutes: React.FC = () => (
   <Routes>
     <Route path="/login" element={<LoginPage />} />
-    <Route path="/" element={<PrivateRoute element={<Layout />} />} >
+    <Route path="/" element={<PrivateRoute element={<Layout />} />}>
       <Route index element={<Dashboard />} />
       <Route path="miembros" element={<Members />} />
       <Route path="actividades" element={<Activities />} />
@@ -52,4 +55,5 @@ function App() {
     </PrimeReactProvider>
   );
 }
+
 export default App;
