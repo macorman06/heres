@@ -5,14 +5,6 @@ export const Materials: React.FC = () => {
   return (
     <div className="under-construction-page">
       <div className="construction-container">
-        {/* Logo y animación */}
-        <div className="construction-logo">
-          <div className="gear-animation">
-            <i className="pi pi-cog" style={{ fontSize: '4rem', color: 'var(--gecos-primary)' }}></i>
-            <i className="pi pi-cog gear-small" style={{ fontSize: '2.5rem', color: 'var(--gecos-primary)' }}></i>
-          </div>
-        </div>
-
         {/* Contenido principal */}
         <Card className="construction-card">
           <div className="construction-content">
