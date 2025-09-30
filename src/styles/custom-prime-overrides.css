@@ -10,3 +10,11 @@
 @import './components/dialogs.css';
 @import './components/custom.css';
 @import './components/accessibility.css';
+
+.p-card .p-card-body {
+    padding: 10px !important;
+}
+
+.p-card .p-card-content {
+    padding: 0 !important;
+}

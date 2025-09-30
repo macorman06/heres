@@ -1,102 +1,279 @@
+// src/hooks/useApi.ts
 import { useState, useEffect, useCallback } from 'react';
-import { apiService, User, CreateUserRequest, UpdateUserRequest } from '../services/api';
+import {
+  fetchUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  uploadProfileImage,
+  User,
+  ApiError
+} from '../services/api';
 
-export interface UseApiState<T> {
-  data: T | null;
-  loading: boolean;
-  error: string | null;
-}
+// ✅ HOOK PARA GESTIÓN DE USUARIOS
+export const useUsers = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export const useApi = () => {
-  // Users management (replaces members)
-  const [users, setUsers] = useState<UseApiState<User[]>>({
-    data: null,
-    loading: false,
-    error: null
-  });
-
-  const fetchUsers = useCallback(async () => {
-    setUsers(prev => ({ ...prev, loading: true, error: null }));
-
+  // ✅ CARGAR USUARIOS
+  const loadUsers = useCallback(async () => {
     try {
-      const data = await apiService.getUsers();
-      setUsers({ data, loading: false, error: null });
-      console.log('✅ Users fetched:', data.length);
-    } catch (error: any) {
-      const errorMessage = error.message || 'Error fetching users';
-      setUsers({ data: null, loading: false, error: errorMessage });
-      console.error('❌ Error fetching users:', errorMessage);
+      setIsLoading(true);
+      setError(null);
+      const userData = await fetchUsers();
+      setUsers(userData);
+    } catch (err: any) {
+      const errorMessage = (err as ApiError).message || 'Error cargando usuarios';
+      setError(errorMessage);
+      console.error('❌ Error cargando usuarios:', err);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  const createUser = useCallback(async (userData: CreateUserRequest): Promise<User> => {
+  // ✅ CREAR USUARIO
+  const addUser = useCallback(async (userData: Partial<User>): Promise<User | null> => {
     try {
-      console.log('📝 Creating user:', userData.nombre);
-      const newUser = await apiService.createUser(userData);
-
-      // Refresh users list
-      await fetchUsers();
-
-      console.log('✅ User created:', newUser.nombre);
+      setError(null);
+      const newUser = await createUser(userData);
+      setUsers(prev => [...prev, newUser]);
+      console.log('✅ Usuario creado:', newUser.nombre);
       return newUser;
-    } catch (error: any) {
-      const errorMessage = error.message || 'Error creating user';
-      console.error('❌ Error creating user:', errorMessage);
-      throw new Error(errorMessage);
+    } catch (err: any) {
+      const errorMessage = (err as ApiError).message || 'Error creando usuario';
+      setError(errorMessage);
+      console.error('❌ Error creando usuario:', err);
+      return null;
     }
-  }, [fetchUsers]);
+  }, []);
 
-  const updateUser = useCallback(async (id: number, userData: UpdateUserRequest): Promise<User> => {
+  // ✅ ACTUALIZAR USUARIO
+  const modifyUser = useCallback(async (id: number, userData: Partial<User>): Promise<User | null> => {
     try {
-      console.log('🔄 Updating user:', id);
-      const updatedUser = await apiService.updateUser(id, userData);
-
-      // Refresh users list
-      await fetchUsers();
-
-      console.log('✅ User updated:', updatedUser.nombre);
+      setError(null);
+      const updatedUser = await updateUser(id, userData);
+      setUsers(prev => prev.map(user => user.id === id ? updatedUser : user));
+      console.log('✅ Usuario actualizado:', updatedUser.nombre);
       return updatedUser;
-    } catch (error: any) {
-      const errorMessage = error.message || 'Error updating user';
-      console.error('❌ Error updating user:', errorMessage);
-      throw new Error(errorMessage);
+    } catch (err: any) {
+      const errorMessage = (err as ApiError).message || 'Error actualizando usuario';
+      setError(errorMessage);
+      console.error('❌ Error actualizando usuario:', err);
+      return null;
     }
-  }, [fetchUsers]);
+  }, []);
 
-  const deleteUser = useCallback(async (id: number): Promise<void> => {
+  // ✅ ELIMINAR USUARIO
+  const removeUser = useCallback(async (id: number): Promise<boolean> => {
     try {
-      console.log('🗑️ Deleting user:', id);
-      await apiService.deleteUser(id);
-
-      // Refresh users list
-      await fetchUsers();
-
-      console.log('✅ User deleted');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Error deleting user';
-      console.error('❌ Error deleting user:', errorMessage);
-      throw new Error(errorMessage);
+      setError(null);
+      await deleteUser(id);
+      setUsers(prev => prev.filter(user => user.id !== id));
+      console.log('✅ Usuario eliminado:', id);
+      return true;
+    } catch (err: any) {
+      const errorMessage = (err as ApiError).message || 'Error eliminando usuario';
+      setError(errorMessage);
+      console.error('❌ Error eliminando usuario:', err);
+      return false;
     }
-  }, [fetchUsers]);
+  }, []);
 
-  // Auto-fetch users on mount
+  // ✅ SUBIR IMAGEN DE PERFIL
+  const uploadUserImage = useCallback(async (userId: number, imageFile: File): Promise<string | null> => {
+    try {
+      setError(null);
+      const result = await uploadProfileImage(userId, imageFile);
+      console.log('✅ Imagen subida:', result.filename);
+      return result.path;
+    } catch (err: any) {
+      const errorMessage = (err as ApiError).message || 'Error subiendo imagen';
+      setError(errorMessage);
+      console.error('❌ Error subiendo imagen:', err);
+      return null;
+    }
+  }, []);
+
+  // ✅ LIMPIAR ERROR
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  // ✅ REFRESCAR DATOS
+  const refreshUsers = useCallback(() => {
+    loadUsers();
+  }, [loadUsers]);
+
+  // ✅ CARGAR USUARIOS AL MONTAR EL COMPONENTE
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    loadUsers();
+  }, [loadUsers]);
 
   return {
-    // Users data
-    users: users.data,
-    usersLoading: users.loading,
-    usersError: users.error,
+    // Estado
+    users,
+    isLoading,
+    error,
 
-    // Users actions
-    fetchUsers,
-    createUser,
-    updateUser,
-    deleteUser,
+    // Acciones
+    addUser,
+    modifyUser,
+    removeUser,
+    uploadUserImage,
+    refreshUsers,
+    clearError,
 
-    // Utility
-    refreshUsers: fetchUsers,
+    // Utilidades
+    totalUsers: users.length,
+    hasError: !!error,
   };
 };
+
+// ✅ HOOK PARA FILTRADO DE USUARIOS
+export const useUserFilters = (users: User[]) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRole, setSelectedRole] = useState<number | null>(null);
+  const [selectedCentro, setSelectedCentro] = useState<string | null>(null);
+
+  // ✅ USUARIOS FILTRADOS
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = !searchTerm ||
+      user.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.apellido1?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesRole = !selectedRole || user.rol_id === selectedRole;
+
+    const matchesCentro = !selectedCentro || user.centro_juvenil === selectedCentro;
+
+    return matchesSearch && matchesRole && matchesCentro;
+  });
+
+  // ✅ OPCIONES DISPONIBLES
+  const availableRoles = [...new Set(users.map(user => user.rol_id))].filter(Boolean);
+  const availableCentros = [...new Set(users.map(user => user.centro_juvenil))].filter(Boolean);
+
+  // ✅ LIMPIAR FILTROS
+  const clearFilters = useCallback(() => {
+    setSearchTerm('');
+    setSelectedRole(null);
+    setSelectedCentro(null);
+  }, []);
+
+  // ✅ VERIFICAR SI HAY FILTROS ACTIVOS
+  const hasActiveFilters = searchTerm || selectedRole || selectedCentro;
+
+  return {
+    // Estado de filtros
+    searchTerm,
+    selectedRole,
+    selectedCentro,
+
+    // Setters
+    setSearchTerm,
+    setSelectedRole,
+    setSelectedCentro,
+
+    // Resultados
+    filteredUsers,
+    availableRoles,
+    availableCentros,
+
+    // Utilidades
+    clearFilters,
+    hasActiveFilters,
+    resultsCount: filteredUsers.length,
+  };
+};
+
+// ✅ HOOK PARA PAGINACIÓN
+export const usePagination = <T>(items: T[], itemsPerPage: number = 10) => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = items.slice(startIndex, endIndex);
+
+  const goToPage = useCallback((page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  }, [totalPages]);
+
+  const goToNextPage = useCallback(() => {
+    goToPage(currentPage + 1);
+  }, [currentPage, goToPage]);
+
+  const goToPreviousPage = useCallback(() => {
+    goToPage(currentPage - 1);
+  }, [currentPage, goToPage]);
+
+  const resetPagination = useCallback(() => {
+    setCurrentPage(1);
+  }, []);
+
+  // ✅ RESETEAR PÁGINA CUANDO CAMBIEN LOS ITEMS
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [items.length, totalPages, currentPage]);
+
+  return {
+    // Estado
+    currentPage,
+    totalPages,
+    itemsPerPage,
+
+    // Datos paginados
+    paginatedItems,
+
+    // Navegación
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    resetPagination,
+
+    // Información
+    hasNextPage: currentPage < totalPages,
+    hasPreviousPage: currentPage > 1,
+    startIndex: startIndex + 1,
+    endIndex: Math.min(endIndex, items.length),
+    totalItems: items.length,
+  };
+};
+
+// ✅ HOOK COMBINADO PARA GESTIÓN COMPLETA DE USUARIOS
+export const useUserManagement = (itemsPerPage?: number) => {
+  const userHooks = useUsers();
+  const filterHooks = useUserFilters(userHooks.users);
+  const paginationHooks = usePagination(filterHooks.filteredUsers, itemsPerPage);
+
+  return {
+    // Datos de usuarios
+    ...userHooks,
+
+    // Filtrado
+    ...filterHooks,
+
+    // Paginación
+    ...paginationHooks,
+
+    // Estado combinado
+    isReady: !userHooks.isLoading && userHooks.users.length > 0,
+    isEmpty: !userHooks.isLoading && userHooks.users.length === 0,
+  };
+};
+
+// ✅ EXPORT COMPATIBILITY (para compatibilidad con imports existentes)
+export const apiService = {
+  fetchUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  uploadProfileImage,
+};
+
+export default useUserManagement;

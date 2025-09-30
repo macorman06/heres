@@ -1,187 +1,139 @@
+// src/hooks/useAuth.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { apiService, User, LoginRequest, RegisterRequest, ROLES } from '../services/api';
+import { loginApi, registerApi, User, LoginCredentials, RegisterData, ApiError } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
+  isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (credentials: LoginRequest) => Promise<any>;
-  register: (userData: RegisterRequest) => Promise<any>;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
+  updateUser: (userData: User) => void;
   clearError: () => void;
-  // ✅ SOLO PERMISOS DE USUARIOS (sin miembros)
-  hasPermission: (requiredRole: number) => boolean;
-  canCreateUsers: () => boolean;
-  canEditUsers: () => boolean;
-  canDeleteUsers: () => boolean;
-  hasAdminAccess: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ FIXED: Check for existing authentication on mount
+  // ✅ CARGAR USUARIO AL INICIALIZAR
   useEffect(() => {
-    const checkAuth = () => {
+    const loadUserFromStorage = () => {
       try {
-        if (apiService.isAuthenticated()) {
-          const currentUser = apiService.getCurrentUser();
+        const storedToken = localStorage.getItem('authToken');
+        const storedUser = localStorage.getItem('currentUser');
 
-          // ✅ FIXED: Verificar que el usuario existe y tiene propiedades básicas
-          if (currentUser && currentUser.id && currentUser.nombre) {
-            setUser(currentUser);
-            console.log('✅ Usuario autenticado encontrado:', currentUser.nombre);
-          } else {
-            console.warn('⚠️ Usuario encontrado pero sin datos válidos:', currentUser);
-            apiService.logout(); // Limpiar datos inválidos
-          }
+        if (storedToken && storedUser) {
+          const userData = JSON.parse(storedUser);
+          setUser(userData);
+          console.log('👤 Usuario cargado desde localStorage:', userData.nombre);
         }
       } catch (error) {
-        console.error('❌ Error checking auth:', error);
-        apiService.logout();
+        console.error('❌ Error cargando usuario desde localStorage:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
       } finally {
         setIsLoading(false);
       }
     };
 
-    checkAuth();
+    loadUserFromStorage();
   }, []);
 
-  // ✅ FIXED: Login function with better error handling
-  const login = async (credentials: LoginRequest) => {
-    setIsLoading(true);
-    setError(null);
-
+  // ✅ FUNCIÓN LOGIN
+  const login = async (credentials: LoginCredentials): Promise<void> => {
     try {
-      console.log('🔐 Iniciando login para:', credentials.email);
-      const response = await apiService.login(credentials);
-
-      // ✅ FIXED: Verificar que la respuesta tiene estructura correcta
-      if (!response) {
-        throw new Error('Respuesta de login vacía del servidor');
-      }
-
-      if (!response.usuario) {
-        throw new Error('No se recibieron datos de usuario del servidor');
-      }
-
-      const usuario = response.usuario;
-
-      // ✅ FIXED: Verificar que el usuario tiene propiedades requeridas
-      if (!usuario.id || !usuario.nombre || !usuario.email) {
-        console.error('❌ Usuario recibido tiene datos incompletos:', usuario);
-        throw new Error('Los datos del usuario están incompletos');
-      }
-
-      setUser(usuario);
-      console.log('✅ Login exitoso:', usuario.nombre);
-      return response;
-
-    } catch (err: any) {
-      const errorMessage = err?.message || 'Error de autenticación desconocido';
-      setError(errorMessage);
-      console.error('❌ Error de login:', errorMessage);
-
-      // ✅ FIXED: Log detallado para debugging en producción
-      if (err?.response?.data) {
-        console.error('❌ Detalles del error del servidor:', err.response.data);
-      }
-
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ✅ FIXED: Register function with better error handling
-  const register = async (userData: RegisterRequest) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      console.log('📝 Iniciando registro para:', userData.email);
-      const response = await apiService.register(userData);
-
-      // ✅ FIXED: Verificar que la respuesta tiene estructura correcta
-      if (!response?.usuario) {
-        throw new Error('No se recibieron datos de usuario del servidor');
-      }
-
-      const usuario = response.usuario;
-
-      // ✅ FIXED: Verificar que el usuario tiene propiedades requeridas
-      if (!usuario.nombre) {
-        console.error('❌ Usuario registrado tiene datos incompletos:', usuario);
-        throw new Error('Los datos del usuario registrado están incompletos');
-      }
-
-      setUser(usuario);
-      console.log('✅ Registro exitoso:', usuario.nombre);
-      return response;
-
-    } catch (err: any) {
-      const errorMessage = err?.message || 'Error de registro desconocido';
-      setError(errorMessage);
-      console.error('❌ Error de registro:', errorMessage);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ✅ FIXED: Logout function
-  const logout = () => {
-    try {
-      console.log('👋 Cerrando sesión para:', user?.nombre || 'usuario desconocido');
-      apiService.logout();
-      setUser(null);
+      setIsLoading(true);
       setError(null);
-      console.log('✅ Sesión cerrada exitosamente');
-      return true;
-    } catch (error) {
-      console.error('❌ Error durante logout:', error);
-      setUser(null); // Limpiar estado incluso si hay error
-      return false;
+
+      const response = await loginApi(credentials);
+
+      // Guardar en localStorage
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('currentUser', JSON.stringify(response.user));
+
+      // Actualizar estado
+      setUser(response.user);
+
+      console.log('✅ Login exitoso:', response.user.nombre);
+
+    } catch (err: any) {
+      const errorMessage = (err as ApiError).message || 'Credenciales inválidas';
+      setError(errorMessage);
+      console.error('❌ Error en login:', err);
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const clearError = () => {
+  // ✅ FUNCIÓN REGISTER
+  const register = async (userData: RegisterData): Promise<void> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await registerApi(userData);
+
+      // Guardar en localStorage
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('currentUser', JSON.stringify(response.user));
+
+      // Actualizar estado
+      setUser(response.user);
+
+      console.log('✅ Registro exitoso:', response.user.nombre);
+
+    } catch (err: any) {
+      const errorMessage = (err as ApiError).message || 'Error en el registro';
+      setError(errorMessage);
+      console.error('❌ Error en registro:', err);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ✅ FUNCIÓN LOGOUT
+  const logout = (): void => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    setUser(null);
+    setError(null);
+    console.log('👋 Usuario deslogueado');
+  };
+
+  // ✅ FUNCIÓN ACTUALIZAR USUARIO
+  const updateUser = (userData: User): void => {
+    try {
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+      setUser(userData);
+      console.log('📝 Usuario actualizado:', userData.nombre);
+    } catch (error) {
+      console.error('❌ Error actualizando usuario:', error);
+    }
+  };
+
+  // ✅ LIMPIAR ERROR
+  const clearError = (): void => {
     setError(null);
   };
-
-  // ✅ FUNCIONES DE PERMISOS - SOLO USUARIOS
-  const hasPermission = (requiredRole: number): boolean => {
-    if (!user || typeof user.rol_id !== 'number') return false;
-    return user.rol_id <= requiredRole;
-  };
-
-  // ✅ SOLO PERMISOS DE USUARIOS
-  const canCreateUsers = () => hasPermission(ROLES.COORDINADOR);
-  const canEditUsers = () => hasPermission(ROLES.ANIMADOR);
-  const canDeleteUsers = () => hasPermission(ROLES.COORDINADOR);
-  const hasAdminAccess = () => hasPermission(ROLES.DIRECTOR);
 
   const value: AuthContextType = {
     user,
+    isAuthenticated: !!user,
     isLoading,
     error,
     login,
     register,
     logout,
-    clearError,
-    hasPermission,
-    canCreateUsers,
-    canEditUsers,
-    canDeleteUsers,
-    hasAdminAccess,
+    updateUser,
+    clearError
   };
 
   return (
@@ -191,10 +143,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
+// ✅ HOOK PERSONALIZADO
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth debe usarse dentro de un AuthProvider');
   }
   return context;
 };

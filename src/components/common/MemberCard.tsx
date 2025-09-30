@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from 'primereact/card';
-import { Chip } from 'primereact/chip';
 import { Button } from 'primereact/button';
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
@@ -8,32 +7,36 @@ import { User } from '../../services/api';
 
 interface MemberCardProps {
   user: User;
+  currentUser?: User;  // ✅ OPCIONAL: Usuario actual logueado
   onView: (user: User) => void;
   onEdit: (user: User) => void;
   showEditButton: boolean;
 }
 
-export const MemberCard: React.FC<MemberCardProps> = ({ user, onView, onEdit, showEditButton }) => {
+export const MemberCard: React.FC<MemberCardProps> = ({
+                                                        user,
+                                                        currentUser,
+                                                        onView,
+                                                        onEdit,
+                                                        showEditButton
+                                                      }) => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // ✅ Generate profile image filename
   const generateImageFilename = (nombre: string, apellido1: string): string => {
     const cleanName = (name: string) =>
       name
         .toLowerCase()
-        .normalize('NFD') // Descomponer caracteres acentuados
-        .replace(/[\u0300-\u036f]/g, '') // Eliminar diacríticos
-        .replace(/[^a-z0-9]/g, '') // Solo letras y números
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '')
         .trim();
 
     const cleanNombre = cleanName(nombre);
     const cleanApellido1 = cleanName(apellido1);
-
     return `${cleanNombre}_${cleanApellido1}`;
   };
 
-// ✅ Check if profile image exists - Solo usar nombre y apellido1
   useEffect(() => {
     if (!user.nombre || !user.apellido1) {
       setImageLoaded(true);
@@ -41,30 +44,19 @@ export const MemberCard: React.FC<MemberCardProps> = ({ user, onView, onEdit, sh
     }
 
     const checkImageExists = async () => {
-      const baseFilename = generateImageFilename(user.nombre, user.apellido1); // ✅ FIXED: Sin apellido2
-      console.log(`🔍 Buscando imagen para: ${baseFilename}`); // Debug
-
+      const baseFilename = generateImageFilename(user.nombre, user.apellido1);
       const extensions = ['png', 'jpg', 'jpeg', 'webp'];
 
       for (const ext of extensions) {
         const imagePath = `/users/${baseFilename}.${ext}`;
-        console.log(`🔍 Verificando: ${imagePath}`); // Debug
-
         try {
           const img = new Image();
-          await new Promise<void>((resolve, reject) => {
-            img.onload = () => {
-              console.log(`✅ Imagen encontrada: ${imagePath}`); // Debug
-              resolve();
-            };
-            img.onerror = () => {
-              console.log(`❌ Imagen no encontrada: ${imagePath}`); // Debug
-              reject();
-            };
+          await new Promise((resolve, reject) => {
+            img.onload = () => resolve(null);
+            img.onerror = () => reject();
             img.src = imagePath;
           });
 
-          // Si llegamos aquí, la imagen existe
           setProfileImage(imagePath);
           setImageLoaded(true);
           return;
@@ -73,17 +65,48 @@ export const MemberCard: React.FC<MemberCardProps> = ({ user, onView, onEdit, sh
         }
       }
 
-      // No se encontró ninguna imagen
-      console.log(`❌ Ninguna imagen encontrada para: ${baseFilename}`); // Debug
       setProfileImage(null);
       setImageLoaded(true);
     };
 
     checkImageExists();
-  }, [user.nombre, user.apellido1]); // ✅ FIXED: Solo dependencias nombre y apellido1
+  }, [user.nombre, user.apellido1]);
 
+  // ✅ FUNCIÓN CORREGIDA: Con validaciones de seguridad
+  const canEditUser = (): boolean => {
+    // ✅ Validar que currentUser existe
+    if (!currentUser || !currentUser.id || !currentUser.rol_id) {
+      console.warn('currentUser no está disponible o es incompleto:', currentUser);
+      return false;
+    }
 
-  // ✅ Use the same badge system as Topbar
+    // ✅ Validar que user tiene los campos necesarios
+    if (!user || !user.rol_id) {
+      console.warn('user no tiene rol_id:', user);
+      return false;
+    }
+
+    // No puedes editarte a ti mismo (opcional)
+    if (currentUser.id === user.id) {
+      return false; // Cambia a true si quieres permitir auto-edición
+    }
+
+    // Jerarquía de roles (menor número = mayor jerarquía)
+    const roleHierarchy: { [key: number]: number } = {
+      1: 1, // superuser - puede editar todos
+      2: 2, // director - puede editar coordinador, animador, miembro
+      3: 3, // coordinador - puede editar animador, miembro
+      4: 4, // animador - puede editar solo miembro
+      5: 5  // miembro - no puede editar nadie
+    };
+
+    const currentUserLevel = roleHierarchy[currentUser.rol_id] || 5;
+    const targetUserLevel = roleHierarchy[user.rol_id] || 5;
+
+    // Solo puedes editar usuarios de nivel inferior (número mayor)
+    return currentUserLevel < targetUserLevel;
+  };
+
   const getRoleBadge = (roleId: number) => {
     const roleMap = {
       1: 'superuser',
@@ -106,29 +129,6 @@ export const MemberCard: React.FC<MemberCardProps> = ({ user, onView, onEdit, sh
     return badges[roleKey] || { label: 'Usuario', severity: 'info' as const };
   };
 
-  // ✅ Section color helper
-  const getSectionColor = (section?: string): string => {
-    if (!section) return 'bg-gray-400';
-
-    const sectionLower = section.toLowerCase();
-    switch (sectionLower) {
-      case 'chiqui':
-        return 'bg-pink-500';
-      case 'centro juvenil':
-        return 'bg-blue-500';
-      case 'infantil':
-        return 'bg-green-500';
-      case 'juvenil':
-        return 'bg-purple-500';
-      case 'catequesis':
-        return 'bg-yellow-500';
-      case 'deporte':
-        return 'bg-orange-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
   const handleCardClick = () => {
     onView(user);
   };
@@ -138,108 +138,105 @@ export const MemberCard: React.FC<MemberCardProps> = ({ user, onView, onEdit, sh
     onEdit(user);
   };
 
-  const userInitials = `${user.nombre.charAt(0)}${user.apellido1?.charAt(0) || ''}`.toUpperCase();
-  const fullName = `${user.nombre} ${user.apellido1 || ''}`.trim();
+  const userInitials = `${user.nombre?.charAt(0) || ''}${user.apellido1?.charAt(0) || ''}`.toUpperCase();
+  const fullName = `${user.nombre || ''} ${user.apellido1 || ''}`.trim();
   const displayEmail = user.email || 'Sin email';
-
-  // ✅ Get role badge info
   const roleBadge = getRoleBadge(user.rol_id || 5);
+
+  // ✅ LÓGICA MEJORADA: Solo mostrar botón si tiene permisos Y está habilitado globalmente
+  const shouldShowEditButton = showEditButton && canEditUser();
 
   return (
     <Card
-      className="h-full cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1 border border-gray-200 dark:border-gray-700 relative overflow-hidden"
+      className="member-card cursor-pointer hover:shadow-md transition-shadow duration-200 h-full rounded-lg"
       onClick={handleCardClick}
+      style={{
+        minHeight: 'auto',
+        padding: '0',
+        margin: '0',
+        width: '100%',
+        minWidth: '220px',
+        maxWidth: '100%'
+      }}
     >
-      <div className="relative">
-        {/* Edit Button - Top Right */}
-        {showEditButton && (
-          <div className="absolute top-0 right-0 z-10">
-            <Button
-              icon="pi pi-pencil"
-              rounded
-              outlined
-              size="small"
-              className="bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-              onClick={handleEditClick}
-              tooltip="Editar usuario"
-              tooltipOptions={{ position: 'left' }}
-            />
-          </div>
+      <div className="flex flex-col items-center p-3 space-y-2 relative">
+        {/* ✅ BOTÓN CONDICIONAL: Solo aparece si tiene permisos */}
+        {shouldShowEditButton && (
+          <Button
+            icon="pi pi-pencil"
+            className="p-button-rounded p-button-text p-button-sm absolute top-1 right-1 z-10"
+            style={{
+              width: '28px',
+              height: '28px',
+              minWidth: '28px'
+            }}
+            onClick={handleEditClick}
+            tooltip="Editar usuario"
+            tooltipOptions={{ position: 'left' }}
+          />
         )}
 
-        {/* Header with Avatar, Name and Contact */}
-        <div className="text-center">
-          {/* ✅ Profile Image or Avatar with initials */}
+        {/* Avatar - más compacto */}
+        <div className="flex-shrink-0">
           {imageLoaded && (
             <>
               {profileImage ? (
-                <div className="mb-3 mx-auto w-24 h-24 relative">
-                  <img
-                    src={profileImage}
-                    alt={`${fullName} - Foto de perfil`}
-                    className="w-full h-full object-cover rounded-full border-4 border-white shadow-lg"
-                    onError={() => {
-                      console.log(`❌ Error cargando imagen: ${profileImage}`); // Debug
-                      setProfileImage(null);
-                    }}
-                  />
-                </div>
+                <img
+                  src={profileImage}
+                  alt={`${user.nombre} ${user.apellido1}`}
+                  className="rounded-full border-2 border-gray-200 object-cover"
+                  style={{ width: '60px', height: '60px' }}
+                  onError={() => {
+                    console.log(`❌ Error cargando imagen: ${profileImage}`);
+                    setProfileImage(null);
+                  }}
+                />
               ) : (
                 <Avatar
                   label={userInitials}
-                  size="xlarge"
+                  size="large"
                   shape="circle"
-                  className="mb-3 mx-auto bg-gradient-to-br from-red-500 to-red-600 text-white font-bold shadow-md"
+                  className="bg-blue-500 text-white border-2 border-gray-200"
+                  style={{ width: '60px', height: '60px' }}
                 />
               )}
             </>
           )}
+        </div>
 
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 leading-tight">
+        {/* Información del usuario - más compacta */}
+        <div className="text-center flex-1 min-w-0 space-y-1">
+          {/* Nombre */}
+          <h3
+            className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-tight truncate"
+            title={fullName}
+            style={{ margin: '0', padding: '0' }}
+          >
             {fullName}
           </h3>
 
+          {/* Email - más compacto */}
           {user.email && (
-            <div className="flex items-center justify-center gap-1 text-sm text-gray-600 dark:text-gray-400 mb-1">
-              <i className="pi pi-envelope text-xs"></i>
-              <span className="truncate max-w-full">{displayEmail}</span>
-            </div>
+            <p
+              className="text-xs text-gray-600 dark:text-gray-300 truncate"
+              title={displayEmail}
+              style={{ margin: '0', padding: '0' }}
+            >
+              {displayEmail}
+            </p>
           )}
-        </div>
 
-        {/* ✅ Role Badge using consistent system */}
-        <div className="flex justify-center mb-4">
+          {/* Badge de rol - más pequeño */}
           <Badge
             value={roleBadge.label}
             severity={roleBadge.severity}
-            className="px-3 py-1 text-sm font-medium"
+            className="text-xs px-2 py-1"
+            style={{
+              fontSize: '0.65rem',
+              fontWeight: 'normal'
+            }}
           />
         </div>
-
-        {/* Allergies if present */}
-        {user.alergias && user.alergias.length > 0 && (
-          <div className="border-t border-gray-200 dark:border-gray-600 pt-3">
-            <div className="flex items-center gap-1 mb-2">
-              <i className="pi pi-exclamation-triangle text-orange-500 text-sm"></i>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Alergias:</span>
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {user.alergias.slice(0, 3).map((alergia, index) => (
-                <Chip
-                  key={index}
-                  label={alergia}
-                  className="bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300 text-xs"
-                />
-              ))}
-              {user.alergias.length > 3 && (
-                <Chip
-                  label={`+${user.alergias.length - 3} más`}
-                  className="bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 text-xs"
-                />
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </Card>
   );

@@ -6,25 +6,70 @@
 .dark .p-card {
     background-color: #1f2937 !important;
     border-color: #374151 !important;
-    color: #f3f4f6 !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
-.dark .p-card .p-card-header {
-    background-color: #1f2937 !important;
-    border-color: #374151 !important;
-    color: #f3f4f6 !important;
+/* Texto principal en la card */
+.dark .p-card h3,
+.dark .p-card .font-semibold {
+    color: #f9fafb !important; /* Blanco casi puro para títulos */
 }
 
-.dark .p-card .p-card-body {
-    background-color: #1f2937 !important;
-    color: #f3f4f6 !important;
+/* Texto secundario (email, etc.) */
+.dark .p-card p,
+.dark .p-card .text-gray-600 {
+    color: #d1d5db !important; /* Gris claro para texto secundario */
 }
 
-.dark .p-card .p-card-content {
+/* Texto pequeño */
+.dark .p-card .text-xs {
+    color: #9ca3af !important; /* Gris medio para texto muy pequeño */
+}
+
+/* Badges en dark mode */
+.dark .p-badge {
+    background-color: #374151 !important;
     color: #e5e7eb !important;
-    padding: 0 !important;
+    border: 1px solid #4b5563 !important;
 }
+
+/* Colores específicos para badges de roles */
+.dark .p-badge.p-badge-danger {
+    background-color: #dc2626 !important;
+    color: #fecaca !important;
+}
+
+.dark .p-badge.p-badge-warning {
+    background-color: #d97706 !important;
+    color: #fed7aa !important;
+}
+
+.dark .p-badge.p-badge-success {
+    background-color: #059669 !important;
+    color: #a7f3d0 !important;
+}
+
+.dark .p-badge.p-badge-info {
+    background-color: #2563eb !important;
+    color: #bfdbfe !important;
+}
+
+/* Avatar con iniciales */
+.dark .p-avatar {
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+}
+
+/* Botones en dark mode */
+.dark .p-button.p-button-text {
+    color: #d1d5db !important;
+}
+
+.dark .p-button.p-button-text:hover {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+}
+
 
 /* Input Components - Proper contrast and visibility */
 .dark .p-inputtext,
