@@ -11,6 +11,8 @@ import { Members } from './pages/Members';
 import { Activities } from './pages/Activities';
 import { Materials } from './pages/Materials';
 import { Contact } from './pages/Contact';
+import { AboutPage } from './pages/AboutPage';
+
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 
 // PrimeReact theme
@@ -28,6 +30,8 @@ import './styles/menus.css';
 import './styles/cards-dialogs.css';
 import './styles/login.css';
 import './styles/construction.css';
+import './styles/about.css';
+
 import './index.css';
 
 const PrivateRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
@@ -47,6 +51,8 @@ const AppRoutes: React.FC = () => (
       <Route path="actividades" element={<Activities />} />
       <Route path="materiales" element={<Materials />} />
       <Route path="contacto" element={<Contact />} />
+      <Route path="/about" element={<AboutPage />} />
+
     </Route>
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
