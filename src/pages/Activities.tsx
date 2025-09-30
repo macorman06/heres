@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
 
 export const Activities: React.FC = () => {
   return (
@@ -62,21 +61,6 @@ export const Activities: React.FC = () => {
               <div className="progress-bar">
                 <div className="progress-fill" style={{ width: '75%' }}></div>
               </div>
-            </div>
-
-            {/* Acciones */}
-            <div className="construction-actions">
-              <Button
-                label="¡Quiero ser notificado!"
-                icon="pi pi-bell"
-                className="p-button-outlined"
-                onClick={() => alert('¡Te notificaremos cuando esté listo!')}
-              />
-              <Button
-                label="Volver al Dashboard"
-                icon="pi pi-home"
-                onClick={() => window.location.href = '/'}
-              />
             </div>
           </div>
         </Card>

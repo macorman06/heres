@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
 
 export const Contact: React.FC = () => {
   return (
@@ -35,16 +34,12 @@ export const Contact: React.FC = () => {
               <h3>Mientras tanto, puedes contactarnos:</h3>
               <div className="contact-quick-info">
                 <div className="contact-item">
-                  <i className="pi pi-phone"></i>
-                  <span>+34 91 XXX XX XX</span>
-                </div>
-                <div className="contact-item">
                   <i className="pi pi-envelope"></i>
-                  <span>info@centrojuvenil.es</span>
+                  <span>marcos.corpas@juveliber.es</span>
                 </div>
                 <div className="contact-item">
                   <i className="pi pi-map-marker"></i>
-                  <span>Centro Juvenil Salesianos</span>
+                  <span>Centro Juvenil Juveliber</span>
                 </div>
               </div>
             </div>
@@ -81,21 +76,6 @@ export const Contact: React.FC = () => {
               <div className="progress-bar">
                 <div className="progress-fill" style={{ width: '40%' }}></div>
               </div>
-            </div>
-
-            {/* Acciones */}
-            <div className="construction-actions">
-              <Button
-                label="Quiero ser notificado"
-                icon="pi pi-bell"
-                className="p-button-outlined"
-                onClick={() => alert('¡Perfecto! Te avisaremos cuando esté listo.')}
-              />
-              <Button
-                label="Volver al inicio"
-                icon="pi pi-home"
-                onClick={() => window.location.href = '/'}
-              />
             </div>
           </div>
         </Card>

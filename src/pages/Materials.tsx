@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
 
 export const Materials: React.FC = () => {
   return (
@@ -62,21 +61,6 @@ export const Materials: React.FC = () => {
               <div className="progress-bar">
                 <div className="progress-fill" style={{ width: '60%' }}></div>
               </div>
-            </div>
-
-            {/* Acciones */}
-            <div className="construction-actions">
-              <Button
-                label="Notificarme cuando esté listo"
-                icon="pi pi-bell"
-                className="p-button-outlined"
-                onClick={() => alert('¡Te avisaremos en cuanto esté disponible!')}
-              />
-              <Button
-                label="Ir al Dashboard"
-                icon="pi pi-home"
-                onClick={() => window.location.href = '/'}
-              />
             </div>
           </div>
         </Card>
