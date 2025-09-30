@@ -8,11 +8,11 @@ interface SidebarProps {
 }
 
 const menuItems: MenuItem[] = [
-  { label: 'Dashboard', icon: 'pi pi-home', route: '/dashboard', subtitle: 'Inicio' },
-  { label: 'Actividades', icon: 'pi pi-calendar', route: '/activities', subtitle: 'Eventos y talleres', badge: 3 },
-  { label: 'Materiales', icon: 'pi pi-folder', route: '/materials', subtitle: 'Recursos y documentos' },
-  { label: 'Miembros', icon: 'pi pi-user', route: '/members', subtitle: 'Animadores y coordinadores' },
-  { label: 'Contacto', icon: 'pi pi-phone', route: '/contact', subtitle: 'Información de contacto' }
+  { label: 'Dashboard', icon: 'pi pi-home', route: '/', subtitle: 'Inicio' },
+  { label: 'Actividades', icon: 'pi pi-calendar', route: '/actividades', subtitle: 'Eventos y talleres', badge: 3 },
+  { label: 'Materiales', icon: 'pi pi-folder', route: '/materiales', subtitle: 'Recursos y documentos' },
+  { label: 'Miembros', icon: 'pi pi-user', route: '/miembros', subtitle: 'Animadores y coordinadores' },
+  { label: 'Contacto', icon: 'pi pi-phone', route: '/contacto', subtitle: 'Información de contacto' }
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {

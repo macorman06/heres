@@ -5,7 +5,6 @@ import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
-import { Skeleton } from 'primereact/skeleton';
 
 // ✅ NUEVOS IMPORTS: Sistema de autenticación y API
 import { useAuth } from '../hooks/useAuth';
@@ -16,7 +15,6 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { DailyCards } from '../components/dashboard/DailyCards';
 import { StatsCards } from '../components/dashboard/StatsCards';
 import { ScheduledActivities } from '../components/dashboard/ScheduledActivities';
-import { NewsFeed } from '../components/news/NewsFeed';
 import { getDashboardStats, mockCalendarEvents } from '../data';
 
 export const Dashboard: React.FC = () => {
@@ -155,108 +153,10 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Daily Cards */}
       <DailyCards />
-
-      {/* ✅ ACTUALIZADA: Stats Cards con datos reales */}
       <StatsCards stats={dashboardStats} />
+      <ScheduledActivities events={mockCalendarEvents}/>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* ✅ NUEVA SECCIÓN: Miembros recientes */}
-        <Card title="Miembros Recientes" className="h-fit">
-          <div className="space-y-4">
-            {recentMembers.length > 0 ? (
-              <>
-                {recentMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
-                    onClick={() => handleMemberClick(member.id)}
-                  >
-                    <Avatar
-                      label={`${member.nombre.charAt(0)}${member.apellido1?.charAt(0) || ''}`}
-                      size="normal"
-                      shape="circle"
-                      className="bg-green-500 text-white"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {member.nombre} {member.apellido1}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {member.centro_juvenil}
-                      </p>
-                    </div>
-                    <Badge
-                      value={member.rol || 'Miembro'}
-                      severity="info"
-                      className="text-xs"
-                    />
-                  </div>
-                ))}
-                <Button
-                  label="Ver todos los miembros"
-                  icon="pi pi-arrow-right"
-                  className="w-full p-button-outlined"
-                  onClick={handleViewAllMembers}
-                />
-              </>
-            ) : (
-              <div className="text-center py-8">
-                <i className="pi pi-users text-3xl text-gray-400 mb-3"></i>
-                <p className="text-gray-500 dark:text-gray-400">
-                  No hay miembros registrados aún
-                </p>
-                <Button
-                  label="Agregar primer miembro"
-                  icon="pi pi-plus"
-                  className="mt-3"
-                  onClick={handleViewAllMembers}
-                />
-              </div>
-            )}
-          </div>
-        </Card>
-
-        {/* Scheduled Activities */}
-        <ScheduledActivities
-          events={mockCalendarEvents}
-          onActionClick={handleActivityAction}
-        />
-      </div>
-
-      {/* News Feed */}
-      <NewsFeed />
-
-      {/* ✅ NUEVA SECCIÓN: Accesos rápidos */}
-      <Card title="Accesos Rápidos" className="mt-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Button
-            label="Gestionar Miembros"
-            icon="pi pi-users"
-            className="p-button-outlined flex-col h-20"
-            onClick={() => navigate('/miembros')}
-          />
-          <Button
-            label="Actividades"
-            icon="pi pi-calendar"
-            className="p-button-outlined flex-col h-20"
-            onClick={() => navigate('/actividades')}
-          />
-          <Button
-            label="Materiales"
-            icon="pi pi-box"
-            className="p-button-outlined flex-col h-20"
-            onClick={() => navigate('/materiales')}
-          />
-          <Button
-            label="Contacto"
-            icon="pi pi-phone"
-            className="p-button-outlined flex-col h-20"
-            onClick={() => navigate('/contacto')}
-          />
-        </div>
-      </Card>
     </div>
   );
 };

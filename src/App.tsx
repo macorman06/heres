@@ -17,7 +17,14 @@ import { LoadingSpinner } from './components/common/LoadingSpinner';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import './styles/custom-prime-overrides.css';
+
+import './styles/variables.css';
+import './styles/fonts.css';
+import './styles/typography.css';    // 3. Tipografía tercero
+import './styles/buttons.css';       // 4. Componentes después
+import './styles/inputs.css';
+import './styles/dropdowns.css';
+import './styles/cards-dialogs.css';
 import './index.css';
 
 const PrivateRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {

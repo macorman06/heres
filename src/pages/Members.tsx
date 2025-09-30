@@ -1,17 +1,17 @@
 // src/pages/Members.tsx
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
+import { Card } from 'primereact/card';
 
 import { useAuth } from '../hooks/useAuth';          // ✅ auth global
 import { useUsers } from '../hooks/useApi';           // ✅ hook especializado
 import { User, RegisterData } from '../services/api';
 
 import { MemberCard } from '../components/common/MemberCard';
-import { UserDetailsDialog } from '../components/common/UserDetailsDialog';
 import { UserFormDialog } from '../components/common/UserFormDialog';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 
@@ -34,7 +34,6 @@ export const Members: React.FC = () => {
     updateExistingUser,
   } = useUsers();
   const toast = useRef<Toast>(null);
-  const navigate = useNavigate();
 
   /* ------------  local state  ------------ */
   const [filters, setFilters] = useState<FilterState>({
@@ -56,7 +55,7 @@ export const Members: React.FC = () => {
   const showToast = (severity: 'success' | 'error', summary: string, detail: string) =>
     toast.current?.show({ severity, summary, detail, life: 3000 });
 
-  const handleFilter = (field: keyof FilterState, value: any) =>
+  const handleFilter = (field: keyof FilterState, value: never) =>
     setFilters((prev) => ({ ...prev, [field]: value }));
 
   const clearFilters = () =>
@@ -73,7 +72,7 @@ export const Members: React.FC = () => {
         showToast('success', 'Creado', 'Usuario creado');
       }
       setFormVisible(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast('error', 'Error', err.message);
     }
   };

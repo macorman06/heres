@@ -1,0 +1,8 @@
+body {
+    font-family: var(--font-family-primary); /* ← Usa la variable de fonts.css */
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    transition: all var(--transition-normal);
+}

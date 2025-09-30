@@ -39,7 +39,7 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
     <div className="flex gap-6">
       {/* Calendar Card - Cuadrado blanco */}
       <Card className="border-0 shadow-md bg-white dark:bg-gray-800 flex-shrink-0">
-        <div className="p-8 flex flex-col items-center justify-center text-center h-full" style={{ width: '200px', height: '200px' }}>
+        <div className="flex flex-col items-center justify-center text-center h-full" style={{ width: '200px', height: '200px' }}>
           <div className="text-sm font-medium uppercase mb-2 text-gray-600 dark:text-gray-300">
             {date.toLocaleDateString('es-ES', { month: 'long' })}
           </div>
@@ -56,27 +56,22 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
       </Card>
 
       {/* Right Column - Two Cards */}
-      <div className="flex-grow flex flex-col space-y-3">
+      <div className="flex-grow flex flex-col space-y-6">
         {/* Salesian Ephemeris Card */}
         <Card className="border-0 shadow-md bg-white dark:bg-gray-800 flex-1">
           <div className="flex items-center space-x-4 h-full">
-            <div className="bg-red-100 dark:bg-red-900/30 rounded-full p-3 flex-shrink-0">
+            <div className="bg-red-100 dark:bg-red-900/30 rounded-full flex-shrink-0">
               <i className={`${salesianInfo.icon} text-red-600 dark:text-red-400 text-xl`}></i>
             </div>
             <div className="flex-grow">
-              <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Efeméride Salesiana
-                </h3>
-                <Badge
-                  value="Salesiano"
-                  className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-xs !flex !items-center !justify-center !leading-none px-2 py-1"
-                />
+              <div>
+                <h3> Efeméride Salesiana </h3>
+                <Badge value="Salesiano"/>
               </div>
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 text-sm">
+              <h4>
                 {salesianInfo.title}
               </h4>
-              <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+              <p>
                 {salesianInfo.description}
               </p>
             </div>
