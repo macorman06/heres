@@ -3,7 +3,7 @@ import { InputText } from 'primereact/inputtext';
 import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate} from 'react-router-dom';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -45,6 +45,7 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
   const location = useLocation();
   const [searchValue, setSearchValue] = useState('');
   const menuRef = useRef<Menu>(null);
+  const navigate = useNavigate();
 
   // ✅ NEW: Profile image state
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -127,7 +128,7 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
       icon: 'pi pi-user',
       command: () => {
         console.log('Navegar a perfil');
-        // Navigate to profile
+        navigate('/profile');
       }
     },
     {
