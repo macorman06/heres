@@ -1,37 +1,22 @@
-// src/hooks/useAuth.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import {
-  loginApi,
-  registerApi,
-  User,
-  LoginCredentials,
-  RegisterData,
-  AuthResponse,
-  ApiError,
-} from '../services/api';
+import type { LoginRequest, RegisterRequest, AuthContextType } from '../types';
+import type { ApiError } from '../types';
+import type { User } from '../types';
 
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
-  logout: () => void;
-  updateUser: (u: User) => void;
-  clearError: () => void;
-  hasPermission: (level: number) => boolean;
-  canCreateUsers: () => boolean;
-}
+import { apiService } from '../services/api/index.ts';
+
+// ===== CONTEXTO =====
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// ===== PROVIDER =====
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ CARGAR USUARIO AL INICIALIZAR
+
   useEffect(() => {
     try {
       const storedToken = localStorage.getItem('authToken');
@@ -51,23 +36,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  // ✅ FUNCIÓN LOGIN AJUSTADA
-  const login = async (credentials: LoginCredentials): Promise<void> => {
+
+  const login = async (credentials: LoginRequest): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const response = await loginApi(credentials);
+      const response = await apiService.login(credentials);
 
-      // ✅ USAR response.usuario EN LUGAR DE response.user
       localStorage.setItem('authToken', response.token);
       localStorage.setItem('currentUser', JSON.stringify(response.usuario));
-
-      // ✅ SETEAR response.usuario
       setUser(response.usuario);
 
       console.log('✅ Login exitoso:', response.usuario.nombre);
-
     } catch (err: any) {
       const errorMessage = (err as ApiError).message || 'Credenciales inválidas';
       setError(errorMessage);
@@ -78,23 +59,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // ✅ FUNCIÓN REGISTER AJUSTADA
-  const register = async (userData: RegisterData): Promise<void> => {
+
+  const register = async (userData: RegisterRequest): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const response = await registerApi(userData);
+      const response = await apiService.register(userData);
 
-      // ✅ USAR response.usuario
       localStorage.setItem('authToken', response.token);
       localStorage.setItem('currentUser', JSON.stringify(response.usuario));
-
       setUser(response.usuario);
 
       console.log('✅ Registro exitoso:', response.usuario.nombre);
-
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = (err as ApiError).message || 'Error en el registro';
       setError(errorMessage);
       console.error('❌ Error en registro:', err);
@@ -104,16 +82,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // ✅ FUNCIÓN LOGOUT
+
   const logout = (): void => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('currentUser');
     setUser(null);
     setError(null);
     console.log('👋 Usuario deslogueado');
+    window.location.href = '/login';
   };
 
-  // ✅ FUNCIÓN ACTUALIZAR USUARIO
+
   const updateUser = (userData: User): void => {
     try {
       localStorage.setItem('currentUser', JSON.stringify(userData));
@@ -124,30 +103,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  /* ----------  helpers de permisos ---------- */
+
+  const clearError = (): void => setError(null);
+
+  // ===== HELPERS DE PERMISOS =====
+
   const roleLevel: Record<number, number> = {
     1: 1, // superuser
     2: 2, // director
     3: 3, // coordinator
     4: 4, // animator
-    5: 5  // member
+    5: 5, // member
   };
 
-  /** true si el usuario actual tiene un nivel <= al requerido */
+
   const hasPermission = (requiredLevel: number): boolean => {
     if (!user) return false;
     const current = roleLevel[user.rol_id] ?? 5;
     return current <= requiredLevel;
   };
 
-  /** true si el usuario puede crear / administrar usuarios (coordinador↑) */
-  const canCreateUsers = () => hasPermission(3); // 1-superuser, 2-director, 3-coordinator
 
+  const canCreateUsers = () => hasPermission(3);
 
-  // ✅ LIMPIAR ERROR
-  const clearError = (): void => {
-    setError(null);
-  };
+  // ===== VALOR DEL CONTEXTO =====
 
   const value: AuthContextType = {
     user,
@@ -160,17 +139,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     updateUser,
     clearError,
     hasPermission,
-    canCreateUsers
+    canCreateUsers,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// ✅ HOOK PERSONALIZADO
+// ===== HOOK =====
+
+
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {

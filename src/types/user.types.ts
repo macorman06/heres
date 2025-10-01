@@ -9,20 +9,19 @@ export const ROLES = {
 
 export type RoleId = typeof ROLES[keyof typeof ROLES];
 
-// User type - Updated for flexible users with birthday
 export interface User {
   id: number;
   nombre: string;
   apellido1?: string;
   apellido2?: string;
-  email?: string; // Optional for users without login capability
+  email?: string;
   rol_id: number;
   rol: string;
   centro_juvenil?: string;
   seccion?: string[];
   sexo?: 'M' | 'F';
-  edad?: number; // Calculated from birthday
-  birthday?: string; // ✅ Added birthday field (YYYY-MM-DD format)
+  edad?: number;
+  birthday?: string;
   direccion?: string;
   localidad?: string;
   telefono?: string;
@@ -30,10 +29,12 @@ export interface User {
   talla?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   fecha_creacion?: string;
   fecha_modificacion?: string;
-  can_login?: boolean; // Indicates if user has login credentials
+  can_login?: boolean;
+  ciudad?: string;
+  codigo_postal?: string;
+  fecha_nacimiento?: string;
 }
 
-// Create User Request type - also needs birthday
 export interface CreateUserRequest {
   nombre: string;
   apellido1?: string;

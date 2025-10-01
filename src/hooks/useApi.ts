@@ -1,39 +1,36 @@
-// src/hooks/useApi.ts
-import { useState, useEffect, useCallback } from 'react';
-import {
-  fetchUsers,
-  createUser,
-  updateUser,
-  deleteUser,
-  uploadProfileImage,
-  User,
-  ApiError,
-} from '../services/api';
+import { useState, useCallback } from 'react';
+import { apiService } from '../services/api/index.ts';
 
-// ✅ HOOK GENÉRICO useApi (para compatibilidad hacia atrás)
-export const useApi = <T>(apiFunction: (...args: any[]) => Promise<T>) => {
+import type { User } from '../types'
+import type { Grupo } from '../types'
+import type { ApiError } from '../types'
+
+// ===== HOOK GENÉRICO =====
+
+export const useApi = <T>(apiFunction: (...args: unknown[]) => Promise<T>) => {
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const execute = useCallback(async (...args: any[]): Promise<T> => {
-    try {
-      setLoading(true);
-      setError(null);
+  const execute = useCallback(
+    async (...args: unknown[]): Promise<T> => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await apiFunction(...args);
+        setData(result);
+        return result;
+      } catch (err: unknown) {
+        const errorMessage = (err as ApiError).message || 'Error desconocido';
+        setError(errorMessage);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiFunction]
+  );
 
-      const result = await apiFunction(...args);
-      setData(result);
-      return result;
-
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error desconocido';
-      setError(errorMessage);
-      console.error('Error en useApi:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiFunction]);
 
   const reset = useCallback(() => {
     setData(null);
@@ -41,127 +38,90 @@ export const useApi = <T>(apiFunction: (...args: any[]) => Promise<T>) => {
     setLoading(false);
   }, []);
 
-  return {
-    data,
-    loading,
-    error,
-    execute,
-    reset
-  };
+  return { data, loading, error, execute, reset };
 };
 
-// ✅ HOOK ESPECIALIZADO PARA USUARIOS
+// ===== HOOK ESPECIALIZADO PARA USUARIOS =====
+
+/**
+ * Hook para gestionar operaciones CRUD de usuarios
+ */
 export const useUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Cargar todos los usuarios
   const fetchAllUsers = useCallback(async (): Promise<User[]> => {
+    // ⚠️ Verificar si hay token antes de continuar
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.log('No token available, skipping fetch');
+      return [];
+    }
+
     try {
       setLoading(true);
       setError(null);
-      const userData = await fetchUsers();
+      const userData = await apiService.getUsers();
       setUsers(userData);
       return userData;
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // Si es 401, NO actualizar estado (ya estamos redirigiendo)
+      if ((err as ApiError).status === 401) {
+        console.log('401 error - redirecting, not updating state');
+        return [];
+      }
+
       const errorMessage = (err as ApiError).message || 'Error cargando usuarios';
       setError(errorMessage);
-      console.error('❌ Error cargando usuarios:', err);
+      throw err;
+    } finally {
+      // Solo actualizar loading si no es 401
+      if (localStorage.getItem('authToken')) {
+        setLoading(false);
+      }
+    }
+  }, []); // Sin dependencias
+
+  return { users, loading, error, fetchAllUsers };
+};
+
+// ===== HOOK ESPECIALIZADO PARA GRUPOS =====
+
+/**
+ * Hook para gestionar operaciones de grupos
+ */
+export const useGroups = () => {
+  const [groups, setGroups] = useState<Grupo[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+
+  const fetchAllGroups = useCallback(async (): Promise<Grupo[]> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const groupsData = await apiService.getGroups();
+      setGroups(groupsData);
+      return groupsData;
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error cargando grupos';
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Crear nuevo usuario
-  const createNewUser = useCallback(async (userData: Partial<User>): Promise<User> => {
-    try {
-      setError(null);
-      const newUser = await createUser(userData);
-      setUsers(prev => [...prev, newUser]);
-      return newUser;
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error creando usuario';
-      setError(errorMessage);
-      throw err;
-    }
-  }, []);
 
-  // Actualizar usuario existente
-  const updateExistingUser = useCallback(async (id: number, userData: Partial<User>): Promise<User> => {
-    try {
-      setError(null);
-      const updatedUser = await updateUser(id, userData);
-      setUsers(prev => prev.map(user => user.id === id ? updatedUser : user));
-      return updatedUser;
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error actualizando usuario';
-      setError(errorMessage);
-      throw err;
-    }
-  }, []);
-
-  // Eliminar usuario
-  const deleteExistingUser = useCallback(async (id: number): Promise<void> => {
-    try {
-      setError(null);
-      await deleteUser(id);
-      setUsers(prev => prev.filter(user => user.id !== id));
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error eliminando usuario';
-      setError(errorMessage);
-      throw err;
-    }
-  }, []);
-
-  // Subir imagen de perfil
-  const uploadUserImage = useCallback(async (userId: number, imageFile: File): Promise<string> => {
-    try {
-      setError(null);
-      const result = await uploadProfileImage(userId, imageFile);
-      return result.path;
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error subiendo imagen';
-      setError(errorMessage);
-      throw err;
-    }
-  }, []);
-
-  // Limpiar error
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
-  // Cargar inicial (opcional - puedes activarlo o desactivarlo)
-  useEffect(() => {
-    // fetchAllUsers(); // Descomenta si quieres carga automática
-  }, []);
+  const clearError = useCallback(() => setError(null), []);
 
   return {
-    users,
+    groups,
     loading,
     error,
-    fetchAllUsers,
-    createNewUser,
-    updateExistingUser,
-    deleteExistingUser,
-    uploadUserImage,
+    fetchAllGroups,
     clearError,
-    refreshUsers: fetchAllUsers // Alias para compatibilidad
+    refreshGroups: fetchAllGroups,
   };
 };
-
-// ✅ ALIAS PARA COMPATIBILIDAD
-export const useApiCall = useApi;
-
-// ✅ RE-EXPORTS PARA COMPATIBILIDAD
-export {
-  fetchUsers,
-  createUser,
-  updateUser,
-  deleteUser,
-  uploadProfileImage
-} from '../services/api';
-
-export type { User, ApiError } from '../services/api';

@@ -10,9 +10,12 @@ export class HttpClient {
   private deduplication = RequestDeduplication.getInstance();
 
   constructor() {
+    // Crear instancia de Axios con configuración base
     this.api = axios.create({
       baseURL: API_CONFIG.BASE_URL,
-      timeout: IS_DEVELOPMENT ? API_CONFIG.TIMEOUT.development : API_CONFIG.TIMEOUT.production,
+      timeout: IS_DEVELOPMENT
+        ? API_CONFIG.TIMEOUT.development
+        : API_CONFIG.TIMEOUT.production,
       headers: API_CONFIG.HEADERS,
     });
 
@@ -21,13 +24,15 @@ export class HttpClient {
     if (IS_DEVELOPMENT) {
       console.log('🔧 HTTP Client initialized:', {
         baseURL: API_CONFIG.BASE_URL,
-        timeout: IS_DEVELOPMENT ? API_CONFIG.TIMEOUT.development : API_CONFIG.TIMEOUT.production
+        timeout: IS_DEVELOPMENT
+          ? API_CONFIG.TIMEOUT.development
+          : API_CONFIG.TIMEOUT.production,
       });
     }
   }
 
-  private setupInterceptors() {
-    // Request interceptor
+  private setupInterceptors(): void {
+    // Interceptor de Request - Añade token de autenticación
     this.api.interceptors.request.use(
       (config) => {
         const token = TokenManager.getToken();
@@ -39,7 +44,7 @@ export class HttpClient {
           console.log('📤 API Request:', {
             method: config.method?.toUpperCase(),
             url: config.url,
-            hasToken: !!token
+            hasToken: !!token,
           });
         }
 
@@ -48,7 +53,7 @@ export class HttpClient {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor
+    // Interceptor de Response - Maneja errores y reintentos
     this.api.interceptors.response.use(
       (response) => {
         this.retryCount = 0;
@@ -57,7 +62,7 @@ export class HttpClient {
           console.log('📥 API Response:', {
             status: response.status,
             url: response.config.url,
-            method: response.config.method?.toUpperCase()
+            method: response.config.method?.toUpperCase(),
           });
         }
 
@@ -70,11 +75,11 @@ export class HttpClient {
           console.error('❌ API Error:', {
             status: error.response?.status,
             url: error.config?.url,
-            message: error.message
+            message: error.message,
           });
         }
 
-        // Handle 401 Unauthorized
+        // Manejar error 401 (No autorizado)
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           TokenManager.clearAuth();
@@ -82,11 +87,17 @@ export class HttpClient {
           return Promise.reject(error);
         }
 
-        // Handle network errors with retry logic
-        if (!error.response && this.retryCount < API_CONFIG.RETRY.maxAttempts && !IS_DEVELOPMENT) {
+        // Lógica de reintentos para errores de red
+        if (
+          !error.response &&
+          this.retryCount < API_CONFIG.RETRY.maxAttempts &&
+          !IS_DEVELOPMENT
+        ) {
           this.retryCount++;
           console.log(`Retrying request... Attempt ${this.retryCount}`);
-          await new Promise(resolve => setTimeout(resolve, API_CONFIG.RETRY.delay * this.retryCount));
+          await new Promise((resolve) =>
+            setTimeout(resolve, API_CONFIG.RETRY.delay * this.retryCount)
+          );
           return this.api.request(originalRequest);
         }
 
@@ -148,7 +159,7 @@ export class HttpClient {
       apiUrl: API_CONFIG.BASE_URL,
       environment: import.meta.env.MODE,
       isDevelopment: IS_DEVELOPMENT,
-      version: '1.0.0'
+      version: '1.0.0',
     };
   }
 }

@@ -4,13 +4,12 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
-import { useNavigate } from 'react-router-dom';
 import { Card } from 'primereact/card';
 
 import { useAuth } from '../hooks/useAuth';          // ✅ auth global
 import { useUsers } from '../hooks/useApi';           // ✅ hook especializado
-import { User, RegisterData } from '../services/api';
-
+import { RegisterData } from '../services/api';
+import { User } from '../types'
 import { MemberCard } from '../components/common/MemberCard';
 import { UserFormDialog } from '../components/common/UserFormDialog';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -45,17 +44,35 @@ export const Members: React.FC = () => {
   const [formVisible, setFormVisible] = useState(false);
   const [viewMode, setViewMode] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isMounted, setIsMounted] = useState(true);
 
   /* ------------  initial load  ------------ */
   useEffect(() => {
-    fetchAllUsers();
-  }, [fetchAllUsers]);
+    // ⚠️ Solo hacer fetch si hay token
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+      console.log('🔴 Sin token - No se hace fetch');
+      return;
+    }
+
+    if (isMounted) {
+      fetchAllUsers().catch((err) => {
+        console.log('Error en fetchAllUsers:', err);
+        // No hacer nada si ya estamos redirigiendo
+      });
+    }
+
+    return () => {
+      setIsMounted(false);
+    };
+  }, []); // ⚠️ Array vacío - solo una vez al montar
 
   /* ------------  helpers  ------------ */
   const showToast = (severity: 'success' | 'error', summary: string, detail: string) =>
     toast.current?.show({ severity, summary, detail, life: 3000 });
 
-  const handleFilter = (field: keyof FilterState, value: never) =>
+  const handleFilter = (field: string, value: string) =>
     setFilters((prev) => ({ ...prev, [field]: value }));
 
   const clearFilters = () =>
@@ -73,7 +90,11 @@ export const Members: React.FC = () => {
       }
       setFormVisible(false);
     } catch (err: unknown) {
-      showToast('error', 'Error', err.message);
+      if (err instanceof Error) {
+        showToast('error', 'Error', err.message);
+      } else {
+        showToast('error', 'Error', String(err));
+      }
     }
   };
 

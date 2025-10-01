@@ -9,7 +9,7 @@ interface SidebarProps {
 
 const menuItems: MenuItem[] = [
   { label: 'Dashboard', icon: 'pi pi-home', route: '/', subtitle: 'Inicio' },
-  { label: 'Miembros', icon: 'pi pi-users', route: '/miembros', subtitle: 'Gestión de usuarios' },
+  { label: 'Grupos', icon: 'pi pi-users', route: '/grupos', subtitle: 'Gestión de usuarios y grupos' },
   { label: 'Actividades', icon: 'pi pi-calendar', route: '/actividades', subtitle: 'Eventos y talleres' },
   { label: 'Materiales', icon: 'pi pi-folder', route: '/materiales', subtitle: 'Recursos y documentos' },
   { label: 'Contacto', icon: 'pi pi-phone', route: '/contacto', subtitle: 'Información de contacto' },

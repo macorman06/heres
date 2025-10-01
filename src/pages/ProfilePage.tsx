@@ -8,7 +8,7 @@ import { Badge } from 'primereact/badge';
 import { Divider } from 'primereact/divider';
 import { Message } from 'primereact/message';
 import { Toast } from 'primereact/toast';
-import { FileUpload } from 'primereact/fileupload';
+import {FileUpload, FileUploadHandlerEvent} from 'primereact/fileupload';
 import { useAuth } from '../hooks/useAuth';
 
 export const ProfilePage: React.FC = () => {

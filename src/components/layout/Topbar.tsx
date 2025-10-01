@@ -47,14 +47,11 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
   const menuRef = useRef<Menu>(null);
   const navigate = useNavigate();
 
-  // ✅ NEW: Profile image state
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // ✅ Usar autenticación real en lugar de mock
   const { user, logout } = useAuth();
 
-  // ✅ NEW: Generate profile image filename - Solo nombre + primer apellido
   const generateImageFilename = (nombre: string, apellido1: string): string => {
     const cleanName = (name: string) =>
       name
@@ -70,17 +67,14 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
     return `${cleanNombre}_${cleanApellido1}`;
   };
 
-  // ✅ NEW: Check if profile image exists
-// En Topbar.tsx - useEffect actualizado
   useEffect(() => {
-    // ✅ FIXED: Solo verificar imagen si el usuario y sus datos están disponibles
     if (!user?.nombre || !user?.apellido1) {
       setImageLoaded(true);
       return;
     }
 
     const checkImageExists = async () => {
-      const baseFilename = generateImageFilename(user.nombre, user.apellido1);
+      const baseFilename = generateImageFilename(user.nombre, user.apellido1 ?? '');
       console.log(`🔍 [Topbar] Buscando imagen para: ${baseFilename}`);
 
       const extensions = ['png', 'jpg', 'jpeg', 'webp'];
@@ -109,10 +103,9 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
     };
 
     checkImageExists();
-  }, [user?.nombre, user?.apellido1]); // ✅ FIXED: Dependencias con optional chaining
+  }, [user?.nombre, user?.apellido1]);
 
 
-  // ✅ Función real de logout
   const handleLogout = async () => {
     try {
       console.log('🚪 Iniciando cierre de sesión...');
@@ -178,16 +171,13 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
     setSearchValue(value);
     if (value.trim()) {
       console.log('Buscando:', value);
-      // Aquí implementarías la lógica de búsqueda
     }
   };
 
   const handleNotificationClick = () => {
     console.log('Mostrar notificaciones:', mockNotifications);
-    // Aquí podrías abrir un panel de notificaciones o modal
   };
 
-  // ✅ Mostrar información real del usuario
   const displayName = user?.nombre || 'Usuario';
   const fullName = `${user?.nombre || ''} ${user?.apellido1 || ''}`.trim() || 'Usuario';
   const displayRole = user?.rol || 'miembro';
@@ -226,7 +216,6 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
 
         {/* Right section - User info */}
         <div className="flex items-center space-x-4">
-          {/* Theme Toggle */}
           <ThemeToggle />
 
           {/* Notifications */}
@@ -258,7 +247,6 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
               </div>
             </div>
 
-            {/* ✅ UPDATED: User Avatar with profile image */}
             <button
               onClick={(e) => menuRef.current?.toggle(e)}
               className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-full"
@@ -290,7 +278,6 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
             </button>
           </div>
 
-          {/* User Menu Overlay */}
           <Menu
             model={userMenuItems}
             popup

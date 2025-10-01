@@ -1,192 +1,253 @@
-/* ===========================================
-   MENUS - MODO CLARO Y OSCURO CORREGIDO
-   =========================================== */
+/* ============================================
+   VARIABLES CSS - MODO CLARO Y OSCURO
+   ============================================ */
 
-/* ✅ BASE MENU - MODO CLARO */
+:root {
+    /* Modo Claro (por defecto) */
+    --menu-bg: #ffffff;
+    --menu-border: #e5e7eb;
+    --menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+    --menu-item-text: #374151;
+    --menu-item-text-hover: #111827;
+    --menu-item-icon: #6b7280;
+    --menu-item-icon-hover: #374151;
+    --menu-item-bg-hover: #f3f4f6;
+
+    --menu-separator: #e5e7eb;
+}
+
+/* Modo Oscuro */
+.dark-mode,
+[data-theme="dark"],
+body.dark-mode {
+    --menu-bg: #1f2937;
+    --menu-border: #374151;
+    --menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+
+    --menu-item-text: #e5e7eb;
+    --menu-item-text-hover: #ffffff;
+    --menu-item-icon: #9ca3af;
+    --menu-item-icon-hover: #e5e7eb;
+    --menu-item-bg-hover: #374151;
+
+    --menu-separator: #4b5563;
+}
+
+/* Detección automática de preferencia del sistema */
+@media (prefers-color-scheme: dark) {
+    :root:not(.light-mode) {
+        --menu-bg: #1f2937;
+        --menu-border: #374151;
+        --menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+
+        --menu-item-text: #e5e7eb;
+        --menu-item-text-hover: #ffffff;
+        --menu-item-icon: #9ca3af;
+        --menu-item-icon-hover: #e5e7eb;
+        --menu-item-bg-hover: #374151;
+
+        --menu-separator: #4b5563;
+    }
+}
+
+/* ============================================
+   ESTILOS DEL MENU - CONTENEDOR PRINCIPAL
+   ============================================ */
+
 .p-menu {
-    background-color: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
+    background-color: var(--menu-bg) !important;
+    border: 1px solid var(--menu-border) !important;
     border-radius: 0.5rem !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: var(--menu-shadow) !important;
     padding: 0.5rem !important;
     min-width: 12rem !important;
     z-index: 1000 !important;
 }
 
-/* ✅ MENU ITEMS - MODO CLARO */
-.p-menu .p-menu-list {
+/* ============================================
+   LISTA DEL MENU
+   ============================================ */
+
+.p-menu .p-menu-list,
+.p-menu-list.p-reset {
     padding: 0 !important;
     margin: 0 !important;
     list-style: none !important;
 }
 
-.p-menu .p-menu-item-link {
+/* ============================================
+   ITEMS DEL MENU
+   ============================================ */
+
+.p-menu .p-menuitem {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+.p-menu .p-menuitem-content {
+    border-radius: 0.375rem !important;
+    transition: background-color 0.15s ease !important;
+}
+
+/* ============================================
+   ENLACES - ELIMINAR TODO SUBRAYADO Y DECORACIÓN
+   ============================================ */
+
+.p-menu .p-menuitem-link,
+.p-menu .p-menuitem-link:link,
+.p-menu .p-menuitem-link:visited,
+.p-menu .p-menuitem-link:hover,
+.p-menu .p-menuitem-link:active,
+.p-menu .p-menuitem-link:focus,
+.p-menu a,
+.p-menu a:link,
+.p-menu a:visited,
+.p-menu a:hover,
+.p-menu a:active,
+.p-menu a:focus {
     padding: 0.75rem 1rem !important;
-    color: #374151 !important; /* Gris oscuro para texto */
+    color: var(--menu-item-text) !important;
     text-decoration: none !important;
+    text-decoration-line: none !important;
+    text-decoration-style: none !important;
+    text-decoration-color: transparent !important;
     display: flex !important;
     align-items: center !important;
+    gap: 0.5rem !important;
     border-radius: 0.375rem !important;
     transition: all 0.15s ease !important;
     font-weight: 400 !important;
     cursor: pointer !important;
-}
-
-.p-menu .p-menu-item-text {
-    color: #374151 !important; /* Asegurar color del texto */
-    font-size: 0.875rem !important;
-}
-
-.p-menu .p-menu-item-icon {
-    color: #6b7280 !important; /* Ícono gris */
-    margin-right: 0.5rem !important;
-    font-size: 0.875rem !important;
-}
-
-/* ✅ HOVER - MODO CLARO */
-.p-menu .p-menu-item:hover .p-menu-item-link,
-.p-menu .p-menu-item.p-focus .p-menu-item-link {
-    background-color: #f3f4f6 !important; /* Fondo gris claro en hover */
-    color: #111827 !important; /* Texto más oscuro en hover */
-}
-
-.p-menu .p-menu-item:hover .p-menu-item-text {
-    color: #111827 !important; /* Texto hover */
-}
-
-.p-menu .p-menu-item:hover .p-menu-item-icon {
-    color: #374151 !important; /* Ícono hover */
-}
-
-/* ✅ SEPARATOR */
-.p-menu .p-menu-separator {
-    border-top: 1px solid #e5e7eb !important;
-    margin: 0.5rem 0 !important;
-    height: 1px !important;
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
     background: transparent !important;
 }
 
-/* ===========================================
-   MODO OSCURO - ESPECÍFICO Y CORRECTO
-   =========================================== */
+/* ============================================
+   TEXTO DE LOS ITEMS
+   ============================================ */
 
-/* ✅ BASE MENU - MODO OSCURO */
-.dark .p-menu {
-    background-color: #1f2937 !important; /* Fondo gris oscuro */
-    border: 1px solid #374151 !important; /* Borde gris */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3) !important;
+.p-menu .p-menuitem-text,
+.p-menuitem-text {
+    color: var(--menu-item-text) !important;
+    font-size: 0.875rem !important;
+    text-decoration: none !important;
+    line-height: 1.25rem !important;
 }
 
-/* ✅ MENU ITEMS - MODO OSCURO */
-.dark .p-menu .p-menu-item-link {
-    color: #f9fafb !important; /* TEXTO BLANCO - NO GRIS */
+/* ============================================
+   ICONOS DE LOS ITEMS
+   ============================================ */
+
+.p-menu .p-menuitem-icon,
+.p-menuitem-icon {
+    color: var(--menu-item-icon) !important;
+    font-size: 0.875rem !important;
+    flex-shrink: 0 !important;
 }
 
-.dark .p-menu .p-menu-item-text {
-    color: #f9fafb !important; /* TEXTO BLANCO ESPECÍFICO */
+/* ============================================
+   ESTADOS: HOVER, FOCUS, ACTIVE
+   ============================================ */
+
+/* Hover en el item completo */
+.p-menu .p-menuitem:hover .p-menuitem-content,
+.p-menu .p-menuitem.p-focus .p-menuitem-content,
+.p-menu .p-menuitem[data-p-focused="true"] .p-menuitem-content {
+    background-color: var(--menu-item-bg-hover) !important;
 }
 
-.dark .p-menu .p-menu-item-icon {
-    color: #d1d5db !important; /* Ícono gris claro */
+/* Hover en el enlace */
+.p-menu .p-menuitem:hover .p-menuitem-link,
+.p-menu .p-menuitem.p-focus .p-menuitem-link,
+.p-menu .p-menuitem[data-p-focused="true"] .p-menuitem-link,
+.p-menu .p-menuitem-link:hover {
+    color: var(--menu-item-text-hover) !important;
+    background: transparent !important;
+    text-decoration: none !important;
 }
 
-/* ✅ HOVER - MODO OSCURO */
-.dark .p-menu .p-menu-item:hover .p-menu-item-link,
-.dark .p-menu .p-menu-item.p-focus .p-menu-item-link {
-    background-color: #374151 !important; /* Fondo gris medio en hover */
-    color: #ffffff !important; /* TEXTO COMPLETAMENTE BLANCO en hover */
+/* Hover en el texto */
+.p-menu .p-menuitem:hover .p-menuitem-text,
+.p-menu .p-menuitem.p-focus .p-menuitem-text,
+.p-menu .p-menuitem[data-p-focused="true"] .p-menuitem-text {
+    color: var(--menu-item-text-hover) !important;
+    text-decoration: none !important;
 }
 
-.dark .p-menu .p-menu-item:hover .p-menu-item-text {
-    color: #ffffff !important; /* TEXTO BLANCO en hover */
+/* Hover en el icono */
+.p-menu .p-menuitem:hover .p-menuitem-icon,
+.p-menu .p-menuitem.p-focus .p-menuitem-icon,
+.p-menu .p-menuitem[data-p-focused="true"] .p-menuitem-icon {
+    color: var(--menu-item-icon-hover) !important;
 }
 
-.dark .p-menu .p-menu-item:hover .p-menu-item-icon {
-    color: #ffffff !important; /* ÍCONO BLANCO en hover */
+/* ============================================
+   SEPARADORES
+   ============================================ */
+
+.p-menu .p-menu-separator,
+.p-menu-separator {
+    border-top: 1px solid var(--menu-separator) !important;
+    margin: 0.5rem 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
 }
 
-/* ✅ SEPARATOR - MODO OSCURO */
-.dark .p-menu .p-menu-separator {
-    border-top-color: #374151 !important;
+/* ============================================
+   OVERLAY Y ANIMACIONES
+   ============================================ */
+
+.p-menu.p-menu-overlay {
+    position: absolute !important;
 }
 
-/* ✅ ACTIVE/SELECTED ITEM */
-.p-menu .p-menu-item.p-highlight .p-menu-item-link {
-    background-color: #dc2626 !important; /* Rojo de la marca */
-    color: #ffffff !important;
-}
-
-.p-menu .p-menu-item.p-highlight .p-menu-item-text,
-.p-menu .p-menu-item.p-highlight .p-menu-item-icon {
-    color: #ffffff !important;
-}
-
-.dark .p-menu .p-menu-item.p-highlight .p-menu-item-link {
-    background-color: #dc2626 !important;
-    color: #ffffff !important;
-}
-
-.dark .p-menu .p-menu-item.p-highlight .p-menu-item-text,
-.dark .p-menu .p-menu-item.p-highlight .p-menu-item-icon {
-    color: #ffffff !important;
-}
-
-/* ✅ SUBMENU HEADER (si lo usas) */
-.p-menu .p-submenu-header {
-    padding: 0.75rem 1rem 0.25rem 1rem !important;
-    color: #6b7280 !important;
-    font-weight: 600 !important;
-    font-size: 0.75rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-}
-
-.dark .p-menu .p-submenu-header {
-    color: #9ca3af !important;
-}
-
-/* ✅ DISABLED ITEMS */
-.p-menu .p-menu-item.p-disabled .p-menu-item-link {
-    opacity: 0.6 !important;
-    cursor: not-allowed !important;
-}
-
-.p-menu .p-menu-item.p-disabled:hover .p-menu-item-link {
-    background-color: transparent !important;
-}
-
-.dark .p-menu .p-menu-item.p-disabled:hover .p-menu-item-link {
-    background-color: transparent !important;
-}
-
-/* ✅ RESPONSIVE */
-@media (max-width: 640px) {
-    .p-menu {
-        min-width: 10rem !important;
-        max-width: calc(100vw - 2rem) !important;
-    }
-
-    .p-menu .p-menu-item-link {
-        padding: 0.875rem 1rem !important;
-    }
-
-    .p-menu .p-menu-item-text {
-        font-size: 1rem !important;
-    }
-}
-
-/* ✅ ANIMACIÓN DE ENTRADA */
-.p-menu {
-    animation: menuFadeIn 0.15s ease-out;
-}
-
-@keyframes menuFadeIn {
-    0% {
+@keyframes fadeIn {
+    from {
         opacity: 0;
-        transform: translateY(-8px) scale(0.95);
+        transform: translateY(-0.5rem);
     }
-    100% {
+    to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
+}
+
+/* ============================================
+   ACCESIBILIDAD Y FOCUS
+   ============================================ */
+
+.p-menu .p-menu-list:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.p-menu .p-menuitem-link:focus-visible {
+    outline: 2px solid var(--menu-item-text) !important;
+    outline-offset: 2px !important;
+}
+
+/* ============================================
+   ESTADOS DISABLED (por si acaso)
+   ============================================ */
+
+.p-menu .p-menuitem.p-disabled .p-menuitem-link,
+.p-menu .p-menuitem[data-p-disabled="true"] .p-menuitem-link {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+/* ============================================
+   LIMPIAR ESTILOS DE NAVEGADORES
+   ============================================ */
+
+.p-menu *,
+.p-menu *::before,
+.p-menu *::after {
+    text-decoration: none !important;
 }

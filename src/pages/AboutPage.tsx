@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
 
 export const AboutPage: React.FC = () => {
   return (

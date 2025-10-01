@@ -1,18 +1,21 @@
 import { HttpClient } from '../core/httpClient';
-import { User, CreateUserRequest } from '../../types/user.types';
+import { User, CreateUserRequest } from '../../../types';
 
 export class UserService {
   constructor(private httpClient: HttpClient) {}
 
   async getUsers(): Promise<User[]> {
-    return this.httpClient.get<User[]>('/usuarios/');
+    return this.httpClient.get<User[]>('/usuarios');
   }
 
   async createUser(userData: CreateUserRequest): Promise<User> {
-    return this.httpClient.post<User>('/usuarios/', userData);
+    return this.httpClient.post<User>('/usuarios', userData);
   }
 
-  async updateUser(id: number, userData: Partial<CreateUserRequest>): Promise<User> {
+  async updateUser(
+    id: number,
+    userData: Partial<CreateUserRequest>
+  ): Promise<User> {
     return this.httpClient.put<User>(`/usuarios/${id}`, userData);
   }
 

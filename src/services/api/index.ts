@@ -1,70 +1,74 @@
+
 import { HttpClient } from './core/httpClient';
 import { AuthService } from './services/authService';
 import { UserService } from './services/userService';
-import { PermissionManager } from '../auth/permissions';
+import { GroupService } from './services/groupService';
 
-// Create HTTP client instance
+// ===== CREAR INSTANCIAS =====
+
+// Crear instancia del cliente HTTP
 const httpClient = new HttpClient();
 
-// Create service instances
+// Crear instancias de servicios
 export const authService = new AuthService(httpClient);
 export const userService = new UserService(httpClient);
+export const groupService = new GroupService(httpClient);
 
-// Export permission manager
-export { PermissionManager };
+// ===== EXPORTAR TIPOS =====
+// Tipos de autenticación, usuario, grupo y error.
+export type { LoginRequest, RegisterRequest, AuthResponse, AuthContextType} from '../../types/auth.types.ts';
+export type { User, CreateUserRequest, UpdateUserRequest} from '../../types/user.types.ts';
+export type { Grupo } from '../../types/group.types.ts';
+export type { ApiError } from '../../types/api.types.ts';
 
-// Export types for components
-export type {
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-  User,
-} from '../types/auth.types';
+// ===== EXPORTAR UTILIDADES =====
 
-export type {
-  CreateUserRequest,
-  UpdateUserRequest,
-} from '../types/user.types';
+export { API_CONFIG, IS_DEVELOPMENT } from './config/apiConfig';
+export { ErrorHandler } from './core/errorHandler';
 
-export type {
-  Member,
-  CreateMemberRequest,
-  UpdateMemberRequest,
-} from '../types/member.types';
+// ===== CLASE APISERVICE (AGRUPACIÓN DE SERVICIOS) =====
 
-export type { ApiError } from '../types/api.types';
 
-// Export roles and constants
-export { ROLES, ROLE_NAMES } from '../auth/permissions';
-
-// Main API service for backward compatibility and ease of use
 export class ApiService {
+  // Referencias a los servicios
   auth = authService;
   users = userService;
-  permissions = PermissionManager;
+  groups = groupService;
 
-  // Environment info
+  // === MÉTODOS DE AUTENTICACIÓN ===
+
+  login = (credentials: any) => authService.login(credentials);
+  register = (userData: any) => authService.register(userData);
+  logout = () => authService.logout();
+  getCurrentUser = () => authService.getCurrentUser();
+  isAuthenticated = () => authService.isAuthenticated();
+
+  // === MÉTODOS DE USUARIOS ===
+
+  getUsers = () => userService.getUsers();
+  createUser = (userData: any) => userService.createUser(userData);
+  updateUser = (id: number, userData: any) => userService.updateUser(id, userData);
+  deleteUser = (id: number) => userService.deleteUser(id);
+  getUserById = (id: number) => userService.getUserById(id);
+
+  // === MÉTODOS DE GRUPOS ===
+
+  getGroups = () => groupService.getGroups();
+  getGroupById = (id: number) => groupService.getGroupById(id);
+  createGroup = (groupData: any) => groupService.createGroup(groupData);
+  updateGroup = (id: number, groupData: any) =>
+    groupService.updateGroup(id, groupData);
+  deleteGroup = (id: number) => groupService.deleteGroup(id);
+
+  // === UTILIDADES ===
+
+  /**
+   * Obtiene información del entorno actual
+   */
   getEnvironmentInfo = () => httpClient.getEnvironmentInfo();
-
-  // Convenience methods for backward compatibility
-  login = (credentials: any) => this.auth.login(credentials);
-  register = (userData: any) => this.auth.register(userData);
-  logout = () => this.auth.logout();
-  getCurrentUser = () => this.auth.getCurrentUser();
-  isAuthenticated = () => this.auth.isAuthenticated();
-
-  getUsers = () => this.users.getUsers();
-  createUser = (userData: any) => this.users.createUser(userData);
-  updateUser = (id: number, userData: any) => this.users.updateUser(id, userData);
-  deleteUser = (id: number) => this.users.deleteUser(id);
-
-  // Permission methods
-  canCreateUsers = (userRole: number) => this.permissions.canCreateUsers(userRole);
-  canEditUsers = (userRole: number) => this.permissions.canEditUsers(userRole);
-  canDeleteUsers = (userRole: number) => this.permissions.canDeleteUsers(userRole);
-  canManageMembers = (userRole: number) => this.permissions.canManageMembers(userRole);
-  hasAdminAccess = (userRole: number) => this.permissions.hasAdminAccess(userRole);
 }
+
+// ===== EXPORTAR INSTANCIA DE APISERVICE =====
 
 export const apiService = new ApiService();
 export default apiService;

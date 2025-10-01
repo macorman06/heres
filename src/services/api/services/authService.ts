@@ -1,6 +1,9 @@
 import { HttpClient } from '../core/httpClient';
 import { TokenManager } from '../../auth/tokenManager';
-import { LoginRequest, RegisterRequest, AuthResponse, User } from '../../types/auth.types';
+
+import type { LoginRequest, RegisterRequest, AuthResponse} from '../../../types';
+import type { User } from '../../../types'
+
 import { IS_DEVELOPMENT } from '../config/apiConfig';
 
 export class AuthService {
@@ -12,7 +15,10 @@ export class AuthService {
         console.log('🔐 Attempting login for:', credentials.email);
       }
 
-      const response = await this.httpClient.post<AuthResponse>('/auth/login', credentials);
+      const response = await this.httpClient.post<AuthResponse>(
+        '/auth/login',
+        credentials
+      );
 
       TokenManager.setToken(response.token);
       TokenManager.setUserData(response.usuario);
@@ -29,7 +35,10 @@ export class AuthService {
 
   async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
-      const response = await this.httpClient.post<AuthResponse>('/auth/register', userData);
+      const response = await this.httpClient.post<AuthResponse>(
+        '/auth/register',
+        userData
+      );
 
       TokenManager.setToken(response.token);
       TokenManager.setUserData(response.usuario);
