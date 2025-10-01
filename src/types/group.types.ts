@@ -17,3 +17,9 @@ export interface Grupo {
   }[];
   status: 'active' | 'inactive';
 }
+
+export interface FormData {
+  nombre: string;
+  centro_juvenil: string;
+  seccion: string;
+}

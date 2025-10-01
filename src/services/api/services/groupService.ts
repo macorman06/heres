@@ -1,6 +1,5 @@
 import { HttpClient } from '../core/httpClient';
-
-import type {Grupo} from '../../../types'
+import type { Grupo } from '../../../types';
 
 export class GroupService {
   constructor(private httpClient: HttpClient) {}

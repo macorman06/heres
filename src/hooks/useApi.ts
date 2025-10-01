@@ -87,10 +87,6 @@ export const useUsers = () => {
 };
 
 // ===== HOOK ESPECIALIZADO PARA GRUPOS =====
-
-/**
- * Hook para gestionar operaciones de grupos
- */
 export const useGroups = () => {
   const [groups, setGroups] = useState<Grupo[]>([]);
   const [loading, setLoading] = useState(false);
@@ -113,6 +109,76 @@ export const useGroups = () => {
     }
   }, []);
 
+  // Obtener un grupo por ID
+  const fetchGroupById = useCallback(async (id: number): Promise<Grupo> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const group = await apiService.getGroupById(id);
+      return group;
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error cargando grupo';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Crear un nuevo grupo
+  const createGroup = useCallback(async (groupData: Partial<Grupo>): Promise<Grupo> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const newGroup = await apiService.createGroup(groupData);
+      // Actualizar la lista de grupos localmente
+      setGroups((prevGroups) => [...prevGroups, newGroup]);
+      return newGroup;
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error creando grupo';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Actualizar un grupo existente
+  const updateGroup = useCallback(async (id: number, groupData: Partial<Grupo>): Promise<Grupo> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const updatedGroup = await apiService.updateGroup(id, groupData);
+      // Actualizar la lista de grupos localmente
+      setGroups((prevGroups) =>
+        prevGroups.map((group) => (group.id === id ? updatedGroup : group))
+      );
+      return updatedGroup;
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error actualizando grupo';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Eliminar un grupo
+  const deleteGroup = useCallback(async (id: number): Promise<void> => {
+    try {
+      setLoading(true);
+      setError(null);
+      await apiService.deleteGroup(id);
+      // Eliminar el grupo de la lista localmente
+      setGroups((prevGroups) => prevGroups.filter((group) => group.id !== id));
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error eliminando grupo';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const clearError = useCallback(() => setError(null), []);
 
@@ -121,6 +187,10 @@ export const useGroups = () => {
     loading,
     error,
     fetchAllGroups,
+    fetchGroupById,
+    createGroup,
+    updateGroup,
+    deleteGroup,
     clearError,
     refreshGroups: fetchAllGroups,
   };
