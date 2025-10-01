@@ -201,7 +201,7 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
   const roleBadge = getRoleBadge(displayRole);
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+    <header className="w-100% bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
       <div className="flex items-center justify-between">
 
         {/* Left section - Title */}

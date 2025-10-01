@@ -1,7 +1,6 @@
 import { HttpClient } from './core/httpClient';
 import { AuthService } from './services/authService';
 import { UserService } from './services/userService';
-import { MemberService } from './services/memberService';
 import { PermissionManager } from '../auth/permissions';
 
 // Create HTTP client instance
@@ -10,7 +9,6 @@ const httpClient = new HttpClient();
 // Create service instances
 export const authService = new AuthService(httpClient);
 export const userService = new UserService(httpClient);
-export const memberService = new MemberService(httpClient);
 
 // Export permission manager
 export { PermissionManager };
@@ -43,7 +41,6 @@ export { ROLES, ROLE_NAMES } from '../auth/permissions';
 export class ApiService {
   auth = authService;
   users = userService;
-  members = memberService;
   permissions = PermissionManager;
 
   // Environment info
@@ -60,11 +57,6 @@ export class ApiService {
   createUser = (userData: any) => this.users.createUser(userData);
   updateUser = (id: number, userData: any) => this.users.updateUser(id, userData);
   deleteUser = (id: number) => this.users.deleteUser(id);
-
-  getMembers = () => this.members.getMembers();
-  createMember = (memberData: any) => this.members.createMember(memberData);
-  updateMember = (id: number, memberData: any) => this.members.updateMember(id, memberData);
-  deleteMember = (id: number) => this.members.deleteMember(id);
 
   // Permission methods
   canCreateUsers = (userRole: number) => this.permissions.canCreateUsers(userRole);

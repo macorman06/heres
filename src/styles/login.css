@@ -1,8 +1,11 @@
 /* ===========================================
-   LOGIN PAGE STYLES
+   LOGIN PAGE STYLES - OPTIMIZED
    =========================================== */
 
-/* ✅ PÁGINA DE LOGIN CON FONDO */
+/* ========================================
+   1. LAYOUT DE LA PÁGINA
+   ======================================== */
+
 .login-page {
     min-height: 100vh;
     width: 100vw;
@@ -10,7 +13,6 @@
     overflow: hidden;
 }
 
-/* ✅ FONDO DE IMAGEN */
 .login-background {
     position: absolute;
     top: 0;
@@ -24,34 +26,34 @@
     background-attachment: fixed;
 }
 
-/* ✅ OVERLAY PARA MEJOR LEGIBILIDAD */
 .login-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.1); /* Overlay sutil blanco */
-    backdrop-filter: blur(1px); /* Desenfoque muy sutil */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(1px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2rem;
 }
 
-/* ✅ CONTENEDOR DEL FORMULARIO */
 .login-container {
     width: 100%;
     max-width: 420px;
     z-index: 10;
 }
 
-/* ✅ WRAPPER DEL FORMULARIO */
+/* ========================================
+   2. CARD Y ESTRUCTURA
+   ======================================== */
+
 .login-form-wrapper {
     width: 100%;
 }
 
-/* ✅ CARD DEL LOGIN */
 .login-card {
     background: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(10px) !important;
@@ -63,7 +65,10 @@
     width: 100%;
 }
 
-/* ✅ HEADER DEL LOGIN */
+/* ========================================
+   3. HEADER Y LOGO
+   ======================================== */
+
 .login-header {
     text-align: center;
     margin-bottom: 2rem;
@@ -71,6 +76,19 @@
 
 .login-logo {
     margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+    transition: all var(--transition-normal);
+    animation: logoFadeIn 0.6s ease-out;
 }
 
 .login-title {
@@ -88,17 +106,10 @@
     font-weight: 300;
 }
 
-/* ✅ ERROR MESSAGE */
-.login-error {
-    margin-bottom: 1.5rem;
-}
+/* ========================================
+   4. FORMULARIO
+   ======================================== */
 
-.login-error .p-message {
-    margin: 0;
-    border-radius: var(--border-radius-md);
-}
-
-/* ✅ FORMULARIO */
 .login-form {
     display: flex;
     flex-direction: column;
@@ -117,7 +128,10 @@
     font-size: 0.875rem;
 }
 
-/* ✅ INPUTS EN EL LOGIN */
+/* ========================================
+   5. INPUTS
+   ======================================== */
+
 .login-form .p-inputtext,
 .login-form .p-password input {
     background: rgba(255, 255, 255, 0.9) !important;
@@ -135,11 +149,22 @@
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
 }
 
+.login-form .p-inputtext:disabled,
+.login-form .p-password input:disabled {
+    background: rgba(243, 244, 246, 0.9) !important;
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+}
+
 .login-form .p-password {
     display: block;
 }
 
-/* ✅ BOTÓN DE LOGIN */
+/* ========================================
+   6. BOTÓN DE LOGIN
+   ======================================== */
+
 .form-actions {
     margin-top: 0.5rem;
 }
@@ -153,20 +178,85 @@
     border-color: var(--gecos-primary) !important;
     border-radius: 0.5rem !important;
     transition: all var(--transition-normal) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
-.login-button:hover {
+.login-button:hover:not(:disabled) {
     background: var(--gecos-primary-hover) !important;
     border-color: var(--gecos-primary-hover) !important;
     transform: translateY(-1px) !important;
     box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3) !important;
 }
 
-.login-button:active {
+.login-button:active:not(:disabled) {
     transform: translateY(0) !important;
 }
 
-/* ✅ FOOTER DEL LOGIN */
+/* Estado de carga del botón */
+.login-button-loading,
+.login-button-loading:hover,
+.login-button-loading:active,
+.login-button-loading:focus,
+.login-button-loading:enabled:hover {
+    background: #9ca3af !important;
+    border-color: #9ca3af !important;
+    color: #ffffff !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* ========================================
+   7. SPINNER Y ANIMACIONES
+   ======================================== */
+
+/* Spinner icon dentro del botón */
+.spinner-icon {
+    display: inline-block;
+    animation: spinnerRotate 1s linear infinite;
+}
+
+@keyframes spinnerRotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Logo fade in */
+@keyframes logoFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ========================================
+   8. MENSAJES DE ERROR
+   ======================================== */
+
+.login-error {
+    margin-bottom: 1.5rem;
+}
+
+.login-error .p-message {
+    margin: 0;
+    border-radius: var(--border-radius-md);
+}
+
+/* ========================================
+   9. FOOTER
+   ======================================== */
+
 .login-footer {
     margin-top: 2rem;
     text-align: center;
@@ -178,7 +268,10 @@
     margin: 0;
 }
 
-/* ✅ RESPONSIVE */
+/* ========================================
+   10. RESPONSIVE
+   ======================================== */
+
 @media (max-width: 640px) {
     .login-overlay {
         padding: 1rem;
@@ -192,12 +285,20 @@
         font-size: 1.75rem;
     }
 
+    .app-logo {
+        width: 64px;
+        height: 64px;
+    }
+
     .login-background {
-        background-attachment: scroll; /* Mejor performance en móvil */
+        background-attachment: scroll;
     }
 }
 
-/* ✅ DARK MODE (si quieres soporte) */
+/* ========================================
+   11. DARK MODE
+   ======================================== */
+
 .dark .login-card {
     background: rgba(31, 41, 55, 0.95) !important;
     border: 1px solid rgba(75, 85, 99, 0.3) !important;
@@ -229,66 +330,23 @@
     box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2) !important;
 }
 
-.dark .login-help {
-    color: var(--dark-text-muted);
+.dark .login-form .p-inputtext:disabled,
+.dark .login-form .p-password input:disabled {
+    background: rgba(55, 65, 81, 0.7) !important;
+    color: #6b7280 !important;
 }
 
-/* ✅ LOADING STATE */
-@keyframes loginPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+.dark .login-button-loading,
+.dark .login-button-loading:hover,
+.dark .login-button-loading:active {
+    background: #6b7280 !important;
+    border-color: #6b7280 !important;
 }
 
-.login-form.loading {
-    animation: loginPulse 2s ease-in-out infinite;
-}
-
-/* ✅ AGREGAR AL ARCHIVO login.css EXISTENTE */
-
-/* ✅ LOGO DE LA APP */
-.login-logo {
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.app-logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
-    transition: all var(--transition-normal);
-}
-
-
-/* ✅ RESPONSIVE DEL LOGO */
-@media (max-width: 640px) {
-    .app-logo {
-        width: 64px;
-        height: 64px;
-    }
-}
-
-/* ✅ DARK MODE DEL LOGO */
 .dark .app-logo {
     box-shadow: 0 4px 12px rgba(248, 113, 113, 0.2);
 }
 
-
-/* ✅ ANIMACIÓN DE ENTRADA DEL LOGO */
-@keyframes logoFadeIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.8) translateY(-10px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.app-logo {
-    animation: logoFadeIn 0.6s ease-out;
+.dark .login-help {
+    color: var(--dark-text-muted);
 }

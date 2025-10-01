@@ -22,8 +22,8 @@ export const Layout: React.FC = () => {
 
       {/* Columna principal */}
       <div className="flex flex-col h-screen overflow-hidden">
-        <Topbar />
-        <main className="flex-1 overflow-y-auto">
+        <Topbar sidebarCollapsed={false}/>
+        <main className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-gray-900">
           <Outlet />
         </main>
       </div>
