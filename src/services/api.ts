@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-import type { User } from '../types'
-import type { ApiError } from '../types'
-import type { AuthResponse } from '../types'
+import type { User } from '../types';
+import type { ApiError } from '../types';
+import type { AuthResponse } from '../types';
 
 export interface LoginCredentials {
   email: string;
@@ -43,17 +43,14 @@ const apiRequest = async <T>(endpoint: string, options: RequestInit = {}): Promi
       const errorData = await response.json().catch(() => ({}));
 
       if (response.status === 401 && !endpoint.includes('/auth/login')) {
-        // 🔴 MARCAR INMEDIATAMENTE
         if (!isRedirecting) {
           isRedirecting = true;
-
-          console.log('🔴 401 DETECTADO - Bloqueando todas las peticiones');
 
           localStorage.removeItem('authToken');
           localStorage.removeItem('currentUser');
 
           // Redirect síncrono
-          window.location.replace('/login'); // ⚠️ Usar .replace() en vez de .href
+          window.location.replace('/login');
         }
 
         // Retornar una promesa que nunca se resuelve
@@ -74,12 +71,7 @@ const apiRequest = async <T>(endpoint: string, options: RequestInit = {}): Promi
       return new Promise(() => {});
     }
 
-    if (
-      error &&
-      typeof error === 'object' &&
-      'message' in error &&
-      'status' in error
-    ) {
+    if (error && typeof error === 'object' && 'message' in error && 'status' in error) {
       throw error;
     }
 
@@ -91,7 +83,6 @@ const apiRequest = async <T>(endpoint: string, options: RequestInit = {}): Promi
   }
 };
 
-
 export const loginApi = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   const response = await apiRequest<AuthResponse>('/auth/login', {
     method: 'POST',
@@ -101,10 +92,9 @@ export const loginApi = async (credentials: LoginCredentials): Promise<AuthRespo
   return {
     mensaje: response.mensaje,
     token: response.token,
-    usuario: response.usuario
+    usuario: response.usuario,
   };
 };
-
 
 export const registerApi = async (userData: RegisterData): Promise<AuthResponse> => {
   const response = await apiRequest<AuthResponse>('/auth/register', {
@@ -115,7 +105,7 @@ export const registerApi = async (userData: RegisterData): Promise<AuthResponse>
   return {
     mensaje: response.mensaje,
     token: response.token,
-    usuario: response.usuario
+    usuario: response.usuario,
   };
 };
 

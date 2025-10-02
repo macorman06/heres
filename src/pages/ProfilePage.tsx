@@ -8,7 +8,7 @@ import { Badge } from 'primereact/badge';
 import { Divider } from 'primereact/divider';
 import { Message } from 'primereact/message';
 import { Toast } from 'primereact/toast';
-import {FileUpload, FileUploadHandlerEvent} from 'primereact/fileupload';
+import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
 import { useAuth } from '../hooks/useAuth';
 
 export const ProfilePage: React.FC = () => {
@@ -32,14 +32,14 @@ export const ProfilePage: React.FC = () => {
     direccion: '',
     ciudad: '',
     codigo_postal: '',
-    fecha_nacimiento: ''
+    fecha_nacimiento: '',
   });
 
   // Estado para cambio de contraseña
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [showPasswordSection, setShowPasswordSection] = useState(false);
 
@@ -57,14 +57,18 @@ export const ProfilePage: React.FC = () => {
         direccion: user.direccion || '',
         ciudad: user.ciudad || '',
         codigo_postal: user.codigo_postal || '',
-        fecha_nacimiento: user.fecha_nacimiento || ''
+        fecha_nacimiento: user.fecha_nacimiento || '',
       });
       checkProfileImage();
     }
   }, [user]);
 
   const cleanName = (name: string) =>
-    name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+    name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '');
 
   const checkProfileImage = async () => {
     if (!user?.nombre || !user?.apellido1) return;
@@ -90,7 +94,7 @@ export const ProfilePage: React.FC = () => {
     setProfileImage(null);
   };
 
-// En ProfilePage.tsx - ACTUALIZAR esta función
+  // En ProfilePage.tsx - ACTUALIZAR esta función
 
   const handleImageUpload = (event: FileUploadHandlerEvent) => {
     const file = event.files[0];
@@ -102,7 +106,7 @@ export const ProfilePage: React.FC = () => {
         severity: 'error',
         summary: 'Error',
         detail: 'La imagen no puede superar los 5MB',
-        life: 3000
+        life: 3000,
       });
       return;
     }
@@ -114,7 +118,7 @@ export const ProfilePage: React.FC = () => {
         severity: 'error',
         summary: 'Error',
         detail: 'Solo se permiten imágenes PNG, JPG o WEBP',
-        life: 3000
+        life: 3000,
       });
       return;
     }
@@ -168,34 +172,39 @@ export const ProfilePage: React.FC = () => {
             ctx.drawImage(img, 0, 0, width, height);
 
             // Convertir a PNG blob
-            canvas.toBlob((blob) => {
-              if (!blob) {
-                throw new Error('Error al convertir imagen');
-              }
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) {
+                  throw new Error('Error al convertir imagen');
+                }
 
-              // Crear URL local para previsualización
-              const imageUrl = URL.createObjectURL(blob);
+                // Crear URL local para previsualización
+                const imageUrl = URL.createObjectURL(blob);
 
-              // Actualizar estado con la nueva imagen
-              setProfileImage(`/users/${filename}?t=${Date.now()}`);
+                // Actualizar estado con la nueva imagen
+                setProfileImage(`/users/${filename}?t=${Date.now()}`);
 
-              // ⚠️ IMPORTANTE: Aquí guardarías en localStorage o IndexedDB
-              // Por ahora, solo mostramos la previsualización
-              saveImageLocally(filename, blob);
+                // ⚠️ IMPORTANTE: Aquí guardarías en localStorage o IndexedDB
+                // Por ahora, solo mostramos la previsualización
+                saveImageLocally(filename, blob);
 
-              toast.current?.show({
-                severity: 'success',
-                summary: 'Éxito',
-                detail: '✅ Imagen de perfil actualizada',
-                life: 3000
-              });
+                toast.current?.show({
+                  severity: 'success',
+                  summary: 'Éxito',
+                  detail: '✅ Imagen de perfil actualizada',
+                  life: 3000,
+                });
 
-              // Disparar evento para actualizar otros componentes
-              window.dispatchEvent(new CustomEvent('profileImageUpdated', {
-                detail: { filename, url: imageUrl }
-              }));
-
-            }, 'image/png', 0.95);
+                // Disparar evento para actualizar otros componentes
+                window.dispatchEvent(
+                  new CustomEvent('profileImageUpdated', {
+                    detail: { filename, url: imageUrl },
+                  })
+                );
+              },
+              'image/png',
+              0.95
+            );
           };
 
           img.onerror = () => {
@@ -203,14 +212,13 @@ export const ProfilePage: React.FC = () => {
           };
 
           img.src = dataUrl;
-
         } catch (error) {
           console.error('❌ Error procesando imagen:', error);
           toast.current?.show({
             severity: 'error',
             summary: 'Error',
             detail: error instanceof Error ? error.message : 'Error procesando imagen',
-            life: 5000
+            life: 5000,
           });
         } finally {
           setIsUploadingImage(false);
@@ -222,20 +230,19 @@ export const ProfilePage: React.FC = () => {
           severity: 'error',
           summary: 'Error',
           detail: 'Error leyendo el archivo',
-          life: 3000
+          life: 3000,
         });
         setIsUploadingImage(false);
       };
 
       reader.readAsDataURL(file);
-
     } catch (error) {
       console.error('❌ Error:', error);
       toast.current?.show({
         severity: 'error',
         summary: 'Error',
         detail: error instanceof Error ? error.message : 'Error desconocido',
-        life: 5000
+        life: 5000,
       });
       setIsUploadingImage(false);
     }
@@ -247,15 +254,6 @@ export const ProfilePage: React.FC = () => {
       // Opción 1: IndexedDB (recomendado para imágenes)
       const db = await openImageDB();
       await saveImageToDB(db, filename, blob);
-
-      // Opción 2: localStorage (solo para imágenes pequeñas, no recomendado)
-      // const reader = new FileReader();
-      // reader.onload = () => {
-      //   localStorage.setItem(`profile_image_${user?.id}`, reader.result as string);
-      // };
-      // reader.readAsDataURL(blob);
-
-      console.log('✅ Imagen guardada localmente:', filename);
     } catch (error) {
       console.error('❌ Error guardando imagen:', error);
     }
@@ -290,11 +288,11 @@ export const ProfilePage: React.FC = () => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handlePasswordChange = (field: string, value: string) => {
-    setPasswordData(prev => ({ ...prev, [field]: value }));
+    setPasswordData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
@@ -303,9 +301,7 @@ export const ProfilePage: React.FC = () => {
     setErrorMessage('');
 
     try {
-      // TODO: Llamar al API para actualizar datos del usuario
-      console.log('Guardando datos:', formData);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       if (user) {
         updateUser({ ...user, ...formData });
@@ -337,9 +333,7 @@ export const ProfilePage: React.FC = () => {
     setErrorMessage('');
 
     try {
-      // TODO: Llamar al API para cambiar contraseña
-      console.log('Cambiando contraseña');
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setSuccessMessage('✅ Contraseña actualizada correctamente');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -358,9 +352,14 @@ export const ProfilePage: React.FC = () => {
       director: { label: 'Director', severity: 'danger' as const },
       coordinador: { label: 'Coordinador', severity: 'warning' as const },
       animador: { label: 'Animador', severity: 'success' as const },
-      miembro: { label: 'Miembro', severity: 'info' as const }
+      miembro: { label: 'Miembro', severity: 'info' as const },
     };
-    return badges[role?.toLowerCase() as keyof typeof badges] || { label: 'Usuario', severity: 'info' as const };
+    return (
+      badges[role?.toLowerCase() as keyof typeof badges] || {
+        label: 'Usuario',
+        severity: 'info' as const,
+      }
+    );
   };
 
   if (!user) {
@@ -369,7 +368,7 @@ export const ProfilePage: React.FC = () => {
 
   const userInitials = user.nombre
     .split(' ')
-    .map(n => n[0])
+    .map((n) => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);
@@ -385,9 +384,7 @@ export const ProfilePage: React.FC = () => {
         {successMessage && (
           <Message severity="success" text={successMessage} className="w-full mb-3" />
         )}
-        {errorMessage && (
-          <Message severity="error" text={errorMessage} className="w-full mb-3" />
-        )}
+        {errorMessage && <Message severity="error" text={errorMessage} className="w-full mb-3" />}
 
         {/* Card principal con información del usuario */}
         <Card className="profile-header-card">
@@ -420,7 +417,7 @@ export const ProfilePage: React.FC = () => {
                   customUpload
                   uploadHandler={handleImageUpload}
                   auto
-                  chooseLabel={isUploadingImage ? "Subiendo..." : "Cambiar foto"}
+                  chooseLabel={isUploadingImage ? 'Subiendo...' : 'Cambiar foto'}
                   className="profile-upload-btn"
                   disabled={isUploadingImage}
                 />
@@ -464,7 +461,7 @@ export const ProfilePage: React.FC = () => {
                         direccion: user.direccion || '',
                         ciudad: user.ciudad || '',
                         codigo_postal: user.codigo_postal || '',
-                        fecha_nacimiento: user.fecha_nacimiento || ''
+                        fecha_nacimiento: user.fecha_nacimiento || '',
                       });
                     }}
                     className="p-button-outlined p-button-secondary"
@@ -585,8 +582,12 @@ export const ProfilePage: React.FC = () => {
           <Divider />
 
           <div className="role-info">
-            <p><strong>Rol:</strong> <Badge value={roleBadge.label} severity={roleBadge.severity} /></p>
-            <p className="text-muted">El rol solo puede ser modificado por un administrador del sistema.</p>
+            <p>
+              <strong>Rol:</strong> <Badge value={roleBadge.label} severity={roleBadge.severity} />
+            </p>
+            <p className="text-muted">
+              El rol solo puede ser modificado por un administrador del sistema.
+            </p>
           </div>
         </Card>
 
@@ -642,7 +643,11 @@ export const ProfilePage: React.FC = () => {
                     icon="pi pi-times"
                     onClick={() => {
                       setShowPasswordSection(false);
-                      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                      setPasswordData({
+                        currentPassword: '',
+                        newPassword: '',
+                        confirmPassword: '',
+                      });
                     }}
                   />
                   <Button

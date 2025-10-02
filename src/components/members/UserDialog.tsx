@@ -22,7 +22,7 @@ const ROLE_OPTIONS = [
   { label: 'Director', value: ROLES.DIRECTOR },
   { label: 'Coordinador', value: ROLES.COORDINADOR },
   { label: 'Animador', value: ROLES.ANIMADOR },
-  { label: 'Miembro', value: ROLES.MIEMBRO }
+  { label: 'Miembro', value: ROLES.MIEMBRO },
 ];
 
 const SECTION_OPTIONS = [
@@ -30,12 +30,12 @@ const SECTION_OPTIONS = [
   { label: 'J2', value: 'J2' },
   { label: 'J3', value: 'J3' },
   { label: 'Chiqui', value: 'Chiqui' },
-  { label: 'CJ', value: 'CJ' }
+  { label: 'CJ', value: 'CJ' },
 ];
 
 const GENDER_OPTIONS = [
   { label: 'Masculino', value: 'M' },
-  { label: 'Femenino', value: 'F' }
+  { label: 'Femenino', value: 'F' },
 ];
 
 const SIZE_OPTIONS = [
@@ -43,7 +43,7 @@ const SIZE_OPTIONS = [
   { label: 'S', value: 'S' },
   { label: 'M', value: 'M' },
   { label: 'L', value: 'L' },
-  { label: 'XL', value: 'XL' }
+  { label: 'XL', value: 'XL' },
 ];
 
 export const UserDialog: React.FC<UserDialogProps> = ({
@@ -51,7 +51,7 @@ export const UserDialog: React.FC<UserDialogProps> = ({
   onHide,
   onSave,
   user,
-  loading = false
+  loading = false,
 }) => {
   const [formData, setFormData] = useState<CreateUserRequest>({
     nombre: '',
@@ -67,7 +67,7 @@ export const UserDialog: React.FC<UserDialogProps> = ({
     localidad: '',
     alergias: [],
     talla: 'M',
-    telefono: ''
+    telefono: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -91,7 +91,7 @@ export const UserDialog: React.FC<UserDialogProps> = ({
         localidad: user.localidad || '',
         alergias: user.alergias || [],
         talla: user.talla || 'M',
-        telefono: user.telefono || ''
+        telefono: user.telefono || '',
       });
       setAllergiesInput((user.alergias || []).join(', '));
     } else {
@@ -110,7 +110,7 @@ export const UserDialog: React.FC<UserDialogProps> = ({
         localidad: '',
         alergias: [],
         talla: 'M',
-        telefono: ''
+        telefono: '',
       });
       setAllergiesInput('');
     }
@@ -157,17 +157,17 @@ export const UserDialog: React.FC<UserDialogProps> = ({
       // Process allergies
       const allergies = allergiesInput
         .split(',')
-        .map(allergy => allergy.trim())
-        .filter(allergy => allergy.length > 0);
+        .map((allergy) => allergy.trim())
+        .filter((allergy) => allergy.length > 0);
 
       const userData = {
         ...formData,
-        alergias: allergies
+        alergias: allergies,
       };
 
       // Remove password if editing and it's empty
       if (isEditMode && !userData.password) {
-        delete (userData as any).password;
+        delete (userData as unknown).password;
       }
 
       await onSave(userData);
@@ -177,17 +177,17 @@ export const UserDialog: React.FC<UserDialogProps> = ({
     }
   };
 
-  const handleInputChange = (field: keyof CreateUserRequest, value: any) => {
-    setFormData(prev => ({
+  const handleInputChange = (field: keyof CreateUserRequest, value: unknown) => {
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
 
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: '',
       }));
     }
   };

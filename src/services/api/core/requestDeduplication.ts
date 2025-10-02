@@ -12,7 +12,6 @@ export class RequestDeduplication {
     // Singleton pattern
   }
 
-
   static getInstance(): RequestDeduplication {
     if (!RequestDeduplication.instance) {
       RequestDeduplication.instance = new RequestDeduplication();
@@ -20,12 +19,10 @@ export class RequestDeduplication {
     return RequestDeduplication.instance;
   }
 
-
   private generateKey(method: string, url: string, data?: unknown): string {
     const dataString = data ? JSON.stringify(data) : '';
     return `${method.toUpperCase()}:${url}:${dataString}`;
   }
-
 
   private cleanupStaleRequests(): void {
     const now = Date.now();
@@ -39,7 +36,6 @@ export class RequestDeduplication {
 
     keysToDelete.forEach((key) => this.pendingRequests.delete(key));
   }
-
 
   async executeUniqueRequest<T, U>(
     method: string,
@@ -55,7 +51,6 @@ export class RequestDeduplication {
     // Si ya existe un request idéntico en curso, retornar su promise
     const existing = this.pendingRequests.get(key);
     if (existing) {
-      console.log('🔄 Deduplicating request:', { method, url });
       return existing.promise as Promise<T>;
     }
 
@@ -81,11 +76,9 @@ export class RequestDeduplication {
     return promise;
   }
 
-
   clearAll(): void {
     this.pendingRequests.clear();
   }
-
 
   getPendingCount(): number {
     this.cleanupStaleRequests();

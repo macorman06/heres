@@ -7,19 +7,19 @@ import { User } from '../../services/api';
 
 interface MemberCardProps {
   user: User;
-  currentUser?: User;  // ✅ OPCIONAL: Usuario actual logueado
+  currentUser?: User; // ✅ OPCIONAL: Usuario actual logueado
   onView: (user: User) => void;
   onEdit: (user: User) => void;
   showEditButton: boolean;
 }
 
 export const MemberCard: React.FC<MemberCardProps> = ({
-                                                        user,
-                                                        currentUser,
-                                                        onView,
-                                                        onEdit,
-                                                        showEditButton
-                                                      }) => {
+  user,
+  currentUser,
+  onView,
+  onEdit,
+  showEditButton,
+}) => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -100,7 +100,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
       2: 2, // director - puede editar coordinador, animador, miembro
       3: 3, // coordinador - puede editar animador, miembro
       4: 4, // animador - puede editar solo miembro
-      5: 5  // miembro - no puede editar nadie
+      5: 5, // miembro - no puede editar nadie
     };
 
     const currentUserLevel = roleHierarchy[currentUser.rol_id] || 5;
@@ -116,7 +116,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
       2: 'director',
       3: 'coordinador',
       4: 'animador',
-      5: 'miembro'
+      5: 'miembro',
     };
 
     const roleKey = roleMap[roleId as keyof typeof roleMap] || 'miembro';
@@ -126,7 +126,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
       director: { label: 'Director', severity: 'danger' as const },
       coordinador: { label: 'Coordinador', severity: 'warning' as const },
       animador: { label: 'Animador', severity: 'success' as const },
-      miembro: { label: 'Miembro', severity: 'info' as const }
+      miembro: { label: 'Miembro', severity: 'info' as const },
     };
 
     return badges[roleKey] || { label: 'Usuario', severity: 'info' as const };
@@ -141,7 +141,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({
     onEdit(user);
   };
 
-  const userInitials = `${user.nombre?.charAt(0) || ''}${user.apellido1?.charAt(0) || ''}`.toUpperCase();
+  const userInitials =
+    `${user.nombre?.charAt(0) || ''}${user.apellido1?.charAt(0) || ''}`.toUpperCase();
   const fullName = `${user.nombre || ''} ${user.apellido1 || ''}`.trim();
   const displayEmail = user.email || 'Sin email';
   const roleBadge = getRoleBadge(user.rol_id || 5);
@@ -159,7 +160,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
         margin: '0',
         width: '100%',
         minWidth: '220px',
-        maxWidth: '100%'
+        maxWidth: '100%',
       }}
     >
       <div className="flex flex-col items-center p-3 space-y-2 relative">
@@ -171,7 +172,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
             style={{
               width: '28px',
               height: '28px',
-              minWidth: '28px'
+              minWidth: '28px',
             }}
             onClick={handleEditClick}
             tooltip="Editar usuario"
@@ -190,7 +191,6 @@ export const MemberCard: React.FC<MemberCardProps> = ({
                   className="rounded-full border-2 border-gray-200 object-cover"
                   style={{ width: '60px', height: '60px' }}
                   onError={() => {
-                    console.log(`❌ Error cargando imagen: ${profileImage}`);
                     setProfileImage(null);
                   }}
                 />
@@ -236,7 +236,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
             className="text-xs px-2 py-1"
             style={{
               fontSize: '0.65rem',
-              fontWeight: 'normal'
+              fontWeight: 'normal',
             }}
           />
         </div>

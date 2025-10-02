@@ -6,10 +6,10 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { Card } from 'primereact/card';
 
-import { useAuth } from '../hooks/useAuth';          // ✅ auth global
-import { useUsers } from '../hooks/useApi';           // ✅ hook especializado
+import { useAuth } from '../hooks/useAuth'; // ✅ auth global
+import { useUsers } from '../hooks/useApi'; // ✅ hook especializado
 import { RegisterData } from '../services/api';
-import { User } from '../types'
+import { User } from '../types';
 import { MemberCard } from '../components/common/MemberCard';
 import { UserFormDialog } from '../components/common/UserFormDialog';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -24,14 +24,7 @@ type FilterState = {
 export const Members: React.FC = () => {
   /* ------------  context & hooks  ------------ */
   const { user: currentUser, hasPermission, canCreateUsers } = useAuth();
-  const {
-    users,
-    loading,
-    error,
-    fetchAllUsers,
-    createNewUser,
-    updateExistingUser,
-  } = useUsers();
+  const { users, loading, error, fetchAllUsers, createNewUser, updateExistingUser } = useUsers();
   const toast = useRef<Toast>(null);
 
   /* ------------  local state  ------------ */
@@ -52,15 +45,11 @@ export const Members: React.FC = () => {
     const token = localStorage.getItem('authToken');
 
     if (!token) {
-      console.log('🔴 Sin token - No se hace fetch');
       return;
     }
 
     if (isMounted) {
-      fetchAllUsers().catch((err) => {
-        console.log('Error en fetchAllUsers:', err);
-        // No hacer nada si ya estamos redirigiendo
-      });
+      fetchAllUsers().catch(() => {});
     }
 
     return () => {
@@ -75,8 +64,7 @@ export const Members: React.FC = () => {
   const handleFilter = (field: string, value: string) =>
     setFilters((prev) => ({ ...prev, [field]: value }));
 
-  const clearFilters = () =>
-    setFilters({ search: '', rol: null, centro: null, hasAccess: null });
+  const clearFilters = () => setFilters({ search: '', rol: null, centro: null, hasAccess: null });
 
   /* ------------  CRUD actions  ------------ */
   const saveUser = async (data: RegisterData) => {
@@ -141,17 +129,14 @@ export const Members: React.FC = () => {
 
   /* ------------  render  ------------ */
   if (loading) return <LoadingSpinner message="Cargando usuarios..." />;
-  if (error)
-    return <div className="text-center text-red-600 py-8">Error: {error}</div>;
+  if (error) return <div className="text-center text-red-600 py-8">Error: {error}</div>;
 
   return (
     <div className="space-y-6">
       {/* header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Gestión de Usuarios</h1>
-        {canCreateUsers() && (
-          <Button icon="pi pi-plus" label="Crear usuario" onClick={openNew} />
-        )}
+        {canCreateUsers() && <Button icon="pi pi-plus" label="Crear usuario" onClick={openNew} />}
       </div>
 
       {/* filters */}
@@ -177,11 +162,7 @@ export const Members: React.FC = () => {
           ]}
           placeholder="Rol"
         />
-        <Button
-          icon="pi pi-filter-slash"
-          label="Limpiar"
-          onClick={clearFilters}
-        />
+        <Button icon="pi pi-filter-slash" label="Limpiar" onClick={clearFilters} />
       </div>
 
       {/* stats */}
@@ -211,17 +192,12 @@ export const Members: React.FC = () => {
           <p className="mb-2">
             {filters.search ? 'No se encontraron usuarios' : 'No hay usuarios registrados'}
           </p>
-          {canCreateUsers() && (
-            <Button label="Crear usuario" icon="pi pi-plus" onClick={openNew} />
-          )}
+          {canCreateUsers() && <Button label="Crear usuario" icon="pi pi-plus" onClick={openNew} />}
         </div>
       ) : (
         <div className="flex flex-wrap gap-4">
           {filtered.map((u) => (
-            <div
-              key={u.id}
-              style={{ flex: '1 1 220px', minWidth: 220, maxWidth: 280 }}
-            >
+            <div key={u.id} style={{ flex: '1 1 220px', minWidth: 220, maxWidth: 280 }}>
               <MemberCard
                 user={u}
                 currentUser={currentUser!}

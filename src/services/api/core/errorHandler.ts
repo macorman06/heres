@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { ApiError } from '../../../types/api.types.ts';
+import { ApiError } from '../../../types';
 import { IS_DEVELOPMENT } from '../config/apiConfig';
 import { TokenManager } from '../../auth/tokenManager';
 
@@ -7,21 +7,21 @@ export class ErrorHandler {
   static handleError(error: AxiosError): ApiError {
     if (!error.response) {
       return {
-        message: import.meta.env.MODE === 'localhost'
-          ? 'Error de conexión. ¿Está corriendo la API local?'
-          : 'Error de conexión. Verifica tu conexión a internet.',
+        message:
+          import.meta.env.MODE === 'localhost'
+            ? 'Error de conexión. ¿Está corriendo la API local?'
+            : 'Error de conexión. Verifica tu conexión a internet.',
         status: 0,
-        details: error.message,
       };
     }
 
     const status = error.response.status;
-    const data = error.response.data as any;
+    const data = error.response.data as never;
 
     switch (status) {
       case 400:
         return {
-          message: data?.message || 'Datos inválidos',
+          message: 'Datos inválidos',
           status,
           details: data,
         };
@@ -59,7 +59,7 @@ export class ErrorHandler {
 
       default:
         return {
-          message: data?.message || 'Error desconocido',
+          message: 'Error desconocido',
           status,
           details: data,
         };
