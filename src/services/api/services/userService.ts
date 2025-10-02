@@ -12,10 +12,7 @@ export class UserService {
     return this.httpClient.post<User>('/usuarios', userData);
   }
 
-  async updateUser(
-    id: number,
-    userData: Partial<CreateUserRequest>
-  ): Promise<User> {
+  async updateUser(id: number, userData: Partial<CreateUserRequest>): Promise<User> {
     return this.httpClient.put<User>(`/usuarios/${id}`, userData);
   }
 
@@ -27,3 +24,8 @@ export class UserService {
     return this.httpClient.get<User>(`/usuarios/${id}`);
   }
 }
+
+const httpClient = new HttpClient();
+const userService = new UserService(httpClient);
+
+export default userService;

@@ -24,3 +24,9 @@ export class GroupService {
     return this.httpClient.delete<void>(`/grupos/${id}`);
   }
 }
+
+// ✅ Crear y exportar instancia
+const httpClient = new HttpClient();
+const groupService = new GroupService(httpClient);
+
+export default groupService;

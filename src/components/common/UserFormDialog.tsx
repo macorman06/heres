@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
 import { User, RegisterData } from '../../services/api';
 
 interface UserFormDialogProps {
@@ -15,30 +14,28 @@ interface UserFormDialogProps {
 }
 
 export const UserFormDialog: React.FC<UserFormDialogProps> = ({
-                                                                visible,
-                                                                user = null,  // ✅ Default value para evitar undefined
-                                                                viewMode = false,
-                                                                onHide,
-                                                                onSave
-                                                              }) => {
-  // ✅ Estado del formulario con valores por defecto
+  visible,
+  user = null,
+  viewMode = false,
+  onHide,
+  onSave,
+}) => {
   const [formData, setFormData] = useState<RegisterData>({
     nombre: '',
     apellido1: '',
     apellido2: '',
     email: '',
-    password: ''
+    password: '',
   });
 
-  // ✅ Cargar datos del usuario cuando se abre el diálogo
   useEffect(() => {
     if (user) {
       setFormData({
-        nombre: user.nombre || '',  // ✅ Fallback a string vacío
+        nombre: user.nombre || '',
         apellido1: user.apellido1 || '',
         apellido2: user.apellido2 || '',
         email: user.email || '',
-        password: '' // No cargar password por seguridad
+        password: '',
       });
     } else {
       // Resetear formulario para nuevo usuario
@@ -47,16 +44,16 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
         apellido1: '',
         apellido2: '',
         email: '',
-        password: ''
+        password: '',
       });
     }
   }, [user]);
 
   // ✅ Handler para cambios en los campos
   const handleChange = (field: keyof RegisterData, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -66,15 +63,6 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
       onSave(formData);
     }
   };
-
-  // ✅ Opciones para dropdown de rol
-  const roleOptions = [
-    { label: 'Superusuario', value: 1 },
-    { label: 'Director', value: 2 },
-    { label: 'Coordinador', value: 3 },
-    { label: 'Animador', value: 4 },
-    { label: 'Miembro', value: 5 }
-  ];
 
   const dialogTitle = viewMode
     ? `Ver Usuario: ${user?.nombre || 'Desconocido'}`
@@ -167,9 +155,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
           <>
             <div className="field">
               <label className="font-semibold">Rol</label>
-              <p className="text-gray-700 dark:text-gray-300">
-                {user.rol || 'No especificado'}
-              </p>
+              <p className="text-gray-700 dark:text-gray-300">{user.rol || 'No especificado'}</p>
             </div>
             <div className="field">
               <label className="font-semibold">Centro Juvenil</label>
@@ -189,12 +175,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
 
       {/* Botones */}
       <div className="flex justify-end gap-2 mt-6">
-        <Button
-          label="Cancelar"
-          icon="pi pi-times"
-          className="p-button-text"
-          onClick={onHide}
-        />
+        <Button label="Cancelar" icon="pi pi-times" className="p-button-text" onClick={onHide} />
         {!viewMode && (
           <Button
             label={user ? 'Actualizar' : 'Crear'}

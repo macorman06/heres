@@ -40,7 +40,7 @@ export const LoginForm: React.FC = () => {
       } else {
         await login({ email, password });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err?.status === 0 || err?.message?.includes('conexión')) {
         toastRef?.current?.show({
           severity: 'error',
@@ -70,11 +70,7 @@ export const LoginForm: React.FC = () => {
       <Card className="login-card">
         <div className="login-header">
           <div className="login-logo">
-            <img
-              src="/logos/favicon-96x96.png"
-              alt="HERES Logo"
-              className="app-logo"
-            />
+            <img src="/logos/favicon-96x96.png" alt="HERES Logo" className="app-logo" />
           </div>
           <h1 className="login-title">HERES</h1>
           <p className="login-subtitle">Herramienta de Recursos Salesianos</p>
@@ -150,9 +146,7 @@ export const LoginForm: React.FC = () => {
         </form>
 
         <div className="login-footer">
-          <p className="login-help">
-            ¿Problemas para acceder? Contacta al administrador.
-          </p>
+          <p className="login-help">¿Problemas para acceder? Contacta al administrador.</p>
         </div>
       </Card>
     </div>
