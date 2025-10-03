@@ -1,5 +1,5 @@
 const getApiBaseUrl = (): string => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  const envUrl = import.meta.env.VITE_API_URL;
   const mode = import.meta.env.MODE;
 
   // Si hay una URL definida en variables de entorno, usarla
