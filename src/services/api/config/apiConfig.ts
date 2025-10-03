@@ -5,13 +5,16 @@ const getApiBaseUrl = (): string => {
   // Si hay una URL definida en variables de entorno, usarla
   if (envUrl) return envUrl;
 
+  // En producción, siempre usar HTTPS
+  if (import.meta.env.PROD) {
+    return 'https://gecos.onrender.com';
+  }
+
   // Configurar según el modo de ejecución
   switch (mode) {
     case 'localhost':
       return 'http://localhost:5000';
     case 'development':
-      return 'https://gecos.onrender.com';
-    case 'production':
       return 'https://gecos.onrender.com';
     default:
       return 'https://gecos.onrender.com';
