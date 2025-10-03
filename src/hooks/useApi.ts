@@ -1,39 +1,32 @@
 // src/hooks/useApi.ts
-import { useState, useEffect, useCallback } from 'react';
-import {
-  fetchUsers,
-  createUser,
-  updateUser,
-  deleteUser,
-  uploadProfileImage,
-  User,
-  ApiError,
-} from '../services/api';
+import { useCallback, useState } from 'react';
+import { api } from '../services/api/index';
+import type { ApiError, Grupo, User } from '../types';
 
-// ✅ HOOK GENÉRICO useApi (para compatibilidad hacia atrás)
-export const useApi = <T>(apiFunction: (...args: any[]) => Promise<T>) => {
+// ===== HOOK GENÉRICO =====
+export const useApi = <T>(apiFunction: (...args: unknown[]) => Promise<T>) => {
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const execute = useCallback(async (...args: any[]): Promise<T> => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const result = await apiFunction(...args);
-      setData(result);
-      return result;
-
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error desconocido';
-      setError(errorMessage);
-      console.error('Error en useApi:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiFunction]);
+  const execute = useCallback(
+    async (...args: unknown[]): Promise<T> => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await apiFunction(...args);
+        setData(result);
+        return result;
+      } catch (err: unknown) {
+        const errorMessage = (err as ApiError).message || 'Error desconocido';
+        setError(errorMessage);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiFunction]
+  );
 
   const reset = useCallback(() => {
     setData(null);
@@ -41,127 +34,142 @@ export const useApi = <T>(apiFunction: (...args: any[]) => Promise<T>) => {
     setLoading(false);
   }, []);
 
-  return {
-    data,
-    loading,
-    error,
-    execute,
-    reset
-  };
+  return { data, loading, error, execute, reset };
 };
 
-// ✅ HOOK ESPECIALIZADO PARA USUARIOS
+// ===== HOOK ESPECIALIZADO PARA USUARIOS =====
 export const useUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Cargar todos los usuarios
   const fetchAllUsers = useCallback(async (): Promise<User[]> => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return [];
+    }
+
     try {
       setLoading(true);
       setError(null);
-      const userData = await fetchUsers();
+      const userData = await api.getUsers(); // ✅ api en lugar de apiService
       setUsers(userData);
       return userData;
-    } catch (err: any) {
+    } catch (err: unknown) {
+      if ((err as ApiError).status === 401) {
+        return [];
+      }
+
       const errorMessage = (err as ApiError).message || 'Error cargando usuarios';
       setError(errorMessage);
-      console.error('❌ Error cargando usuarios:', err);
+      throw err;
+    } finally {
+      if (localStorage.getItem('authToken')) {
+        setLoading(false);
+      }
+    }
+  }, []);
+
+  return { users, loading, error, fetchAllUsers };
+};
+
+// ===== HOOK ESPECIALIZADO PARA GRUPOS =====
+export const useGroups = () => {
+  const [groups, setGroups] = useState<Grupo[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchAllGroups = useCallback(async (): Promise<Grupo[]> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const groupsData = await api.getGroups(); // ✅ api
+      setGroups(groupsData);
+      return groupsData;
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error cargando grupos';
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Crear nuevo usuario
-  const createNewUser = useCallback(async (userData: Partial<User>): Promise<User> => {
+  const fetchGroupById = useCallback(async (id: number): Promise<Grupo> => {
     try {
+      setLoading(true);
       setError(null);
-      const newUser = await createUser(userData);
-      setUsers(prev => [...prev, newUser]);
-      return newUser;
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error creando usuario';
+      return await api.getGroupById(id);
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error cargando grupo';
       setError(errorMessage);
       throw err;
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  // Actualizar usuario existente
-  const updateExistingUser = useCallback(async (id: number, userData: Partial<User>): Promise<User> => {
+  const createGroup = useCallback(async (groupData: Partial<Grupo>): Promise<Grupo> => {
     try {
+      setLoading(true);
       setError(null);
-      const updatedUser = await updateUser(id, userData);
-      setUsers(prev => prev.map(user => user.id === id ? updatedUser : user));
-      return updatedUser;
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error actualizando usuario';
+      const newGroup = await api.createGroup(groupData); // ✅ api
+      setGroups((prevGroups) => [...prevGroups, newGroup]);
+      return newGroup;
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error creando grupo';
       setError(errorMessage);
       throw err;
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  // Eliminar usuario
-  const deleteExistingUser = useCallback(async (id: number): Promise<void> => {
+  const updateGroup = useCallback(async (id: number, groupData: Partial<Grupo>): Promise<Grupo> => {
     try {
+      setLoading(true);
       setError(null);
-      await deleteUser(id);
-      setUsers(prev => prev.filter(user => user.id !== id));
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error eliminando usuario';
+      const updatedGroup = await api.updateGroup(id, groupData); // ✅ api
+      setGroups((prevGroups) =>
+        prevGroups.map((group) => (group.id === id ? updatedGroup : group))
+      );
+      return updatedGroup;
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error actualizando grupo';
       setError(errorMessage);
       throw err;
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  // Subir imagen de perfil
-  const uploadUserImage = useCallback(async (userId: number, imageFile: File): Promise<string> => {
+  const deleteGroup = useCallback(async (id: number): Promise<void> => {
     try {
+      setLoading(true);
       setError(null);
-      const result = await uploadProfileImage(userId, imageFile);
-      return result.path;
-    } catch (err: any) {
-      const errorMessage = (err as ApiError).message || 'Error subiendo imagen';
+      await api.deleteGroup(id); // ✅ api
+      setGroups((prevGroups) => prevGroups.filter((group) => group.id !== id));
+    } catch (err: unknown) {
+      const errorMessage = (err as ApiError).message || 'Error eliminando grupo';
       setError(errorMessage);
       throw err;
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  // Limpiar error
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
-  // Cargar inicial (opcional - puedes activarlo o desactivarlo)
-  useEffect(() => {
-    // fetchAllUsers(); // Descomenta si quieres carga automática
-  }, []);
+  const clearError = useCallback(() => setError(null), []);
 
   return {
-    users,
+    groups,
     loading,
     error,
-    fetchAllUsers,
-    createNewUser,
-    updateExistingUser,
-    deleteExistingUser,
-    uploadUserImage,
+    fetchAllGroups,
+    fetchGroupById,
+    createGroup,
+    updateGroup,
+    deleteGroup,
     clearError,
-    refreshUsers: fetchAllUsers // Alias para compatibilidad
+    refreshGroups: fetchAllGroups,
   };
 };
-
-// ✅ ALIAS PARA COMPATIBILIDAD
-export const useApiCall = useApi;
-
-// ✅ RE-EXPORTS PARA COMPATIBILIDAD
-export {
-  fetchUsers,
-  createUser,
-  updateUser,
-  deleteUser,
-  uploadProfileImage
-} from '../services/api';
-
-export type { User, ApiError } from '../services/api';

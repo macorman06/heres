@@ -1,29 +1,7 @@
-// src/services/api.ts
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-
-// ✅ TIPOS AJUSTADOS A TU BACKEND
-export interface User {
-  id: number;
-  nombre: string;
-  apellido1?: string;
-  apellido2?: string;
-  email?: string;
-  rol_id: number;
-  rol?: string;
-  centro_juvenil?: string;
-  seccion?: string;
-  edad?: number;
-  birthday?: string;
-  sexo?: string;
-  direccion?: string;
-  localidad?: string;
-  telefono?: string;
-  alergias?: string[];
-  talla?: string;
-  can_login?: boolean;
-  fecha_creacion?: string;
-  fecha_modificacion?: string;
-}
+import type { User } from '../types';
+import type { ApiError } from '../types';
+import type { AuthResponse } from '../types';
 
 export interface LoginCredentials {
   email: string;
@@ -38,21 +16,15 @@ export interface RegisterData {
   apellido2?: string;
 }
 
-// ✅ AJUSTADO A LA RESPUESTA DE TU BACKEND
-export interface AuthResponse {
-  mensaje: string;        // "Login exitoso"
-  token: string;         // JWT token
-  usuario: User;         // ✅ TU BACKEND USA "usuario", NO "user"
-}
+// api.ts
+let isRedirecting = false;
 
-export interface ApiError {
-  message: string;
-  status?: number;
-  details?: any;
-}
+const apiRequest = async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
+  // 🔴 BLOQUEAR inmediatamente si ya estamos redirigiendo
+  if (isRedirecting) {
+    return new Promise(() => {}); // Promise que nunca se resuelve
+  }
 
-// ✅ FUNCIÓN HELPER PARA REQUESTS
-const apiRequest = async (endpoint: string, options: RequestInit = {}): Promise<any> => {
   const token = localStorage.getItem('authToken');
 
   const config: RequestInit = {
@@ -69,6 +41,22 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}): Promise<
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+
+      if (response.status === 401 && !endpoint.includes('/auth/login')) {
+        if (!isRedirecting) {
+          isRedirecting = true;
+
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('currentUser');
+
+          // Redirect síncrono
+          window.location.replace('/login');
+        }
+
+        // Retornar una promesa que nunca se resuelve
+        return new Promise(() => {});
+      }
+
       throw {
         message: errorData.message || `HTTP ${response.status}: ${response.statusText}`,
         status: response.status,
@@ -77,10 +65,16 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}): Promise<
     }
 
     return await response.json();
-  } catch (error: any) {
-    if (error.message && error.status) {
-      throw error; // Ya es un ApiError
+  } catch (error: unknown) {
+    // Si ya estamos redirigiendo, no propagar el error
+    if (isRedirecting) {
+      return new Promise(() => {});
     }
+
+    if (error && typeof error === 'object' && 'message' in error && 'status' in error) {
+      throw error;
+    }
+
     throw {
       message: 'Error de conexión con el servidor',
       status: 0,
@@ -89,23 +83,21 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}): Promise<
   }
 };
 
-// ✅ FUNCIONES DE AUTENTICACIÓN AJUSTADAS
 export const loginApi = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  const response = await apiRequest('/auth/login', {
+  const response = await apiRequest<AuthResponse>('/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),
   });
 
-  // ✅ RETORNA LA RESPUESTA TAL COMO VIENE DEL BACKEND
   return {
     mensaje: response.mensaje,
     token: response.token,
-    usuario: response.usuario  // ✅ Mantenemos "usuario" como viene del backend
+    usuario: response.usuario,
   };
 };
 
 export const registerApi = async (userData: RegisterData): Promise<AuthResponse> => {
-  const response = await apiRequest('/auth/register', {
+  const response = await apiRequest<AuthResponse>('/auth/register', {
     method: 'POST',
     body: JSON.stringify(userData),
   });
@@ -113,17 +105,16 @@ export const registerApi = async (userData: RegisterData): Promise<AuthResponse>
   return {
     mensaje: response.mensaje,
     token: response.token,
-    usuario: response.usuario
+    usuario: response.usuario,
   };
 };
 
-// ✅ FUNCIONES DE USUARIOS
 export const fetchUsers = async (): Promise<User[]> => {
-  return await apiRequest('/usuarios/');
+  return await apiRequest('/usuarios');
 };
 
 export const createUser = async (userData: Partial<User>): Promise<User> => {
-  return await apiRequest('/usuarios/', {
+  return await apiRequest('/usuarios', {
     method: 'POST',
     body: JSON.stringify(userData),
   });

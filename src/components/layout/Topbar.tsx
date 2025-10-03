@@ -3,7 +3,7 @@ import { InputText } from 'primereact/inputtext';
 import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -18,15 +18,15 @@ const mockNotifications = [
     title: 'Nueva actividad programada',
     message: 'Se ha programado una nueva actividad para el sábado',
     time: '2 min',
-    read: false
+    read: false,
   },
   {
     id: '2',
     title: 'Recordatorio: Reunión semanal',
     message: 'La reunión semanal es mañana a las 21:00',
     time: '1 hora',
-    read: false
-  }
+    read: false,
+  },
 ];
 
 const getPageTitle = (pathname: string): string => {
@@ -35,25 +35,23 @@ const getPageTitle = (pathname: string): string => {
     '/activities': 'Actividades',
     '/materials': 'Materiales',
     '/members': 'Miembros',
-    '/contact': 'Contacto'
+    '/contact': 'Contacto',
   };
   return routes[pathname] || 'HERES';
 };
 
 // eslint-disable-next-line no-empty-pattern
-export const Topbar: React.FC<TopbarProps> = ({ }) => {
+export const Topbar: React.FC<TopbarProps> = ({}) => {
   const location = useLocation();
   const [searchValue, setSearchValue] = useState('');
   const menuRef = useRef<Menu>(null);
+  const navigate = useNavigate();
 
-  // ✅ NEW: Profile image state
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // ✅ Usar autenticación real en lugar de mock
   const { user, logout } = useAuth();
 
-  // ✅ NEW: Generate profile image filename - Solo nombre + primer apellido
   const generateImageFilename = (nombre: string, apellido1: string): string => {
     const cleanName = (name: string) =>
       name
@@ -69,18 +67,14 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
     return `${cleanNombre}_${cleanApellido1}`;
   };
 
-  // ✅ NEW: Check if profile image exists
-// En Topbar.tsx - useEffect actualizado
   useEffect(() => {
-    // ✅ FIXED: Solo verificar imagen si el usuario y sus datos están disponibles
     if (!user?.nombre || !user?.apellido1) {
       setImageLoaded(true);
       return;
     }
 
     const checkImageExists = async () => {
-      const baseFilename = generateImageFilename(user.nombre, user.apellido1);
-      console.log(`🔍 [Topbar] Buscando imagen para: ${baseFilename}`);
+      const baseFilename = generateImageFilename(user.nombre, user.apellido1 ?? '');
 
       const extensions = ['png', 'jpg', 'jpeg', 'webp'];
 
@@ -108,13 +102,10 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
     };
 
     checkImageExists();
-  }, [user?.nombre, user?.apellido1]); // ✅ FIXED: Dependencias con optional chaining
+  }, [user?.nombre, user?.apellido1]);
 
-
-  // ✅ Función real de logout
   const handleLogout = async () => {
     try {
-      console.log('🚪 Iniciando cierre de sesión...');
       logout(); // Esto limpia el token, usuario y redirige a /login
     } catch (error) {
       console.error('❌ Error durante logout:', error);
@@ -126,40 +117,35 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
       label: 'Mi Perfil',
       icon: 'pi pi-user',
       command: () => {
-        console.log('Navegar a perfil');
-        // Navigate to profile
-      }
+        navigate('/profile');
+      },
     },
     {
       label: 'Configuración',
       icon: 'pi pi-cog',
-      command: () => {
-        console.log('Navegar a configuración');
-        // Navigate to settings
-      }
+      command: () => {},
     },
     {
-      separator: true
+      separator: true,
     },
     {
       label: 'Notificaciones',
       icon: 'pi pi-bell',
-      badge: mockNotifications.filter(n => !n.read).length.toString(),
+      badge: mockNotifications.filter((n) => !n.read).length.toString(),
       command: () => {
-        console.log('Ver todas las notificaciones');
         // Open notifications panel
-      }
+      },
     },
     {
-      separator: true
+      separator: true,
     },
     {
       label: 'Cerrar Sesión',
       icon: 'pi pi-sign-out',
       command: () => {
         handleLogout();
-      }
-    }
+      },
+    },
   ];
 
   const getRoleBadge = (role: string) => {
@@ -168,31 +154,31 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
       director: { label: 'Director', severity: 'danger' as const },
       coordinador: { label: 'Coordinador', severity: 'warning' as const },
       animador: { label: 'Animador', severity: 'success' as const },
-      miembro: { label: 'Miembro', severity: 'info' as const }
+      miembro: { label: 'Miembro', severity: 'info' as const },
     };
-    return badges[role?.toLowerCase() as keyof typeof badges] || { label: role || 'Usuario', severity: 'info' as const };
+    return (
+      badges[role?.toLowerCase() as keyof typeof badges] || {
+        label: role || 'Usuario',
+        severity: 'info' as const,
+      }
+    );
   };
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
     if (value.trim()) {
-      console.log('Buscando:', value);
-      // Aquí implementarías la lógica de búsqueda
+      /* empty */
     }
   };
 
-  const handleNotificationClick = () => {
-    console.log('Mostrar notificaciones:', mockNotifications);
-    // Aquí podrías abrir un panel de notificaciones o modal
-  };
+  const handleNotificationClick = () => {};
 
-  // ✅ Mostrar información real del usuario
   const displayName = user?.nombre || 'Usuario';
   const fullName = `${user?.nombre || ''} ${user?.apellido1 || ''}`.trim() || 'Usuario';
   const displayRole = user?.rol || 'miembro';
   const userInitials = displayName
     .split(' ')
-    .map(n => n[0])
+    .map((n) => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);
@@ -200,9 +186,8 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
   const roleBadge = getRoleBadge(displayRole);
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+    <header className="w-100% bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
       <div className="flex items-center justify-between">
-
         {/* Left section - Title */}
         <div className="flex items-center">
           <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
@@ -225,7 +210,6 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
 
         {/* Right section - User info */}
         <div className="flex items-center space-x-4">
-          {/* Theme Toggle */}
           <ThemeToggle />
 
           {/* Notifications */}
@@ -234,9 +218,9 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
             className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
           >
             <i className="pi pi-bell text-lg"></i>
-            {mockNotifications.filter(n => !n.read).length > 0 && (
+            {mockNotifications.filter((n) => !n.read).length > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {mockNotifications.filter(n => !n.read).length}
+                {mockNotifications.filter((n) => !n.read).length}
               </span>
             )}
           </button>
@@ -245,19 +229,12 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
           <div className="flex items-center space-x-3">
             {/* User Info */}
             <div className="hidden md:block text-right">
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                {fullName}
-              </div>
+              <div className="text-sm font-medium text-gray-900 dark:text-white">{fullName}</div>
               <div className="text-xs">
-                <Badge
-                  value={roleBadge.label}
-                  severity={roleBadge.severity}
-                  className="text-xs"
-                />
+                <Badge value={roleBadge.label} severity={roleBadge.severity} className="text-xs" />
               </div>
             </div>
 
-            {/* ✅ UPDATED: User Avatar with profile image */}
             <button
               onClick={(e) => menuRef.current?.toggle(e)}
               className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-full"
@@ -271,7 +248,6 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
                         alt={`${fullName} - Foto de perfil`}
                         className="w-full h-full object-cover rounded-full border-2 border-gray-300 dark:border-gray-600"
                         onError={() => {
-                          console.log(`❌ [Topbar] Error cargando imagen: ${profileImage}`);
                           setProfileImage(null);
                         }}
                       />
@@ -289,12 +265,7 @@ export const Topbar: React.FC<TopbarProps> = ({ }) => {
             </button>
           </div>
 
-          {/* User Menu Overlay */}
-          <Menu
-            model={userMenuItems}
-            popup
-            ref={menuRef}
-          />
+          <Menu model={userMenuItems} popup ref={menuRef} />
         </div>
       </div>
     </header>

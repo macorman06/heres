@@ -11,10 +11,10 @@ interface ScheduledActivitiesProps {
 }
 
 export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
-                                                                          events,
-                                                                          loading = false,
-                                                                          onActivityAction
-                                                                        }) => {
+  events,
+  loading = false,
+  onActivityAction,
+}) => {
   const [selectedFilter, setSelectedFilter] = useState<FilterOption>('all');
 
   // Filtrar eventos según la selección
@@ -22,7 +22,7 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
     if (selectedFilter === 'all') {
       return events;
     }
-    return events.filter(event => event.badge === selectedFilter);
+    return events.filter((event) => event.badge === selectedFilter);
   }, [events, selectedFilter]);
 
   if (loading) {
@@ -62,7 +62,6 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
   }
 
   const handleActivityAction = (eventId: string) => {
-    console.log('Acción en actividad:', eventId);
     if (onActivityAction) {
       onActivityAction(eventId);
     }
@@ -85,11 +84,15 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
     <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Actividades Programadas</h2>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+            Actividades Programadas
+          </h2>
 
           {/* Dropdown Filter */}
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">Filtrar por:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+              Filtrar por:
+            </span>
             <Dropdown
               value={selectedFilter}
               options={FILTER_OPTIONS}
@@ -106,22 +109,15 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
           <div className="text-sm text-gray-600 dark:text-gray-300">
             {filteredEvents.length === events.length
               ? `Mostrando todas las actividades (${filteredEvents.length})`
-              : `Mostrando ${filteredEvents.length} de ${events.length} actividades`
-            }
+              : `Mostrando ${filteredEvents.length} de ${events.length} actividades`}
           </div>
 
           {/* Leyenda de badges */}
           <div className="flex items-center gap-2 text-xs">
             <span className="text-gray-500 dark:text-gray-400">Leyenda:</span>
-            <span className={`px-2 py-1 rounded-full ${getBadgeColor('Chiqui')}`}>
-              Chiqui
-            </span>
-            <span className={`px-2 py-1 rounded-full ${getBadgeColor('CJ')}`}>
-              CJ
-            </span>
-            <span className={`px-2 py-1 rounded-full ${getBadgeColor('Ambas')}`}>
-              Ambas
-            </span>
+            <span className={`px-2 py-1 rounded-full ${getBadgeColor('Chiqui')}`}>Chiqui</span>
+            <span className={`px-2 py-1 rounded-full ${getBadgeColor('CJ')}`}>CJ</span>
+            <span className={`px-2 py-1 rounded-full ${getBadgeColor('Ambas')}`}>Ambas</span>
           </div>
         </div>
 
@@ -133,17 +129,12 @@ export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
               <p className="text-sm">
                 {selectedFilter === 'all'
                   ? 'No se encontraron actividades en el sistema.'
-                  : `No se encontraron actividades para "${FILTER_OPTIONS.find(opt => opt.value === selectedFilter)?.label}".`
-                }
+                  : `No se encontraron actividades para "${FILTER_OPTIONS.find((opt) => opt.value === selectedFilter)?.label}".`}
               </p>
             </div>
           ) : (
             filteredEvents.map((event) => (
-              <ActivityCard
-                key={event.id}
-                event={event}
-                onMoreOptions={handleActivityAction}
-              />
+              <ActivityCard key={event.id} event={event} onMoreOptions={handleActivityAction} />
             ))
           )}
         </div>

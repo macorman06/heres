@@ -5,18 +5,7 @@ import { LoginForm } from '../components/auth/LoginForm';
 import { useAuth } from '../hooks/useAuth';
 
 export const LoginPage: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  // Si está cargando, mostrar spinner
-  if (isLoading) {
-    return (
-      <div className="login-page">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
-        </div>
-      </div>
-    );
-  }
+  const { isAuthenticated } = useAuth();
 
   // Si ya está autenticado, redirigir al dashboard
   if (isAuthenticated) {

@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '../../hooks/useTheme';
 
 export const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
 
   return (
     <button
@@ -13,9 +13,11 @@ export const ThemeToggle: React.FC = () => {
     >
       <div className="relative w-5 h-5 overflow-hidden">
         {/* Sun Icon */}
-        <div className={`absolute inset-0 transform transition-all duration-300 ${
-          isDark ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
-        }`}>
+        <div
+          className={`absolute inset-0 transform transition-all duration-300 ${
+            isDark ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+          }`}
+        >
           <svg
             className="w-5 h-5"
             fill="currentColor"
@@ -31,18 +33,18 @@ export const ThemeToggle: React.FC = () => {
         </div>
 
         {/* Moon Icon */}
-        <div className={`absolute inset-0 transform transition-all duration-300 ${
-          isDark ? 'translate-y-6 opacity-0' : 'translate-y-0 opacity-100'
-        }`}>
+        <div
+          className={`absolute inset-0 transform transition-all duration-300 ${
+            isDark ? 'translate-y-6 opacity-0' : 'translate-y-0 opacity-100'
+          }`}
+        >
           <svg
             className="w-5 h-5"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-            />
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
           </svg>
         </div>
       </div>
