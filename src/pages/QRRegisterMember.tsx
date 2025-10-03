@@ -1,7 +1,6 @@
 // src/pages/QRRegisterMember.tsx
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -9,12 +8,12 @@ import { Message } from 'primereact/message';
 import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import '../styles/QRRegisterMember.css';
-import { grupoOptions, seccionOptions } from '../types/options.ts';
+import { seccionOptions } from '../types/options.ts';
 import { FormDataQRMember, FormErrorsQRMember } from '../types/qrform.types.ts';
 
-export const QRRegisterMember: React.FC = () => {
-  const navigate = useNavigate();
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+export const QRRegisterMember: React.FC = () => {
   const [formData, setFormData] = useState<FormDataQRMember>({
     firstName: '',
     lastName: '',
@@ -57,10 +56,6 @@ export const QRRegisterMember: React.FC = () => {
       }
     }
 
-    if (!formData.grupo) {
-      newErrors.grupo = 'Debes seleccionar un grupo';
-    }
-
     if (!formData.seccion) {
       newErrors.seccion = 'Debes seleccionar una sección';
     }
@@ -84,28 +79,30 @@ export const QRRegisterMember: React.FC = () => {
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/qr/register-member', {
+      const response = await fetch(`${API_BASE_URL}/api/qr/register-member`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          username: formData.username,
+          birthDate: formData.birthDate,
+          seccion: formData.seccion,
           consentGiven: true,
           consentDate: new Date().toISOString(),
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error al registrar el miembro');
+        throw new Error(data.error || 'Error al registrar el miembro');
       }
 
+      // Registro exitoso - NO redirigir
       setSuccess(true);
-
-      setTimeout(() => {
-        navigate('/');
-      }, 3000);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Error al procesar el registro');
     } finally {
@@ -125,7 +122,6 @@ export const QRRegisterMember: React.FC = () => {
     formData.lastName.trim() !== '' &&
     formData.username.trim() !== '' &&
     formData.birthDate !== '' &&
-    formData.grupo !== '' &&
     formData.seccion !== '' &&
     consent;
 
@@ -142,8 +138,8 @@ export const QRRegisterMember: React.FC = () => {
                   style={{ fontSize: '4rem', color: 'var(--green-500)' }}
                 />
                 <h2>¡Registro Exitoso!</h2>
-                <p>Te hemos enviado un correo de confirmación.</p>
                 <p>Bienvenido/a al Centro Juvenil Juveliber.</p>
+                <p>Tu cuenta ha sido creada correctamente.</p>
               </div>
             </Card>
           </div>
@@ -239,38 +235,20 @@ export const QRRegisterMember: React.FC = () => {
                 {errors.birthDate && <small className="p-error">{errors.birthDate}</small>}
               </div>
 
-              <div className="form-row">
-                <div className="form-field">
-                  <label htmlFor="grupo" className="required-field">
-                    Grupo <span className="required-asterisk">*</span>
-                  </label>
-                  <Dropdown
-                    id="grupo"
-                    value={formData.grupo}
-                    options={grupoOptions}
-                    onChange={(e) => handleInputChange('grupo', e.value)}
-                    placeholder="Selecciona tu grupo"
-                    className={errors.grupo ? 'p-invalid' : ''}
-                    disabled={loading}
-                  />
-                  {errors.grupo && <small className="p-error">{errors.grupo}</small>}
-                </div>
-
-                <div className="form-field">
-                  <label htmlFor="seccion" className="required-field">
-                    Sección <span className="required-asterisk">*</span>
-                  </label>
-                  <Dropdown
-                    id="seccion"
-                    value={formData.seccion}
-                    options={seccionOptions}
-                    onChange={(e) => handleInputChange('seccion', e.value)}
-                    placeholder="Selecciona tu sección"
-                    className={errors.seccion ? 'p-invalid' : ''}
-                    disabled={loading}
-                  />
-                  {errors.seccion && <small className="p-error">{errors.seccion}</small>}
-                </div>
+              <div className="form-field">
+                <label htmlFor="seccion" className="required-field">
+                  Sección <span className="required-asterisk">*</span>
+                </label>
+                <Dropdown
+                  id="seccion"
+                  value={formData.seccion}
+                  options={seccionOptions}
+                  onChange={(e) => handleInputChange('seccion', e.value)}
+                  placeholder="Selecciona tu sección"
+                  className={errors.seccion ? 'p-invalid' : ''}
+                  disabled={loading}
+                />
+                {errors.seccion && <small className="p-error">{errors.seccion}</small>}
               </div>
 
               <div className="consent-field">
@@ -302,8 +280,8 @@ export const QRRegisterMember: React.FC = () => {
                 <i className="pi pi-info-circle" />
                 <p>
                   <strong>Protección de datos:</strong> Tus datos serán utilizados únicamente para
-                  gestionar tu participación en las actividades internas del centro juvenil. Puedes
-                  solicitar la eliminación de tus datos en cualquier momento.
+                  gestionar tu participación en las actividades del centro juvenil. Puedes solicitar
+                  la eliminación de tus datos en cualquier momento.
                 </p>
               </div>
 

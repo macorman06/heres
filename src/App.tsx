@@ -6,7 +6,6 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ThemeProvider } from './hooks/useTheme';
 import { Layout } from './components/layout/Layout';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
-
 import {
   // Páginas principales
   Dashboard,
@@ -19,10 +18,8 @@ import {
   Grupos,
   QRRegisterMember,
   PrivacyPolicy,
-
   // Materiales principal
   Materials,
-
   // Grupos Formativos
   GruposFormativosIndex,
   ChiquiPage,
@@ -31,37 +28,31 @@ import {
   SalesianosCoperadoresPage,
   ComunidadesPage,
   OtrosGruposPage,
-
   // Talleres
   TalleresIndex,
   ManualidadesPage,
   CocinaPage,
   OtrosTalleresPage,
-
   // Juegos
   JuegosIndex,
   CluedoPage,
   TableroPage,
   GymkanaPage,
   OtrosJuegosPage,
-
   // Pruebas
   PruebasIndex,
   InteriorPage,
   ExteriorPage,
-
   // Oraciones
   OracionesIndex,
   NinosPage,
   JovenesOracionesPage,
   AdultosPage,
-
   // Campaña Pastoral
   CampanaPastoralIndex,
   JustificacionPage,
   ImagenPage,
   MaterialesCampanaPage,
-
   // Imagen Corporativa
   ImagenCorporativaIndex,
   LogosPage,
@@ -94,10 +85,8 @@ export const ToastContext = React.createContext<React.RefObject<Toast> | null>(n
 
 const PrivateRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
   const { isAuthenticated, isLoading } = useAuth();
-
   if (isLoading) return <LoadingSpinner />;
-
-  return isAuthenticated ? element : <Navigate to="/login" replace />;
+  return isAuthenticated ? element : <Navigate to="/login" />;
 };
 
 // Lista de rutas públicas que NO requieren autenticación
@@ -108,9 +97,7 @@ const AuthWatcher: React.FC = () => {
   const location = useLocation();
 
   React.useEffect(() => {
-    // Solo redirigir si no está autenticado Y no está en una ruta pública
     const isPublicRoute = PUBLIC_ROUTES.some((route) => location.pathname.startsWith(route));
-
     if (!isAuthenticated && !isPublicRoute) {
       window.location.href = '/login';
     }
@@ -123,513 +110,114 @@ function App() {
   const toastRef = useRef<Toast>(null);
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <PrimeReactProvider>
-          <Router>
-            <ToastContext.Provider value={toastRef}>
-              <Toast ref={toastRef} />
+    <PrimeReactProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <ToastContext.Provider value={toastRef}>
+            <Router>
               <AuthWatcher />
+              <Toast ref={toastRef} />
               <Routes>
                 {/* Rutas públicas */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/qr/register-member" element={<QRRegisterMember />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
-                {/* Rutas protegidas */}
-                <Route
-                  path="/"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <Dashboard />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/members"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <Members />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/activities"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <Activities />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/contact"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <Contact />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/about"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <AboutPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <ProfilePage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/grupos"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <Grupos />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                {/* Rutas protegidas con Layout */}
+                <Route element={<PrivateRoute element={<Layout />} />}>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/members" element={<Members />} />
+                  <Route path="/activities" element={<Activities />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/grupos" element={<Grupos />} />
 
-                {/* Materiales */}
-                <Route
-                  path="/materials"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <Materials />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                  {/* Materiales */}
+                  <Route path="/materiales" element={<Materials />} />
+                  <Route path="/materiales/grupos-formativos" element={<GruposFormativosIndex />} />
 
-                {/* Grupos Formativos */}
-                <Route
-                  path="/materials/grupos-formativos"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <GruposFormativosIndex />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/grupos-formativos/chiqui"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <ChiquiPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/grupos-formativos/centro-juvenil"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <CentroJuvenilPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/grupos-formativos/catecumenado"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <CatecumenadoPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/grupos-formativos/salesianos-cooperadores"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <SalesianosCoperadoresPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/grupos-formativos/comunidades"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <ComunidadesPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/grupos-formativos/otros"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <OtrosGruposPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                  {/* Grupos Formativos */}
+                  <Route path="/materiales/grupos-formativos/chiqui" element={<ChiquiPage />} />
+                  <Route
+                    path="/materiales/grupos-formativos/centro-juvenil"
+                    element={<CentroJuvenilPage />}
+                  />
+                  <Route
+                    path="/materiales/grupos-formativos/catecumenado"
+                    element={<CatecumenadoPage />}
+                  />
+                  <Route
+                    path="/materiales/grupos-formativos/salesianos-cooperadores"
+                    element={<SalesianosCoperadoresPage />}
+                  />
+                  <Route
+                    path="/materiales/grupos-formativos/comunidades"
+                    element={<ComunidadesPage />}
+                  />
+                  <Route path="/materiales/grupos-formativos/otros" element={<OtrosGruposPage />} />
 
-                {/* Talleres */}
-                <Route
-                  path="/materials/talleres"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <TalleresIndex />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/talleres/manualidades"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <ManualidadesPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/talleres/cocina"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <CocinaPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/talleres/otros"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <OtrosTalleresPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                  {/* Talleres */}
+                  <Route path="/materiales/talleres" element={<TalleresIndex />} />
+                  <Route path="/materiales/talleres/manualidades" element={<ManualidadesPage />} />
+                  <Route path="/materiales/talleres/cocina" element={<CocinaPage />} />
+                  <Route path="/materiales/talleres/otros" element={<OtrosTalleresPage />} />
 
-                {/* Juegos */}
-                <Route
-                  path="/materials/juegos"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <JuegosIndex />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/juegos/cluedo"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <CluedoPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/juegos/tablero"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <TableroPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/juegos/gymkana"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <GymkanaPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/juegos/otros"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <OtrosJuegosPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                  {/* Juegos */}
+                  <Route path="/materiales/juegos" element={<JuegosIndex />} />
+                  <Route path="/materiales/juegos/cluedo" element={<CluedoPage />} />
+                  <Route path="/materiales/juegos/tablero" element={<TableroPage />} />
+                  <Route path="/materiales/juegos/gymkana" element={<GymkanaPage />} />
+                  <Route path="/materiales/juegos/otros" element={<OtrosJuegosPage />} />
 
-                {/* Pruebas */}
-                <Route
-                  path="/materials/pruebas"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <PruebasIndex />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/pruebas/interior"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <InteriorPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/pruebas/exterior"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <ExteriorPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                  {/* Pruebas */}
+                  <Route path="/materiales/pruebas" element={<PruebasIndex />} />
+                  <Route path="/materiales/pruebas/interior" element={<InteriorPage />} />
+                  <Route path="/materiales/pruebas/exterior" element={<ExteriorPage />} />
 
-                {/* Oraciones */}
-                <Route
-                  path="/materials/oraciones"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <OracionesIndex />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/oraciones/ninos"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <NinosPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/oraciones/jovenes"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <JovenesOracionesPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/oraciones/adultos"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <AdultosPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                  {/* Oraciones */}
+                  <Route path="/materiales/oraciones" element={<OracionesIndex />} />
+                  <Route path="/materiales/oraciones/ninos" element={<NinosPage />} />
+                  <Route path="/materiales/oraciones/jovenes" element={<JovenesOracionesPage />} />
+                  <Route path="/materiales/oraciones/adultos" element={<AdultosPage />} />
 
-                {/* Campaña Pastoral */}
-                <Route
-                  path="/materials/campana-pastoral"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <CampanaPastoralIndex />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/campana-pastoral/justificacion"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <JustificacionPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/campana-pastoral/imagen"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <ImagenPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/campana-pastoral/materiales"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <MaterialesCampanaPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                  {/* Campaña Pastoral */}
+                  <Route path="/materiales/campana-pastoral" element={<CampanaPastoralIndex />} />
+                  <Route
+                    path="/materiales/campana-pastoral/justificacion"
+                    element={<JustificacionPage />}
+                  />
+                  <Route path="/materiales/campana-pastoral/imagen" element={<ImagenPage />} />
+                  <Route
+                    path="/materiales/campana-pastoral/materiales"
+                    element={<MaterialesCampanaPage />}
+                  />
 
-                {/* Imagen Corporativa */}
-                <Route
-                  path="/materials/imagen-corporativa"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <ImagenCorporativaIndex />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/imagen-corporativa/logos"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <LogosPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/imagen-corporativa/tipografia"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <TipografiaPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path="/materials/imagen-corporativa/otros"
-                  element={
-                    <PrivateRoute
-                      element={
-                        <Layout>
-                          <OtrosImagenPage />
-                        </Layout>
-                      }
-                    />
-                  }
-                />
+                  {/* Imagen Corporativa */}
+                  <Route
+                    path="/materiales/imagen-corporativa"
+                    element={<ImagenCorporativaIndex />}
+                  />
+                  <Route path="/materiales/imagen-corporativa/logos" element={<LogosPage />} />
+                  <Route
+                    path="/materiales/imagen-corporativa/tipografia"
+                    element={<TipografiaPage />}
+                  />
+                  <Route
+                    path="/materiales/imagen-corporativa/otros"
+                    element={<OtrosImagenPage />}
+                  />
+                </Route>
 
                 {/* Ruta por defecto */}
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
-            </ToastContext.Provider>
-          </Router>
-        </PrimeReactProvider>
-      </AuthProvider>
-    </ThemeProvider>
+            </Router>
+          </ToastContext.Provider>
+        </AuthProvider>
+      </ThemeProvider>
+    </PrimeReactProvider>
   );
 }
 
