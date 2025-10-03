@@ -1,0 +1,524 @@
+/* ===========================================
+   QR REGISTER MEMBER - LOGIN STYLE
+   =========================================== */
+
+/* ========================================
+   1. LAYOUT DE LA PÁGINA - IGUAL QUE LOGIN
+   ======================================== */
+
+.qr-register-page {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+}
+
+.qr-register-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/assets/backgrounds/white_background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.qr-register-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.qr-register-container {
+  width: 100%;
+  max-width: 580px; /* Aumentado de 480px a 580px para acomodar los dropdowns */
+  z-index: 10;
+}
+
+/* ========================================
+   2. CARD - IGUAL QUE LOGIN
+   ======================================== */
+
+.qr-register-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 1rem !important;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 15px 25px rgba(0, 0, 0, 0.05) !important;
+  padding: 2.5rem !important;
+  width: 100%;
+  box-sizing: border-box; /* Asegura que el padding no cause overflow */
+}
+
+/* ========================================
+   3. HEADER Y LOGO
+   ======================================== */
+
+.qr-register-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.qr-register-logo {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+  transition: all var(--transition-normal);
+  animation: logoFadeIn 0.6s ease-out;
+}
+
+.qr-register-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--gecos-primary);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-family-heading);
+}
+
+.qr-register-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 300;
+}
+
+/* ========================================
+   4. FORMULARIO
+   ======================================== */
+
+.qr-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0; /* Previene overflow en flex/grid items */
+}
+
+.form-field label {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.field-hint {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* Fila para campos side-by-side */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+}
+
+/* ========================================
+   5. INPUTS Y DROPDOWNS - ESTILO LOGIN
+   ======================================== */
+
+.qr-register-form .p-inputtext {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  transition: all var(--transition-normal) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.qr-register-form .p-inputtext:focus {
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: var(--gecos-primary) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+.qr-register-form .p-inputtext:disabled {
+  background: rgba(243, 244, 246, 0.9) !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.qr-register-form .p-dropdown {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.5rem !important;
+  transition: all var(--transition-normal) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.qr-register-form .p-dropdown:hover {
+  border-color: var(--text-muted) !important;
+}
+
+.qr-register-form .p-dropdown:focus,
+.qr-register-form .p-dropdown.p-focus {
+  border-color: var(--gecos-primary) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+/* ========================================
+   6. CHECKBOX Y CONSENT
+   ======================================== */
+
+.consent-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.consent-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.consent-label {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.consent-label a {
+  color: var(--gecos-primary);
+  text-decoration: underline;
+}
+
+.consent-label a:hover {
+  color: var(--gecos-primary-hover);
+}
+
+/* ========================================
+   7. PRIVACY NOTICE
+   ======================================== */
+
+.privacy-notice {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-left: 4px solid var(--gecos-primary);
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+.privacy-notice i {
+  color: var(--gecos-primary);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.privacy-notice p {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* ========================================
+   8. BOTÓN - ESTILO LOGIN
+   ======================================== */
+
+.form-actions {
+  margin-top: 0.5rem;
+}
+
+.qr-register-button {
+  width: 100% !important;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  background: var(--gecos-primary) !important;
+  border-color: var(--gecos-primary) !important;
+  border-radius: 0.5rem !important;
+  transition: all var(--transition-normal) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.qr-register-button:hover:not(:disabled) {
+  background: var(--gecos-primary-hover) !important;
+  border-color: var(--gecos-primary-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3) !important;
+}
+
+.qr-register-button:active:not(:disabled) {
+  transform: translateY(0) !important;
+}
+
+.qr-register-button-loading,
+.qr-register-button-loading:hover,
+.qr-register-button-loading:active {
+  background: #9ca3af !important;
+  border-color: #9ca3af !important;
+  color: #ffffff !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   9. PANTALLA DE ÉXITO
+   ======================================== */
+
+.success-card {
+  text-align: center;
+}
+
+.success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+}
+
+.success-content h2 {
+  color: var(--green-600);
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.success-content p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* ========================================
+   10. MENSAJES DE ERROR
+   ======================================== */
+
+.qr-register-error {
+  margin-bottom: 1.5rem;
+}
+
+.qr-register-error .p-message {
+  margin: 0;
+  border-radius: var(--border-radius-md);
+}
+
+.p-error {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* ========================================
+   11. ANIMACIONES
+   ======================================== */
+
+@keyframes logoFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ========================================
+   12. RESPONSIVE
+   ======================================== */
+
+@media (max-width: 640px) {
+  .qr-register-overlay {
+    padding: 1rem;
+  }
+
+  .qr-register-container {
+    max-width: 100%; /* Ocupa todo el ancho en móviles */
+  }
+
+  .qr-register-card {
+    padding: 2rem !important;
+  }
+
+  .qr-register-title {
+    font-size: 1.5rem;
+  }
+
+  .app-logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .qr-register-background {
+    background-attachment: scroll;
+  }
+
+  /* Una columna en móviles */
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   13. DARK MODE
+   ======================================== */
+
+.dark .qr-register-card {
+  background: rgba(31, 41, 55, 0.95) !important;
+  border: 1px solid rgba(75, 85, 99, 0.3) !important;
+}
+
+.dark .qr-register-title {
+  color: #f87171;
+}
+
+.dark .qr-register-subtitle {
+  color: var(--dark-text-secondary);
+}
+
+.dark .form-field label {
+  color: var(--dark-text-primary);
+}
+
+.dark .qr-register-form .p-inputtext,
+.dark .qr-register-form .p-dropdown {
+  background: rgba(55, 65, 81, 0.9) !important;
+  border: 1px solid rgba(75, 85, 99, 0.3) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+.dark .qr-register-form .p-inputtext:focus,
+.dark .qr-register-form .p-dropdown:focus {
+  background: rgba(55, 65, 81, 1) !important;
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2) !important;
+}
+
+.dark .app-logo {
+  box-shadow: 0 4px 12px rgba(248, 113, 113, 0.2);
+}
+
+.dark .consent-label {
+  color: var(--dark-text-primary);
+}
+
+.dark .privacy-notice {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+.dark .privacy-notice p {
+  color: var(--dark-text-primary);
+}
+
+/* ========================================
+   CAMPO OBLIGATORIO - ASTERISCO ROJO
+   ======================================== */
+
+.required-asterisk {
+  color: #dc2626;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.required-field {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ========================================
+   CAMPO OBLIGATORIO - ASTERISCO ROJO
+   ======================================== */
+
+.required-asterisk {
+  color: #dc2626;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.required-field {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ========================================
+   14. CHECKBOX - ESTILOS MÍNIMOS (NO BLOQUEAN FUNCIONALIDAD)
+   ======================================== */
+
+/* Solo estilizamos el borde y colores, SIN tocar el pointer-events */
+.qr-register-form .p-checkbox .p-checkbox-box {
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.qr-register-form .p-checkbox:hover .p-checkbox-box {
+  border-color: var(--gecos-primary);
+}
+
+.qr-register-form .p-checkbox .p-checkbox-box.p-highlight {
+  background: var(--gecos-primary);
+  border-color: var(--gecos-primary);
+}
+
+.qr-register-form .p-checkbox .p-checkbox-box .p-checkbox-icon {
+  color: white;
+}
+
+.qr-register-form .p-checkbox.p-invalid .p-checkbox-box {
+  border-color: #dc2626;
+}
+
+/* Dark mode para checkbox */
+.dark .qr-register-form .p-checkbox .p-checkbox-box {
+  border: 2px solid rgba(156, 163, 175, 0.5);
+}
+
+.dark .qr-register-form .p-checkbox:hover .p-checkbox-box {
+  border-color: #f87171;
+}
+
+.dark .qr-register-form .p-checkbox .p-checkbox-box.p-highlight {
+  background: #f87171;
+  border-color: #f87171;
+}

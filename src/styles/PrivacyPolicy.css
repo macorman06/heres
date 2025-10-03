@@ -1,0 +1,338 @@
+/* ===========================================
+   PRIVACY POLICY PAGE
+   =========================================== */
+
+/* ========================================
+   1. LAYOUT DE LA PÁGINA
+   ======================================== */
+
+.privacy-policy-page {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.privacy-policy-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/assets/backgrounds/white_background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: 0;
+}
+
+.privacy-policy-overlay {
+  position: relative;
+  min-height: 100vh;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  z-index: 1;
+}
+
+.privacy-policy-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+/* ========================================
+   2. CARD
+   ======================================== */
+
+.privacy-policy-card {
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 1rem !important;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 15px 25px rgba(0, 0, 0, 0.05) !important;
+  padding: 3rem !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   3. HEADER
+   ======================================== */
+
+.privacy-policy-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid rgba(220, 38, 38, 0.1);
+}
+
+.privacy-policy-logo {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.privacy-policy-logo .app-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.privacy-policy-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--gecos-primary);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-family-heading);
+}
+
+.privacy-policy-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.5rem 0;
+  font-weight: 400;
+}
+
+.privacy-policy-date {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ========================================
+   4. CONTENIDO
+   ======================================== */
+
+.privacy-policy-content {
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.policy-section {
+  margin-bottom: 2.5rem;
+}
+
+.policy-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--gecos-primary);
+  margin: 0 0 1rem 0;
+  font-family: var(--font-family-heading);
+}
+
+.policy-section p {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.policy-section ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.policy-section li {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.policy-section li strong {
+  color: var(--gecos-primary);
+  font-weight: 600;
+}
+
+.policy-section a {
+  color: var(--gecos-primary);
+  text-decoration: underline;
+  transition: color var(--transition-normal);
+}
+
+.policy-section a:hover {
+  color: var(--gecos-primary-hover);
+}
+
+/* ========================================
+   5. INFO BOX
+   ======================================== */
+
+.policy-info-box {
+  background: rgba(220, 38, 38, 0.05);
+  border-left: 4px solid var(--gecos-primary);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.policy-info-box p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.policy-info-box p:first-child {
+  margin-top: 0;
+}
+
+.policy-info-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* ========================================
+   6. SECCIÓN DESTACADA (MENORES)
+   ======================================== */
+
+.highlight-section {
+  background: rgba(255, 243, 205, 0.3);
+  padding: 2rem;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(245, 158, 11, 0.3);
+}
+
+.policy-alert {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.policy-alert i {
+  color: #f59e0b;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.policy-alert p {
+  margin: 0.5rem 0;
+}
+
+.policy-alert p:first-child {
+  margin-top: 0;
+}
+
+/* ========================================
+   7. FOOTER
+   ======================================== */
+
+.privacy-policy-footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid rgba(220, 38, 38, 0.1);
+  display: flex;
+  justify-content: center;
+}
+
+.back-button {
+  background: var(--gecos-primary) !important;
+  border-color: var(--gecos-primary) !important;
+  padding: 0.75rem 2rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  border-radius: 0.5rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.back-button:hover {
+  background: var(--gecos-primary-hover) !important;
+  border-color: var(--gecos-primary-hover) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3) !important;
+}
+
+/* ========================================
+   8. RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .privacy-policy-overlay {
+    padding: 2rem 1rem;
+  }
+
+  .privacy-policy-card {
+    padding: 2rem !important;
+  }
+
+  .privacy-policy-title {
+    font-size: 1.75rem;
+  }
+
+  .policy-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .policy-section p,
+  .policy-section li {
+    font-size: 0.95rem;
+  }
+
+  .policy-alert {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .policy-alert i {
+    font-size: 1.5rem;
+  }
+}
+
+/* ========================================
+   9. DARK MODE
+   ======================================== */
+
+.dark .privacy-policy-card {
+  background: rgba(31, 41, 55, 0.98) !important;
+  border: 1px solid rgba(75, 85, 99, 0.3) !important;
+}
+
+.dark .privacy-policy-title {
+  color: #f87171;
+}
+
+.dark .privacy-policy-subtitle,
+.dark .privacy-policy-date {
+  color: var(--dark-text-secondary);
+}
+
+.dark .policy-section h2 {
+  color: #f87171;
+}
+
+.dark .policy-section p,
+.dark .policy-section li {
+  color: var(--dark-text-primary);
+}
+
+.dark .policy-section li strong {
+  color: #f87171;
+}
+
+.dark .policy-info-box {
+  background: rgba(248, 113, 113, 0.1);
+  border-left-color: #f87171;
+}
+
+.dark .highlight-section {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.dark .policy-alert i {
+  color: #fbbf24;
+}
+
+.dark .privacy-policy-header {
+  border-bottom-color: rgba(248, 113, 113, 0.2);
+}
+
+.dark .privacy-policy-footer {
+  border-top-color: rgba(248, 113, 113, 0.2);
+}

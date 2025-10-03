@@ -9,7 +9,10 @@ export { Activities } from './Activities';
 export { Contact } from './Contact';
 export { AboutPage } from './AboutPage';
 export { ProfilePage } from './ProfilePage';
-export { Grupos } from './Grupos'
+export { Grupos } from './Grupos';
+export { QRRegisterMember } from './QRRegisterMember.tsx';
+export { PrivacyPolicy } from './PrivacyPolicy.tsx';
+
 // ============================================
 // MATERIALES - PÁGINA PRINCIPAL
 // ============================================
