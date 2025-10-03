@@ -6,7 +6,7 @@
   Access-Control-Allow-Headers: Content-Type, Authorization
 
   # Protección XSS
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; connect-src 'self' https://api.heres.com http://localhost:8000;
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; connect-src 'self' https://gecos.onrender.com http://localhost:8000;
 
   # Protección Clickjacking
   X-Frame-Options: DENY
