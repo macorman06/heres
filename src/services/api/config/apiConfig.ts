@@ -1,24 +1,5 @@
 const getApiBaseUrl = (): string => {
-  const envUrl = import.meta.env.VITE_API_URL;
-  const mode = import.meta.env.MODE;
-
-  // Si hay una URL definida en variables de entorno, usarla
-  if (envUrl) return envUrl;
-
-  // En producción, siempre usar HTTPS
-  if (import.meta.env.PROD) {
-    return 'https://gecos.onrender.com';
-  }
-
-  // Configurar según el modo de ejecución
-  switch (mode) {
-    case 'localhost':
-      return 'http://localhost:5000';
-    case 'development':
-      return 'https://gecos.onrender.com';
-    default:
-      return 'https://gecos.onrender.com';
-  }
+  return 'https://gecos.onrender.com';
 };
 
 export const API_CONFIG = {
