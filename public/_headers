@@ -1,32 +1,19 @@
 # Aplicar a todas las páginas
 /*
-  # CORS restringido
-  Access-Control-Allow-Origin: https://heres.com
+  # CORS headers
+  Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS
   Access-Control-Allow-Headers: Content-Type, Authorization
 
-  # Protección XSS
-  # Content-Security-Policy: connect-src 'self' https://gecos.onrender.com http://localhost:8000; default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'
-
-  # Protección Clickjacking
-  X-Frame-Options: DENY
-
-  # Prevenir MIME sniffing
+  # Security headers
+  Content-Security-Policy: upgrade-insecure-requests
+  X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
-
-  # Forzar HTTPS
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-
-  # Referrer Policy
   Referrer-Policy: strict-origin-when-cross-origin
-
-  # Permisos del navegador
-  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
-
-  # XSS Protection (legacy pero útil)
   X-XSS-Protection: 1; mode=block
 
-# Cache para assets estáticos (opcional)
+# Cache para assets estáticos
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
