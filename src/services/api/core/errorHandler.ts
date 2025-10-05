@@ -5,7 +5,10 @@ import { TokenManager } from '../../auth/tokenManager';
 
 export class ErrorHandler {
   static handleError(error: AxiosError): ApiError {
+    console.log('⚠️ [ErrorHandler] Procesando error:', error);
+
     if (!error.response) {
+      console.error('❌ [ErrorHandler] Error sin respuesta (posible error de red)');
       return {
         message:
           import.meta.env.MODE === 'localhost'
@@ -18,8 +21,11 @@ export class ErrorHandler {
     const status = error.response.status;
     const data = error.response.data as never;
 
+    console.log('⚠️ [ErrorHandler] Error HTTP:', { status, data });
+
     switch (status) {
       case 400:
+        console.log('⚠️ [ErrorHandler] 400 Bad Request');
         return {
           message: 'Datos inválidos',
           status,
@@ -27,6 +33,7 @@ export class ErrorHandler {
         };
 
       case 401:
+        console.log('🔴 [ErrorHandler] 401 Unauthorized - Limpiando auth');
         TokenManager.clearAuth();
         return {
           message: 'No autorizado. Por favor, inicia sesión nuevamente.',
@@ -35,6 +42,7 @@ export class ErrorHandler {
         };
 
       case 403:
+        console.log('⚠️ [ErrorHandler] 403 Forbidden');
         return {
           message: 'No tienes permisos para realizar esta acción.',
           status,
@@ -42,6 +50,7 @@ export class ErrorHandler {
         };
 
       case 404:
+        console.log('⚠️ [ErrorHandler] 404 Not Found');
         return {
           message: 'Recurso no encontrado.',
           status,
@@ -49,6 +58,7 @@ export class ErrorHandler {
         };
 
       case 500:
+        console.log('❌ [ErrorHandler] 500 Internal Server Error');
         return {
           message: IS_DEVELOPMENT
             ? 'Error del servidor. Revisa los logs de la API.'
@@ -58,6 +68,7 @@ export class ErrorHandler {
         };
 
       default:
+        console.log('⚠️ [ErrorHandler] Error desconocido:', status);
         return {
           message: 'Error desconocido',
           status,
