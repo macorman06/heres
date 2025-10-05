@@ -8,14 +8,17 @@ export class UserService {
 
   async getUsers(): Promise<User[]> {
     console.log('👥 [UserService] getUsers() llamado');
-    const result = await this.httpClient.get<User[]>('/usuarios');
+    const result = await this.httpClient.get<User[]>('/usuarios/list');
     console.log('👥 [UserService] getUsers() completado. Total usuarios:', result.length);
     return result;
   }
 
   async createUser(userData: CreateUserRequest): Promise<User> {
     console.log('➕ [UserService] createUser() llamado con:', userData);
-    const result = await this.httpClient.post<User, CreateUserRequest>('/usuarios', userData);
+    const result = await this.httpClient.post<User, CreateUserRequest>(
+      '/usuarios/create',
+      userData
+    );
     console.log('➕ [UserService] createUser() completado:', result);
     return result;
   }
