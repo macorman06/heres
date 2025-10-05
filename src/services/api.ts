@@ -110,11 +110,11 @@ export const registerApi = async (userData: RegisterData): Promise<AuthResponse>
 };
 
 export const fetchUsers = async (): Promise<User[]> => {
-  return await apiRequest('/usuarios');
+  return await apiRequest('/usuarios/');
 };
 
 export const createUser = async (userData: Partial<User>): Promise<User> => {
-  return await apiRequest('/usuarios', {
+  return await apiRequest('/usuarios/', {
     method: 'POST',
     body: JSON.stringify(userData),
   });
