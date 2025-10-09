@@ -219,7 +219,7 @@ export const Ranking: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
+    <div>
       <Toast ref={toast} />
 
       {/* Header */}
@@ -351,11 +351,9 @@ export const Ranking: React.FC = () => {
         <DataTable
           value={sortedUsers}
           loading={loading}
-          paginator
           rows={100}
           emptyMessage="No hay miembros registrados"
           stripedRows
-          responsiveLayout="scroll"
           className="ranking-table"
         >
           <Column header="#" body={rankTemplate} style={{ width: '120px' }} frozen />

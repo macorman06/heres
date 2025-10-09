@@ -6,60 +6,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ThemeProvider } from './hooks/useTheme';
 import { Layout } from './components/layout/Layout';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
-import {
-  // Páginas principales
-  Dashboard,
-  LoginPage,
-  Members,
-  Activities,
-  Contact,
-  AboutPage,
-  ProfilePage,
-  Grupos,
-  QRRegisterMember,
-  PrivacyPolicy,
-  // Materiales principal
-  Materials,
-  // Grupos Formativos
-  GruposFormativosIndex,
-  ChiquiPage,
-  CentroJuvenilPage,
-  CatecumenadoPage,
-  SalesianosCoperadoresPage,
-  ComunidadesPage,
-  OtrosGruposPage,
-  // Talleres
-  TalleresIndex,
-  ManualidadesPage,
-  CocinaPage,
-  OtrosTalleresPage,
-  // Juegos
-  JuegosIndex,
-  CluedoPage,
-  TableroPage,
-  GymkanaPage,
-  OtrosJuegosPage,
-  // Pruebas
-  PruebasIndex,
-  InteriorPage,
-  ExteriorPage,
-  // Oraciones
-  OracionesIndex,
-  NinosPage,
-  JovenesOracionesPage,
-  AdultosPage,
-  // Campaña Pastoral
-  CampanaPastoralIndex,
-  JustificacionPage,
-  ImagenPage,
-  MaterialesCampanaPage,
-  // Imagen Corporativa
-  ImagenCorporativaIndex,
-  LogosPage,
-  TipografiaPage,
-  OtrosImagenPage,
-  Ranking,
-} from './pages';
+import * as Pages from './pages';
 
 // PrimeReact theme
 import 'primereact/resources/themes/lara-light-blue/theme.css';
@@ -120,95 +67,119 @@ function App() {
               <Toast ref={toastRef} />
               <Routes>
                 {/* Rutas públicas */}
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/qr/register-member" element={<QRRegisterMember />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/login" element={<Pages.LoginPage />} />
+                <Route path="/qr/register-member" element={<Pages.QRRegisterMember />} />
+                <Route path="/privacy-policy" element={<Pages.PrivacyPolicy />} />
 
                 {/* Rutas protegidas con Layout */}
                 <Route element={<PrivateRoute element={<Layout />} />}>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/members" element={<Members />} />
-                  <Route path="/activities" element={<Activities />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/grupos" element={<Grupos />} />
-                  <Route path="/ranking" element={<Ranking />} />
+                  <Route path="/" element={<Pages.Dashboard />} />
+                  <Route path="/dashboard" element={<Pages.Dashboard />} />
+                  <Route path="/members" element={<Pages.Members />} />
+                  <Route path="/activities" element={<Pages.Activities />} />
+                  <Route path="/contact" element={<Pages.Contact />} />
+                  <Route path="/about" element={<Pages.AboutPage />} />
+                  <Route path="/profile" element={<Pages.ProfilePage />} />
+                  <Route path="/grupos" element={<Pages.Grupos />} />
+                  <Route path="/ranking" element={<Pages.Ranking />} />
 
                   {/* Materiales */}
-                  <Route path="/materiales" element={<Materials />} />
-                  <Route path="/materiales/grupos-formativos" element={<GruposFormativosIndex />} />
+                  <Route path="/materiales" element={<Pages.Materials />} />
+                  <Route
+                    path="/materiales/grupos-formativos"
+                    element={<Pages.GruposFormativosIndex />}
+                  />
 
                   {/* Grupos Formativos */}
-                  <Route path="/materiales/grupos-formativos/chiqui" element={<ChiquiPage />} />
+                  <Route
+                    path="/materiales/grupos-formativos/chiqui"
+                    element={<Pages.ChiquiPage />}
+                  />
                   <Route
                     path="/materiales/grupos-formativos/centro-juvenil"
-                    element={<CentroJuvenilPage />}
+                    element={<Pages.CentroJuvenilPage />}
                   />
                   <Route
                     path="/materiales/grupos-formativos/catecumenado"
-                    element={<CatecumenadoPage />}
+                    element={<Pages.CatecumenadoPage />}
                   />
                   <Route
                     path="/materiales/grupos-formativos/salesianos-cooperadores"
-                    element={<SalesianosCoperadoresPage />}
+                    element={<Pages.SalesianosCoperadoresPage />}
                   />
                   <Route
                     path="/materiales/grupos-formativos/comunidades"
-                    element={<ComunidadesPage />}
+                    element={<Pages.ComunidadesPage />}
                   />
-                  <Route path="/materiales/grupos-formativos/otros" element={<OtrosGruposPage />} />
+                  <Route
+                    path="/materiales/grupos-formativos/otros"
+                    element={<Pages.OtrosGruposPage />}
+                  />
 
                   {/* Talleres */}
-                  <Route path="/materiales/talleres" element={<TalleresIndex />} />
-                  <Route path="/materiales/talleres/manualidades" element={<ManualidadesPage />} />
-                  <Route path="/materiales/talleres/cocina" element={<CocinaPage />} />
-                  <Route path="/materiales/talleres/otros" element={<OtrosTalleresPage />} />
+                  <Route path="/materiales/talleres" element={<Pages.TalleresIndex />} />
+                  <Route
+                    path="/materiales/talleres/manualidades"
+                    element={<Pages.ManualidadesPage />}
+                  />
+                  <Route path="/materiales/talleres/cocina" element={<Pages.CocinaPage />} />
+                  <Route path="/materiales/talleres/otros" element={<Pages.OtrosTalleresPage />} />
 
                   {/* Juegos */}
-                  <Route path="/materiales/juegos" element={<JuegosIndex />} />
-                  <Route path="/materiales/juegos/cluedo" element={<CluedoPage />} />
-                  <Route path="/materiales/juegos/tablero" element={<TableroPage />} />
-                  <Route path="/materiales/juegos/gymkana" element={<GymkanaPage />} />
-                  <Route path="/materiales/juegos/otros" element={<OtrosJuegosPage />} />
+                  <Route path="/materiales/juegos" element={<Pages.JuegosIndex />} />
+                  <Route path="/materiales/juegos/cluedo" element={<Pages.CluedoPage />} />
+                  <Route path="/materiales/juegos/tablero" element={<Pages.TableroPage />} />
+                  <Route path="/materiales/juegos/gymkana" element={<Pages.GymkanaPage />} />
+                  <Route path="/materiales/juegos/otros" element={<Pages.OtrosJuegosPage />} />
 
                   {/* Pruebas */}
-                  <Route path="/materiales/pruebas" element={<PruebasIndex />} />
-                  <Route path="/materiales/pruebas/interior" element={<InteriorPage />} />
-                  <Route path="/materiales/pruebas/exterior" element={<ExteriorPage />} />
+                  <Route path="/materiales/pruebas" element={<Pages.PruebasIndex />} />
+                  <Route path="/materiales/pruebas/interior" element={<Pages.InteriorPage />} />
+                  <Route path="/materiales/pruebas/exterior" element={<Pages.ExteriorPage />} />
 
                   {/* Oraciones */}
-                  <Route path="/materiales/oraciones" element={<OracionesIndex />} />
-                  <Route path="/materiales/oraciones/ninos" element={<NinosPage />} />
-                  <Route path="/materiales/oraciones/jovenes" element={<JovenesOracionesPage />} />
-                  <Route path="/materiales/oraciones/adultos" element={<AdultosPage />} />
+                  <Route path="/materiales/oraciones" element={<Pages.OracionesIndex />} />
+                  <Route path="/materiales/oraciones/ninos" element={<Pages.NinosPage />} />
+                  <Route
+                    path="/materiales/oraciones/jovenes"
+                    element={<Pages.JovenesOracionesPage />}
+                  />
+                  <Route path="/materiales/oraciones/adultos" element={<Pages.AdultosPage />} />
 
                   {/* Campaña Pastoral */}
-                  <Route path="/materiales/campana-pastoral" element={<CampanaPastoralIndex />} />
+                  <Route
+                    path="/materiales/campana-pastoral"
+                    element={<Pages.CampanaPastoralIndex />}
+                  />
                   <Route
                     path="/materiales/campana-pastoral/justificacion"
-                    element={<JustificacionPage />}
+                    element={<Pages.JustificacionPage />}
                   />
-                  <Route path="/materiales/campana-pastoral/imagen" element={<ImagenPage />} />
+                  <Route
+                    path="/materiales/campana-pastoral/imagen"
+                    element={<Pages.ImagenPage />}
+                  />
                   <Route
                     path="/materiales/campana-pastoral/materiales"
-                    element={<MaterialesCampanaPage />}
+                    element={<Pages.MaterialesCampanaPage />}
                   />
 
                   {/* Imagen Corporativa */}
                   <Route
                     path="/materiales/imagen-corporativa"
-                    element={<ImagenCorporativaIndex />}
+                    element={<Pages.ImagenCorporativaIndex />}
                   />
-                  <Route path="/materiales/imagen-corporativa/logos" element={<LogosPage />} />
+                  <Route
+                    path="/materiales/imagen-corporativa/logos"
+                    element={<Pages.LogosPage />}
+                  />
                   <Route
                     path="/materiales/imagen-corporativa/tipografia"
-                    element={<TipografiaPage />}
+                    element={<Pages.TipografiaPage />}
                   />
                   <Route
                     path="/materiales/imagen-corporativa/otros"
-                    element={<OtrosImagenPage />}
+                    element={<Pages.OtrosImagenPage />}
                   />
                 </Route>
 
