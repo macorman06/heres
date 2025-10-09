@@ -58,6 +58,7 @@ import {
   LogosPage,
   TipografiaPage,
   OtrosImagenPage,
+  Ranking,
 } from './pages';
 
 // PrimeReact theme
@@ -133,6 +134,7 @@ function App() {
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/grupos" element={<Grupos />} />
+                  <Route path="/ranking" element={<Ranking />} />
 
                   {/* Materiales */}
                   <Route path="/materiales" element={<Materials />} />
