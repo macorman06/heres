@@ -1,7 +1,4 @@
-// src/pages/Dashboard.tsx
-
 import React, { useState, useEffect } from 'react';
-import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { useUsers } from '../hooks/useApi';
 import { useAuth } from '../hooks/useAuth';
@@ -9,7 +6,7 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { DailyCards } from '../components/dashboard/DailyCards';
 import { ScheduledActivities } from '../components/dashboard/ScheduledActivities';
 import { mockCalendarEvents } from '../data';
-import { ROLES } from '../types/user.types';
+import { ROLES } from '../types';
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth(); // Obtener usuario actual
@@ -67,22 +64,8 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400">Bienvenido al panel de control</p>
-        </div>
-        <Button
-          label="Actualizar"
-          icon="pi pi-refresh"
-          onClick={fetchAllUsers}
-          loading={usersLoading}
-        />
-      </div>
-
+    <div>
       <DailyCards />
-
       <div className="mt-6">
         <ScheduledActivities events={mockCalendarEvents} />
       </div>

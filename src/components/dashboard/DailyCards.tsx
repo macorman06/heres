@@ -40,7 +40,7 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
       <Card className="daily-card no-padding-card">
         <div
           className="flex flex-col items-center justify-center text-center h-full"
-          style={{ width: '200px', height: '200px' }}
+          style={{ width: '150px', height: '150px' }}
         >
           <div className="text-sm font-medium uppercase mb-2 text-gray-600 dark:text-gray-300">
             {date.toLocaleDateString('es-ES', { month: 'long' })}
@@ -56,7 +56,7 @@ export const DailyCards: React.FC<DailyCardsProps> = ({ date = new Date() }) => 
       </Card>
 
       {/* Right Column - Two Cards */}
-      <div className="flex-grow flex flex-col space-y-6">
+      <div className="flex-grow flex flex-col space-y-2">
         {/* Salesian Ephemeris Card */}
         <Card className="daily-card no-padding-card">
           <div className="flex items-center space-x-4 h-full">
