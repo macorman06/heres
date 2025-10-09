@@ -1,33 +1,33 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { MenuItem } from '../../types';
+import React, { useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { RoleId } from '../../types';
+import { getMenuItemsByRole } from '../../types/menu_items.ts';
+import { useAuth } from '../../hooks/useAuth';
 
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
 }
 
-const menuItems: MenuItem[] = [
-  { label: 'Dashboard', icon: 'pi pi-home', route: '/', subtitle: 'Inicio' },
-  { label: 'Grupos', icon: 'pi pi-users', route: '/grupos', subtitle: 'Gestión de usuarios y grupos' },
-  { label: 'Actividades', icon: 'pi pi-calendar', route: '/actividades', subtitle: 'Eventos y talleres' },
-  { label: 'Materiales', icon: 'pi pi-folder', route: '/materiales', subtitle: 'Recursos y documentos' },
-  { label: 'Contacto', icon: 'pi pi-phone', route: '/contacto', subtitle: 'Información de contacto' },
-  { label: 'Acerca de HERES', icon: 'pi pi-info-circle', route: '/about', subtitle: 'Conoce el proyecto',}
-];
-
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
+
+  const menuItems = useMemo(() => {
+    return getMenuItemsByRole(user?.rol_id as RoleId);
+  }, [user?.rol_id]);
 
   const handleMenuClick = (route: string) => {
     navigate(route);
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col h-full ${
-      collapsed ? 'w-18' : 'w-66'
-    }`}>
+    <div
+      className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col h-full ${
+        collapsed ? 'w-18' : 'w-66'
+      }`}
+    >
       {/* Header */}
       <div className="h-20 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between flex-shrink-0">
         {/* Logo - SIEMPRE visible y clickeable cuando está colapsado */}
@@ -99,7 +99,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                         )}
                       </div>
                       {item.subtitle && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{item.subtitle}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {item.subtitle}
+                        </p>
                       )}
                     </div>
                   )}
@@ -111,7 +113,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       </nav>
 
       {/* Footer - SIEMPRE pegado abajo */}
-      <div className={`border-t border-gray-200 dark:border-gray-700 flex-shrink-0 ${collapsed ? 'p-2' : 'p-4'}`}>
+      <div
+        className={`border-t border-gray-200 dark:border-gray-700 flex-shrink-0 ${collapsed ? 'p-2' : 'p-4'}`}
+      >
         {!collapsed ? (
           <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
             <p className="font-medium">HERES v1.0</p>

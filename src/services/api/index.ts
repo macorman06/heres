@@ -4,10 +4,7 @@ import userService from './services/userService';
 import groupService from './services/groupService';
 
 // === IMPORTAR TIPOS CORRECTOS ===
-import type { User } from '../../types';
-import type { Grupo } from '../../types';
-import type { LoginRequest, RegisterRequest } from '../../types';
-import type { CreateUserRequest } from '../../types';
+import type { User, Grupo, LoginRequest, RegisterRequest, CreateUserRequest } from '../../types';
 
 export const api = {
   // === AUTENTICACIÓN ===
@@ -19,8 +16,12 @@ export const api = {
 
   // === USUARIOS ===
   getUsers: () => userService.getUsers(),
+  getRanking: () => userService.getRanking(),
+  getUserById: (id: number) => userService.getUserById(id),
   createUser: (userData: CreateUserRequest) => userService.createUser(userData),
   updateUser: (id: number, userData: Partial<User>) => userService.updateUser(id, userData),
+  updatePuntuacion: (id: number, puntuacion: number) =>
+    userService.updatePuntuacion(id, puntuacion),
   deleteUser: (id: number) => userService.deleteUser(id),
 
   // === GRUPOS ===
