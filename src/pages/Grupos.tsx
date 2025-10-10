@@ -429,6 +429,26 @@ export const Grupos: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Añadir estado para ordenación
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  // Función para ordenar
+  const getSortedGroups = () => {
+    const sorted = [...groups].sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.nombre.localeCompare(b.nombre);
+      } else {
+        return b.nombre.localeCompare(a.nombre);
+      }
+    });
+    return sorted;
+  };
+
+  // Cambiar el toggle de orden
+  const toggleSort = () => {
+    setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+  };
+
   if (loading) {
     return (
       <div className="grupos-container">
@@ -466,30 +486,30 @@ export const Grupos: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Grupos</h1>
           <p className="text-gray-600 dark:text-gray-400">Gestiona y consulta los grupos.</p>
         </div>
-        <Button
-          label="Crear Grupo"
-          icon="pi pi-plus"
-          onClick={openCreateDialog}
-          className="btn-primary"
-        />
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <Button
+            label={sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+            icon={sortOrder === 'asc' ? 'pi pi-sort-alpha-down' : 'pi pi-sort-alpha-up'}
+            onClick={toggleSort}
+            className="btn-secondary"
+          />
+          <Button
+            label="Crear Grupo"
+            icon="pi pi-plus"
+            onClick={openCreateDialog}
+            className="btn-primary"
+          />
+        </div>
       </div>
 
-      {/* Grid de grupos */}
-      {groups.length === 0 ? (
-        <Card>
-          <p style={{ textAlign: 'center', color: '#6b7280' }}>
-            Aún no se han creado grupos en el sistema
-          </p>
-        </Card>
-      ) : (
-        <div className="grupos-grid">
-          {groups.map((grupo) => (
-            <Card key={grupo.id} className="grupo-card">
-              {renderCardContent(grupo)}
-            </Card>
-          ))}
-        </div>
-      )}
+      {/* Usar getSortedGroups() en lugar de groups */}
+      <div className="grupos-grid">
+        {getSortedGroups().map((grupo) => (
+          <Card key={grupo.id} className="grupo-card">
+            {renderCardContent(grupo)}
+          </Card>
+        ))}
+      </div>
 
       {/* Dialog para crear/editar grupo */}
       <Dialog
