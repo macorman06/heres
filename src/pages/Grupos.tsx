@@ -13,6 +13,8 @@ import { Skeleton } from 'primereact/skeleton';
 import { Grupo, FormData, User } from '../types';
 import { centroJuvenilOptions, seccionOptions } from '../types/general.types';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 export const Grupos: React.FC = () => {
   const { groups, loading, error, fetchAllGroups, createGroup, updateGroup, deleteGroup } =
     useGroups();
@@ -61,7 +63,7 @@ export const Grupos: React.FC = () => {
         throw new Error('No hay token de autenticación. Por favor, inicia sesión.');
       }
 
-      const response = await fetch('http://localhost:5000/usuarios/list', {
+      const response = await fetch(`${API_BASE_URL}/usuarios/list`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -157,7 +159,7 @@ export const Grupos: React.FC = () => {
 
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:5000/grupos/${selectedGrupo.id}/miembros`, {
+      const response = await fetch(`${API_BASE_URL}/grupos/${selectedGrupo.id}/miembros`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -229,7 +231,7 @@ export const Grupos: React.FC = () => {
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch(
-        `http://localhost:5000/grupos/${memberToDelete.grupo.id}/usuarios/${memberToDelete.usuario.id}`,
+        `${API_BASE_URL}/grupos/${memberToDelete.grupo.id}/usuarios/${memberToDelete.usuario.id}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
