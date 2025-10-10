@@ -4,10 +4,10 @@ export const ROLES = {
   DIRECTOR: 2,
   COORDINADOR: 3,
   ANIMADOR: 4,
-  MIEMBRO: 5
+  MIEMBRO: 5,
 } as const;
 
-export type RoleId = typeof ROLES[keyof typeof ROLES];
+export type RoleId = (typeof ROLES)[keyof typeof ROLES];
 
 export interface User {
   id: number;
@@ -33,6 +33,7 @@ export interface User {
   ciudad?: string;
   codigo_postal?: string;
   fecha_nacimiento?: string;
+  puntuacion?: number;
 }
 
 export interface CreateUserRequest {
@@ -54,4 +55,4 @@ export interface CreateUserRequest {
 }
 
 // Update User Request type
-export type UpdateUserRequest = Partial<CreateUserRequest>
+export type UpdateUserRequest = Partial<CreateUserRequest>;

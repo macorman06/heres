@@ -11,24 +11,6 @@ interface TopbarProps {
   sidebarCollapsed: boolean;
 }
 
-// Datos mockeados de notificaciones (se mantienen por ahora)
-const mockNotifications = [
-  {
-    id: '1',
-    title: 'Nueva actividad programada',
-    message: 'Se ha programado una nueva actividad para el sábado',
-    time: '2 min',
-    read: false,
-  },
-  {
-    id: '2',
-    title: 'Recordatorio: Reunión semanal',
-    message: 'La reunión semanal es mañana a las 21:00',
-    time: '1 hora',
-    read: false,
-  },
-];
-
 const getPageTitle = (pathname: string): string => {
   const routes: Record<string, string> = {
     '/dashboard': 'Dashboard',
@@ -129,17 +111,6 @@ export const Topbar: React.FC<TopbarProps> = ({}) => {
       separator: true,
     },
     {
-      label: 'Notificaciones',
-      icon: 'pi pi-bell',
-      badge: mockNotifications.filter((n) => !n.read).length.toString(),
-      command: () => {
-        // Open notifications panel
-      },
-    },
-    {
-      separator: true,
-    },
-    {
       label: 'Cerrar Sesión',
       icon: 'pi pi-sign-out',
       command: () => {
@@ -170,8 +141,6 @@ export const Topbar: React.FC<TopbarProps> = ({}) => {
       /* empty */
     }
   };
-
-  const handleNotificationClick = () => {};
 
   const displayName = user?.nombre || 'Usuario';
   const fullName = `${user?.nombre || ''} ${user?.apellido1 || ''}`.trim() || 'Usuario';
@@ -211,19 +180,6 @@ export const Topbar: React.FC<TopbarProps> = ({}) => {
         {/* Right section - User info */}
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-
-          {/* Notifications */}
-          <button
-            onClick={handleNotificationClick}
-            className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-          >
-            <i className="pi pi-bell text-lg"></i>
-            {mockNotifications.filter((n) => !n.read).length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {mockNotifications.filter((n) => !n.read).length}
-              </span>
-            )}
-          </button>
 
           {/* User Menu */}
           <div className="flex items-center space-x-3">
