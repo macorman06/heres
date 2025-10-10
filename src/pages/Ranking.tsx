@@ -227,7 +227,9 @@ export const Ranking: React.FC = () => {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           🏆 Ranking de Miembros
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">Clasificación de miembros por puntuación</p>
+        <p className="text-gray-600 dark:text-gray-400">
+          Clasificación de miembros por puntuación.
+        </p>
       </div>
 
       {/* Controles de ordenamiento */}
@@ -239,15 +241,13 @@ export const Ranking: React.FC = () => {
               label="Nombre"
               icon="pi pi-sort-alpha-down"
               onClick={() => handleSort('nombre')}
-              className={sortField === 'nombre' ? '' : 'p-button-outlined'}
-              severity={sortField === 'nombre' ? 'danger' : 'secondary'}
+              className={sortField === 'nombre' ? 'btn-primary' : 'btn-secondary'}
             />
             <Button
               label="Puntuación"
               icon="pi pi-sort-numeric-down"
               onClick={() => handleSort('puntuacion')}
-              className={sortField === 'puntuacion' ? '' : 'p-button-outlined'}
-              severity={sortField === 'puntuacion' ? 'danger' : 'secondary'}
+              className={sortField === 'puntuacion' ? 'btn-primary' : 'btn-secondary'}
             />
           </div>
 

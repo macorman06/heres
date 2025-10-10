@@ -1,0 +1,167 @@
+/* ===========================================
+   FORMS - INPUTS, DROPDOWNS, TEXTAREAS
+   =========================================== */
+
+/* Base Input Styling */
+.p-inputtext,
+.p-password .p-password-input {
+  padding: 0.75rem !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  border-radius: var(--border-radius-md) !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  min-height: var(--field-height) !important;
+  transition: all var(--transition-normal) !important;
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.p-inputtext::placeholder,
+.p-password .p-password-input::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Focus States */
+.p-inputtext:focus,
+.p-password .p-password-input:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3) !important;
+  border-color: var(--gecos-primary) !important;
+  outline: none !important;
+}
+
+/* Disabled States */
+.p-inputtext:disabled {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-muted) !important;
+  border-color: var(--border-primary) !important;
+  opacity: 0.7 !important;
+  cursor: not-allowed !important;
+}
+
+/* Invalid State */
+.p-inputtext.p-invalid {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Dropdown Styling */
+.p-dropdown {
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-secondary) !important;
+  border-radius: var(--border-radius-md) !important;
+  transition: all var(--transition-normal) !important;
+  min-height: var(--field-height) !important;
+}
+
+.p-dropdown:hover {
+  border-color: var(--text-muted) !important;
+}
+
+.p-dropdown:focus,
+.p-dropdown.p-focus {
+  border-color: var(--gecos-primary) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3) !important;
+  outline: none !important;
+}
+
+.p-dropdown.p-invalid {
+  border-color: #dc2626 !important;
+}
+
+.p-dropdown:disabled {
+  background: var(--bg-secondary) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
+/* MultiSelect */
+.p-multiselect {
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-secondary) !important;
+  border-radius: var(--border-radius-md) !important;
+  transition: all var(--transition-normal) !important;
+  min-height: var(--field-height) !important;
+}
+
+.p-multiselect:focus,
+.p-multiselect.p-focus {
+  border-color: var(--gecos-primary) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3) !important;
+}
+
+/* Textarea */
+.p-inputtextarea {
+  padding: 0.75rem !important;
+  border: 1px solid var(--border-secondary) !important;
+  border-radius: var(--border-radius-md) !important;
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  resize: vertical !important;
+  min-height: 6rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.p-inputtextarea:focus {
+  border-color: var(--gecos-primary) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3) !important;
+  outline: none !important;
+}
+
+/* Checkbox */
+.p-checkbox .p-checkbox-box {
+  border: 2px solid var(--border-secondary) !important;
+  border-radius: 4px !important;
+  transition: all var(--transition-normal) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.p-checkbox:hover .p-checkbox-box {
+  border-color: var(--gecos-primary) !important;
+}
+
+.p-checkbox .p-checkbox-box.p-highlight {
+  background: var(--gecos-primary) !important;
+  border-color: var(--gecos-primary) !important;
+}
+
+.p-checkbox .p-checkbox-box .p-checkbox-icon {
+  color: white !important;
+}
+
+/* Dark Mode */
+.dark .p-inputtext,
+.dark .p-password .p-password-input,
+.dark .p-dropdown,
+.dark .p-multiselect,
+.dark .p-inputtextarea {
+  background-color: var(--dark-bg-tertiary) !important;
+  border-color: var(--dark-border-secondary) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+.dark .p-inputtext:focus,
+.dark .p-password .p-password-input:focus,
+.dark .p-dropdown:focus,
+.dark .p-dropdown.p-focus,
+.dark .p-multiselect:focus,
+.dark .p-inputtextarea:focus {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3) !important;
+}
+
+.dark .p-checkbox .p-checkbox-box {
+  border-color: var(--dark-border-secondary) !important;
+  background: var(--dark-bg-tertiary) !important;
+}
+
+.dark .p-checkbox .p-checkbox-box.p-highlight {
+  background: #f87171 !important;
+  border-color: #f87171 !important;
+}

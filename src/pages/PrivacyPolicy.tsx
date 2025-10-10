@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
-import '../styles/PrivacyPolicy.css';
+import '../styles/4-pages/privacy-policy.css';
 
 export const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();

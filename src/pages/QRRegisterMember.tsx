@@ -5,7 +5,7 @@ import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
 import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
-import '../styles/QRRegisterMember.css';
+import '../styles/4-pages/qr-register.css';
 import { FormDataQRMember, FormErrorsQRMember } from '../types/qrform.types.ts';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';

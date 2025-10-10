@@ -125,21 +125,12 @@ export const LoginForm: React.FC = () => {
           <div className="form-actions">
             <Button
               type="submit"
-              className={`login-button ${showLoading ? 'login-button-loading' : ''}`}
+              label={showLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              icon={showLoading ? 'pi pi-spin pi-spinner' : 'pi pi-sign-in'}
+              loading={showLoading}
               disabled={showLoading}
-            >
-              {showLoading ? (
-                <>
-                  <i className="pi pi-spinner spinner-icon"></i>
-                  <span style={{ marginLeft: '8px' }}>Iniciando sesión...</span>
-                </>
-              ) : (
-                <>
-                  <i className="pi pi-sign-in" style={{ marginRight: '8px' }}></i>
-                  {isRegisterMode ? 'Registrarse' : 'Iniciar Sesión'}
-                </>
-              )}
-            </Button>
+              className="login-button btn-primary"
+            />
           </div>
         </form>
 
@@ -152,7 +143,7 @@ export const LoginForm: React.FC = () => {
           <p className="register-text">¿Primera vez aquí?</p>
           <Button
             type="button"
-            className="register-button"
+            className="btn-secondary"
             outlined
             onClick={() => navigate('/qr/register-member')}
             disabled={showLoading}

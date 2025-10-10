@@ -22,9 +22,3 @@ export interface FormErrorsQRMember {
   consent?: string;
   centro_juvenil?: string;
 }
-
-export const centroJuvenilOptions = [
-  { label: 'CJ Juveliber', value: 'CJ Juveliber' },
-  { label: 'CJ La Balsa', value: 'CJ La Balsa' },
-  { label: 'CJ Sotojoven', value: 'CJ Sotojoven' },
-];

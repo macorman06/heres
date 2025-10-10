@@ -1,72 +1,125 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useGroups } from '../hooks/useApi';
 import { Card } from 'primereact/card';
-import { Skeleton } from 'primereact/skeleton';
-import { Badge } from 'primereact/badge';
-import { Dialog } from 'primereact/dialog';
+import { Chip } from 'primereact/chip';
 import { Button } from 'primereact/button';
+import { Menu } from 'primereact/menu';
+import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { confirmDialog } from 'primereact/confirmdialog';
-import { ConfirmDialog } from 'primereact/confirmdialog';
+import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 import { Toast } from 'primereact/toast';
-import { Grupo, FormData } from '../types';
+import { Skeleton } from 'primereact/skeleton';
+import { Grupo, FormData, User } from '../types';
+import { centroJuvenilOptions, seccionOptions } from '../types/general.types';
 
 export const Grupos: React.FC = () => {
-  const { groups, loading, error, fetchAllGroups, createGroup, updateGroup, deleteGroup } = useGroups();
+  const { groups, loading, error, fetchAllGroups, createGroup, updateGroup, deleteGroup } =
+    useGroups();
+
+  // Estados para diálogos
   const [displayDialog, setDisplayDialog] = useState(false);
+  const [displayMembersDialog, setDisplayMembersDialog] = useState(false);
+  const [displayDeleteGroupDialog, setDisplayDeleteGroupDialog] = useState(false);
+  const [displayDeleteMemberDialog, setDisplayDeleteMemberDialog] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  // Estados para grupos y usuarios
   const [selectedGrupo, setSelectedGrupo] = useState<Grupo | null>(null);
-  const [expandedCardId, setExpandedCardId] = useState<number | null>(null);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
+  const [hoveredUserId, setHoveredUserId] = useState<number | null>(null);
+  const [groupToDelete, setGroupToDelete] = useState<Grupo | null>(null);
+  const [memberToDelete, setMemberToDelete] = useState<{ grupo: Grupo; usuario: User } | null>(
+    null
+  );
+
+  // Form data
   const [formData, setFormData] = useState<FormData>({
     nombre: '',
     centro_juvenil: '',
-    seccion: ''
+    seccion: '',
   });
-  const toast = React.useRef<Toast>(null);
+
+  // Refs
+  const toast = useRef<Toast>(null);
+  const menuRefs = useRef<{ [key: number]: Menu | null }>({});
 
   useEffect(() => {
     fetchAllGroups();
   }, [fetchAllGroups]);
 
-  // Manejar expansión de la tarjeta
-  const handleCardClick = (grupoId: number, event: React.MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (!target.closest('button')) {
-      setExpandedCardId(expandedCardId === grupoId ? null : grupoId);
+  // Obtener todos los usuarios del sistema
+  const fetchAllUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const token = localStorage.getItem('authToken');
+
+      if (!token) {
+        throw new Error('No hay token de autenticación. Por favor, inicia sesión.');
+      }
+
+      const response = await fetch('http://localhost:5000/usuarios/list', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error response:', errorData);
+        throw new Error(errorData.msg || 'Error al cargar usuarios');
+      }
+
+      const data = await response.json();
+      setAllUsers(data);
+    } catch (error: any) {
+      console.error('Error fetching users:', error);
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.message || 'No se pudieron cargar los usuarios',
+        life: 3000,
+      });
+    } finally {
+      setLoadingUsers(false);
     }
   };
 
+  // Abrir diálogo para crear grupo
   const openCreateDialog = () => {
     setIsEditMode(false);
     setSelectedGrupo(null);
-    setFormData({
-      nombre: '',
-      centro_juvenil: '',
-      seccion: ''
-    });
+    setFormData({ nombre: '', centro_juvenil: '', seccion: '' });
     setDisplayDialog(true);
   };
 
-  const openEditDialog = (grupo: Grupo, event: React.MouseEvent) => {
-    event.stopPropagation();
+  // Abrir diálogo para editar grupo
+  const openEditDialog = (grupo: Grupo) => {
     setIsEditMode(true);
     setSelectedGrupo(grupo);
     setFormData({
       nombre: grupo.nombre,
       centro_juvenil: grupo.centro_juvenil,
-      seccion: grupo.seccion
+      seccion: grupo.seccion,
     });
     setDisplayDialog(true);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  // Abrir diálogo para gestionar miembros
+  const openMembersDialog = async (grupo: Grupo) => {
+    setSelectedGrupo(grupo);
+    const currentMemberIds = grupo.usuarios.map((u) => u.id);
+    setSelectedMembers(currentMemberIds);
+    await fetchAllUsers();
+    setDisplayMembersDialog(true);
   };
 
+  // Guardar grupo (crear o editar)
   const handleSave = async () => {
     try {
       if (isEditMode && selectedGrupo) {
@@ -75,7 +128,7 @@ export const Grupos: React.FC = () => {
           severity: 'success',
           summary: 'Éxito',
           detail: 'Grupo actualizado correctamente',
-          life: 3000
+          life: 3000,
         });
       } else {
         await createGroup(formData);
@@ -83,7 +136,7 @@ export const Grupos: React.FC = () => {
           severity: 'success',
           summary: 'Éxito',
           detail: 'Grupo creado correctamente',
-          life: 3000
+          life: 3000,
         });
       }
       setDisplayDialog(false);
@@ -93,212 +146,385 @@ export const Grupos: React.FC = () => {
         severity: 'error',
         summary: 'Error',
         detail: 'No se pudo guardar el grupo',
-        life: 3000
+        life: 3000,
       });
     }
   };
 
-  const confirmDelete = (grupo: Grupo, event: React.MouseEvent) => {
-    event.stopPropagation();
-    confirmDialog({
-      message: `¿Estás seguro de que quieres eliminar el grupo "${grupo.nombre}"?`,
-      header: 'Confirmar eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => handleDelete(grupo.id),
-      reject: () => {},
-      acceptLabel: 'Sí',
-      rejectLabel: 'No',
-      acceptClassName: 'p-button-danger'
-    });
+  // Guardar cambios de miembros
+  const handleSaveMembers = async () => {
+    if (!selectedGrupo) return;
+
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`http://localhost:5000/grupos/${selectedGrupo.id}/miembros`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ usuario_ids: selectedMembers }),
+      });
+
+      if (!response.ok) throw new Error('Error al actualizar miembros');
+
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Miembros actualizados correctamente',
+        life: 3000,
+      });
+
+      setDisplayMembersDialog(false);
+      fetchAllGroups();
+    } catch (error) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudieron actualizar los miembros',
+        life: 3000,
+      });
+    }
   };
 
-  const handleDelete = async (id: number) => {
+  // Abrir diálogo para eliminar grupo
+  const confirmDeleteGroup = (grupo: Grupo) => {
+    setGroupToDelete(grupo);
+    setDisplayDeleteGroupDialog(true);
+  };
+
+  const handleDeleteGroup = async () => {
+    if (!groupToDelete) return;
+
     try {
-      await deleteGroup(id);
+      await deleteGroup(groupToDelete.id);
       toast.current?.show({
         severity: 'success',
         summary: 'Éxito',
         detail: 'Grupo eliminado correctamente',
-        life: 3000
+        life: 3000,
       });
       fetchAllGroups();
+      setDisplayDeleteGroupDialog(false);
+      setGroupToDelete(null);
     } catch {
       toast.current?.show({
         severity: 'error',
         summary: 'Error',
         detail: 'No se pudo eliminar el grupo',
-        life: 3000
+        life: 3000,
       });
     }
   };
 
-  const cardContent = (grupo: Grupo) => {
-    const isExpanded = expandedCardId === grupo.id;
+  // Abrir diálogo para eliminar miembro
+  const confirmRemoveMember = (grupo: Grupo, usuario: User) => {
+    setMemberToDelete({ grupo, usuario });
+    setDisplayDeleteMemberDialog(true);
+  };
+
+  const handleRemoveMember = async () => {
+    if (!memberToDelete) return;
+
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(
+        `http://localhost:5000/grupos/${memberToDelete.grupo.id}/usuarios/${memberToDelete.usuario.id}`,
+        {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!response.ok) throw new Error('Error al eliminar miembro');
+
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Miembro eliminado del grupo',
+        life: 3000,
+      });
+
+      fetchAllGroups();
+      setDisplayDeleteMemberDialog(false);
+      setMemberToDelete(null);
+    } catch {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo eliminar el miembro',
+        life: 3000,
+      });
+    }
+  };
+
+  // Toggle expansión de lista
+  const toggleExpand = (grupoId: number) => {
+    setExpandedGroups((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(grupoId)) {
+        newSet.delete(grupoId);
+      } else {
+        newSet.add(grupoId);
+      }
+      return newSet;
+    });
+  };
+
+  // Menú contextual para cada grupo
+  const getMenuItems = (grupo: Grupo) => [
+    {
+      label: 'Editar grupo',
+      icon: 'pi pi-pencil',
+      command: () => openEditDialog(grupo),
+    },
+    {
+      label: 'Añadir miembros',
+      icon: 'pi pi-users',
+      command: () => openMembersDialog(grupo),
+    },
+    {
+      separator: true,
+    },
+    {
+      label: 'Eliminar grupo',
+      icon: 'pi pi-trash',
+      command: () => confirmDeleteGroup(grupo),
+      className: 'text-red-500',
+    },
+  ];
+
+  // Template para usuarios en MultiSelect
+  const userOptionTemplate = (option: User) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div>
+        <div style={{ fontWeight: 500 }}>
+          {option.nombre} {option.apellido1} {option.apellido2}
+        </div>
+        <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+          {option.email}
+          {option.centro_juvenil && ` • ${option.centro_juvenil}`}
+        </div>
+      </div>
+    </div>
+  );
+
+  // Renderizar contenido de la card
+  const renderCardContent = (grupo: Grupo) => {
+    const isExpanded = expandedGroups.has(grupo.id);
+    const visibleUsers = isExpanded ? grupo.usuarios : grupo.usuarios.slice(0, 5);
+    const hasMore = grupo.usuarios.length > 5;
 
     return (
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <i className="pi pi-users" />
-          <Badge value={grupo.usuarios.length} severity="info" />
-          <span className="text-sm text-gray-600">
-            {grupo.usuarios.length === 1 ? 'miembro' : 'miembros'}
-          </span>
+      <div className="grupo-card-content">
+        {/* Header con nombre y chip de sección */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginBottom: '1rem',
+          }}
+        >
+          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700 }}>{grupo.nombre}</h3>
+          <Chip
+            label={grupo.seccion || 'N/A'}
+            style={{
+              backgroundColor: grupo.seccion === 'CJ' ? '#3b82f6' : '#10b981',
+              color: 'white',
+            }}
+          />
         </div>
 
-        {/* Lista de usuarios expandida */}
-        {isExpanded && grupo.usuarios.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <h4 className="font-semibold text-sm mb-3 text-gray-700">Miembros del grupo:</h4>
-            <ul className="space-y-2">
-              {grupo.usuarios.map((usuario) => (
+        {/* Lista de usuarios */}
+        <div style={{ marginBottom: '1rem' }}>
+          {visibleUsers.length === 0 ? (
+            <p style={{ color: '#6b7280', fontStyle: 'italic', margin: 0 }}>Sin miembros</p>
+          ) : (
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+              }}
+            >
+              {visibleUsers.map((usuario) => (
                 <li
                   key={usuario.id}
-                  className="flex items-center gap-2 p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
+                  onMouseEnter={() => setHoveredUserId(usuario.id)}
+                  onMouseLeave={() => setHoveredUserId(null)}
+                  style={{
+                    padding: '0.5rem',
+                    borderRadius: '4px',
+                    marginBottom: '0.25rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    transition: 'background-color 0.2s',
+                    backgroundColor: hoveredUserId === usuario.id ? '#f3f4f6' : 'transparent',
+                  }}
                 >
-                  <i className="pi pi-user text-xs text-gray-500" />
-                  <span className="text-sm">
-                    {usuario.nombre} {usuario.apellido1} {usuario.apellido2}
+                  <span>
+                    {usuario.nombre} {usuario.apellido1}
                   </span>
+                  {hoveredUserId === usuario.id && (
+                    <Button
+                      icon="pi pi-times"
+                      rounded
+                      text
+                      severity="danger"
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        confirmRemoveMember(grupo, usuario);
+                      }}
+                      style={{ width: '1.5rem', height: '1.5rem' }}
+                    />
+                  )}
                 </li>
               ))}
             </ul>
-          </div>
-        )}
+          )}
 
-        {isExpanded && grupo.usuarios.length === 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-200 text-center text-sm text-gray-500">
-            No hay miembros en este grupo
-          </div>
-        )}
+          {/* Botón para expandir/colapsar si hay más de 5 */}
+          {hasMore && (
+            <Button
+              label={isExpanded ? 'Ver menos' : `Ver ${grupo.usuarios.length - 5} más`}
+              text
+              size="small"
+              onClick={() => toggleExpand(grupo.id)}
+              style={{ marginTop: '0.5rem', padding: 0 }}
+            />
+          )}
+        </div>
 
-        {/* Indicador de expansión */}
-        <div className="flex justify-center mt-3">
-          <i className={`pi ${isExpanded ? 'pi-chevron-up' : 'pi-chevron-down'} text-xs text-gray-400`} />
+        {/* Footer con menú de opciones */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            paddingTop: '0.5rem',
+            borderTop: '1px solid #e5e7eb',
+          }}
+        >
+          <Button
+            icon="pi pi-ellipsis-v"
+            rounded
+            text
+            onClick={(e) => menuRefs.current[grupo.id]?.toggle(e)}
+            aria-label="Opciones"
+          />
+          <Menu model={getMenuItems(grupo)} popup ref={(el) => (menuRefs.current[grupo.id] = el)} />
         </div>
       </div>
     );
   };
 
-  // Pie de la tarjeta con botones de acción
-  const cardFooter = (grupo: Grupo) => (
-    <div className="flex gap-2 justify-end">
-      <Button
-        icon="pi pi-pencil"
-        className="p-button-rounded p-button-text"
-        onClick={(e) => openEditDialog(grupo, e)}
-        tooltip="Editar"
-        tooltipOptions={{ position: 'top' }}
-      />
-      <Button
-        icon="pi pi-trash"
-        className="p-button-rounded p-button-text p-button-danger"
-        onClick={(e) => confirmDelete(grupo, e)}
-        tooltip="Eliminar"
-        tooltipOptions={{ position: 'top' }}
-      />
-    </div>
-  );
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDropdownChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   if (loading) {
     return (
-      <div className="p-6">
-        <div className="mb-6">
-          <Skeleton width="300px" height="2rem" className="mb-2" />
-          <Skeleton width="400px" height="1rem" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height="200px" />
-          ))}
-        </div>
+      <div className="grupos-container">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} style={{ marginBottom: '1rem' }}>
+            <Skeleton height="150px" />
+          </Card>
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {error}
-        </div>
+      <div className="error-container">
+        <p>{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="grupos-container">
       <Toast ref={toast} />
-      <ConfirmDialog />
 
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Grupos</h1>
-          <p className="text-gray-600">
-            Gestiona y consulta los grupos a los que perteneces.
-          </p>
+      {/* Header */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '2rem',
+        }}
+      >
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Grupos</h1>
+          <p className="text-gray-600 dark:text-gray-400">Gestiona y consulta los grupos.</p>
         </div>
         <Button
           label="Crear Grupo"
           icon="pi pi-plus"
           onClick={openCreateDialog}
-          className="p-button-success"
+          className="btn-primary"
         />
       </div>
 
+      {/* Grid de grupos */}
       {groups.length === 0 ? (
-        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded">
-          Aún no se han creado grupos en el sistema
-        </div>
+        <Card>
+          <p style={{ textAlign: 'center', color: '#6b7280' }}>
+            Aún no se han creado grupos en el sistema
+          </p>
+        </Card>
       ) : (
-        <div className="flex flex-wrap gap-4">
+        <div className="grupos-grid">
           {groups.map((grupo) => (
-            <div
-              key={grupo.id}
-              style={{ flex: '1 1 220px', minWidth: 220, maxWidth: 280 }}
-            >
-              <Card
-                title={grupo.nombre}
-                subTitle={`${grupo.seccion} - ${grupo.centro_juvenil}`}
-                footer={cardFooter(grupo)}
-                className="cursor-pointer hover:shadow-lg transition-all duration-300"
-                onClick={(e) => handleCardClick(grupo.id, e)}
-                style={{
-                  transition: 'all 0.3s ease',
-                  minHeight: expandedCardId === grupo.id ? 'auto' : '200px'
-                }}
-              >
-                {cardContent(grupo)}
-              </Card>
-            </div>
+            <Card key={grupo.id} className="grupo-card">
+              {renderCardContent(grupo)}
+            </Card>
           ))}
         </div>
       )}
 
+      {/* Dialog para crear/editar grupo */}
       <Dialog
         header={isEditMode ? 'Editar Grupo' : 'Crear Nuevo Grupo'}
         visible={displayDialog}
         style={{ width: '450px' }}
         onHide={() => setDisplayDialog(false)}
+        modal
+        draggable={false}
+        resizable={false}
+        maskClassName="dialog-dark-mask"
         footer={
-          <div>
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
             <Button
               label="Cancelar"
               icon="pi pi-times"
               onClick={() => setDisplayDialog(false)}
-              className="p-button-text"
+              className="btn-secondary"
             />
             <Button
               label="Guardar"
               icon="pi pi-check"
               onClick={handleSave}
-              disabled={!formData.nombre.trim()}
+              autoFocus
+              className="btn-primary"
             />
           </div>
         }
       >
-        <div className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="nombre" className="block mb-2 font-semibold">
+        <div className="p-fluid">
+          <div className="p-field" style={{ marginBottom: '1.5rem' }}>
+            <label
+              htmlFor="nombre"
+              style={{ fontWeight: '600', marginBottom: '0.5rem', display: 'block' }}
+            >
               Nombre *
             </label>
             <InputText
@@ -306,37 +532,210 @@ export const Grupos: React.FC = () => {
               name="nombre"
               value={formData.nombre}
               onChange={handleInputChange}
-              className="w-full"
-              placeholder="Nombre del grupo"
+              placeholder="Ej: Grupo A1"
               required
             />
           </div>
-          <div>
-            <label htmlFor="centro_juvenil" className="block mb-2 font-semibold">
-              Centro Juvenil
-            </label>
-            <InputText
-              id="centro_juvenil"
-              name="centro_juvenil"
-              value={formData.centro_juvenil}
-              onChange={handleInputChange}
-              className="w-full"
-              placeholder="Centro juvenil"
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '1rem',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <div className="p-field">
+              <label
+                htmlFor="centro_juvenil"
+                style={{ fontWeight: '600', marginBottom: '0.5rem', display: 'block' }}
+              >
+                Centro Juvenil *
+              </label>
+              <Dropdown
+                id="centro_juvenil"
+                name="centro_juvenil"
+                value={formData.centro_juvenil}
+                options={centroJuvenilOptions}
+                onChange={(e) => handleDropdownChange('centro_juvenil', e.value)}
+                placeholder="Centro"
+                required
+              />
+            </div>
+
+            <div className="p-field">
+              <label
+                htmlFor="seccion"
+                style={{ fontWeight: '600', marginBottom: '0.5rem', display: 'block' }}
+              >
+                Sección *
+              </label>
+              <Dropdown
+                id="seccion"
+                name="seccion"
+                value={formData.seccion}
+                options={seccionOptions}
+                onChange={(e) => handleDropdownChange('seccion', e.value)}
+                placeholder="Sección"
+                required
+              />
+            </div>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* Dialog para gestionar miembros */}
+      <Dialog
+        header={`Gestionar miembros: ${selectedGrupo?.nombre || ''}`}
+        visible={displayMembersDialog}
+        style={{ width: '600px' }}
+        onHide={() => setDisplayMembersDialog(false)}
+        modal
+        draggable={false}
+        resizable={false}
+        maskClassName="dialog-dark-mask"
+        footer={
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <Button
+              label="Cancelar"
+              icon="pi pi-times"
+              onClick={() => setDisplayMembersDialog(false)}
+              className="btn-secondary"
+            />
+            <Button
+              label="Guardar Cambios"
+              icon="pi pi-check"
+              onClick={handleSaveMembers}
+              autoFocus
+              className="btn-primary"
             />
           </div>
-          <div>
-            <label htmlFor="seccion" className="block mb-2 font-semibold">
-              Sección
+        }
+      >
+        <div className="p-fluid">
+          <div className="p-field">
+            <label
+              htmlFor="members"
+              style={{ fontWeight: '600', marginBottom: '0.5rem', display: 'block' }}
+            >
+              Selecciona los miembros del grupo
             </label>
-            <InputText
-              id="seccion"
-              name="seccion"
-              value={formData.seccion}
-              onChange={handleInputChange}
-              className="w-full"
-              placeholder="Sección"
+            <small style={{ display: 'block', marginBottom: '0.75rem', color: '#6b7280' }}>
+              Puedes seleccionar múltiples usuarios.
+            </small>
+
+            {loadingUsers ? (
+              <Skeleton height="200px" />
+            ) : (
+              <MultiSelect
+                id="members"
+                value={selectedMembers}
+                options={allUsers}
+                onChange={(e) => setSelectedMembers(e.value)}
+                optionLabel="nombre"
+                optionValue="id"
+                placeholder="Selecciona usuarios..."
+                filter
+                filterPlaceholder="Buscar usuarios..."
+                itemTemplate={userOptionTemplate}
+                display="chip"
+                maxSelectedLabels={3}
+                style={{ width: '100%' }}
+              />
+            )}
+
+            <div
+              style={{
+                marginTop: '0.75rem',
+                padding: '0.5rem',
+                background: '#f3f4f6',
+                borderRadius: '4px',
+                fontSize: '0.9rem',
+              }}
+            >
+              <i className="pi pi-info-circle" style={{ marginRight: '0.5rem' }}></i>
+              {selectedMembers.length} usuario(s) seleccionado(s)
+            </div>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* Dialog para eliminar grupo */}
+      <Dialog
+        header="Confirmar eliminación"
+        visible={displayDeleteGroupDialog}
+        style={{ width: '450px' }}
+        onHide={() => setDisplayDeleteGroupDialog(false)}
+        modal
+        draggable={false}
+        resizable={false}
+        maskClassName="dialog-dark-mask"
+        footer={
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <Button
+              label="Cancelar"
+              icon="pi pi-times"
+              onClick={() => setDisplayDeleteGroupDialog(false)}
+              className="btn-secondary"
+            />
+            <Button
+              label="Sí, eliminar"
+              icon="pi pi-check"
+              onClick={handleDeleteGroup}
+              autoFocus
+              className="btn-primary"
             />
           </div>
+        }
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <i
+            className="pi pi-exclamation-triangle"
+            style={{ fontSize: '2rem', color: '#f59e0b' }}
+          ></i>
+          <p style={{ margin: 0 }}>
+            ¿Estás seguro de que quieres eliminar el grupo "{groupToDelete?.nombre}"?
+          </p>
+        </div>
+      </Dialog>
+
+      {/* Dialog para eliminar miembro */}
+      <Dialog
+        header="Eliminar miembro"
+        visible={displayDeleteMemberDialog}
+        style={{ width: '450px' }}
+        onHide={() => setDisplayDeleteMemberDialog(false)}
+        modal
+        draggable={false}
+        resizable={false}
+        maskClassName="dialog-dark-mask"
+        footer={
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <Button
+              label="Cancelar"
+              icon="pi pi-times"
+              onClick={() => setDisplayDeleteMemberDialog(false)}
+              className="btn-secondary"
+            />
+            <Button
+              label="Sí, eliminar"
+              icon="pi pi-check"
+              onClick={handleRemoveMember}
+              autoFocus
+              className="btn-primary"
+            />
+          </div>
+        }
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <i
+            className="pi pi-exclamation-triangle"
+            style={{ fontSize: '2rem', color: '#f59e0b' }}
+          ></i>
+          <p style={{ margin: 0 }}>
+            ¿Seguro que deseas eliminar a {memberToDelete?.usuario.nombre}{' '}
+            {memberToDelete?.usuario.apellido1}?
+          </p>
         </div>
       </Dialog>
     </div>

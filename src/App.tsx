@@ -8,24 +8,40 @@ import { Layout } from './components/layout/Layout';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import * as Pages from './pages';
 
-// PrimeReact theme
+// EXTERNAL LIBRARIES
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import './styles/variables.css';
-import './styles/fonts.css';
-import './styles/typography.css';
-import './styles/buttons.css';
-import './styles/inputs.css';
-import './styles/dropdowns.css';
-import './styles/menus.css';
-import './styles/cards-dialogs.css';
-import './styles/login.css';
-import './styles/construction.css';
-import './styles/about.css';
-import './styles/profile.css';
-import './styles/toast.css';
-import './styles/grupos.css';
+
+// 1. BASE
+import './styles/1-base/variables.css';
+import './styles/1-base/fonts.css';
+
+// 2. CORE
+import './styles/2-core/typography.css';
+
+// 3. COMPONENTS
+import './styles/3-components/buttons.css';
+import './styles/3-components/forms.css';
+import './styles/3-components/cards.css';
+import './styles/3-components/dialogs.css';
+import './styles/3-components/menus.css';
+import './styles/3-components/toast.css';
+import './styles/3-components/badge.css';
+import './styles/3-components/avatar.css';
+
+// 4. PAGES
+import './styles/4-pages/login.css';
+import './styles/4-pages/profile.css';
+import './styles/4-pages/grupos.css';
+import './styles/4-pages/privacy-policy.css';
+import './styles/4-pages/qr-register.css';
+import './styles/4-pages/about.css';
+
+// 5. OVERRIDES
+import './styles/5-overrides/primereact-overrides.css';
+
+// INDEX
 import './index.css';
 
 // Contexto para el Toast global

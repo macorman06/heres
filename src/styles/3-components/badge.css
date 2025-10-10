@@ -1,0 +1,37 @@
+/* Badge Styling */
+.p-badge {
+  border-radius: var(--border-radius-sm) !important;
+  font-weight: 500 !important;
+  font-size: 0.75rem !important;
+  padding: 0.25rem 0.5rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}
+
+.p-badge.p-badge-success {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.p-badge.p-badge-warning {
+  background-color: #f59e0b !important;
+  color: #ffffff !important;
+}
+
+.p-badge.p-badge-danger {
+  background-color: var(--gecos-primary) !important;
+  color: #ffffff !important;
+}
+
+.p-badge.p-badge-info {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+.p-badge.p-badge-secondary {
+  background-color: #6b7280 !important;
+  color: #ffffff !important;
+}

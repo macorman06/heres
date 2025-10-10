@@ -1,0 +1,145 @@
+/* ===========================================
+   BUTTONS - GLOBAL STYLES
+   =========================================== */
+
+/* Primary Button */
+.btn-primary,
+.p-button.p-button-primary {
+  background: var(--gecos-primary) !important;
+  border-color: var(--gecos-primary) !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--border-radius-md) !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.btn-primary:hover,
+.p-button.p-button-primary:hover {
+  background: var(--gecos-primary-hover) !important;
+  border-color: var(--gecos-primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+}
+
+/* Secondary Button */
+.btn-secondary,
+.p-button.p-button-secondary {
+  background: transparent !important;
+  border: 2px solid var(--border-secondary) !important;
+  color: var(--text-primary) !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 500 !important;
+  border-radius: var(--border-radius-md) !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary) !important;
+  border-color: var(--gecos-primary) !important;
+  color: var(--gecos-primary) !important;
+}
+
+/* Success Button */
+.p-button-success {
+  background: #10b981 !important;
+  border-color: #10b981 !important;
+}
+
+.p-button-success:hover {
+  background: #059669 !important;
+  border-color: #059669 !important;
+}
+
+/* Danger Button */
+.p-button-danger {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+.p-button-danger:hover {
+  background: #b91c1c !important;
+  border-color: #b91c1c !important;
+}
+
+/* Warning Button */
+.p-button-warning {
+  background: #f59e0b !important;
+  border-color: #f59e0b !important;
+  color: white !important;
+}
+
+.p-button-warning:hover {
+  background: #d97706 !important;
+  border-color: #d97706 !important;
+}
+
+/* Info Button */
+.p-button-info {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+.p-button-info:hover {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+/* Text Button */
+.p-button-text {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-secondary) !important;
+}
+
+.p-button-text:hover {
+  background: var(--bg-secondary) !important;
+  color: var(--gecos-primary) !important;
+}
+
+/* Rounded Button */
+.p-button-rounded {
+  border-radius: 50% !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+}
+
+/* Button Sizes */
+.p-button-sm {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.875rem !important;
+}
+
+.p-button-lg {
+  padding: 1rem 2rem !important;
+  font-size: 1.125rem !important;
+}
+
+/* Disabled State */
+.p-button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* Dark Mode */
+.dark .btn-secondary {
+  border-color: var(--dark-border-secondary) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+.dark .btn-secondary:hover {
+  background: var(--dark-bg-tertiary) !important;
+  border-color: #f87171 !important;
+  color: #f87171 !important;
+}
+
+.dark .p-button-text {
+  color: var(--dark-text-secondary) !important;
+}
+
+.dark .p-button-text:hover {
+  background: var(--dark-bg-tertiary) !important;
+  color: #f87171 !important;
+}

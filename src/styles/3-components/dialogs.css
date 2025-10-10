@@ -1,0 +1,57 @@
+/* ===========================================
+   DIALOGS - GLOBAL STYLES
+   =========================================== */
+
+/* Dialog Container */
+.p-dialog {
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.p-dialog .p-dialog-header {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  padding: 1.5rem !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
+}
+
+.p-dialog .p-dialog-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.p-dialog .p-dialog-content {
+  background: var(--bg-primary) !important;
+  color: var(--text-secondary) !important;
+  padding: 1.5rem !important;
+}
+
+.p-dialog .p-dialog-footer {
+  background: var(--bg-primary) !important;
+  padding: 1.25rem 1.5rem !important;
+  border-top: 1px solid var(--border-primary) !important;
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg) !important;
+}
+
+/* Dialog Mask (Background overlay) */
+.dialog-dark-mask {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Dark Mode */
+.dark .p-dialog .p-dialog-header,
+.dark .p-dialog .p-dialog-content,
+.dark .p-dialog .p-dialog-footer {
+  background: var(--dark-bg-primary) !important;
+  border-color: var(--dark-border-primary) !important;
+}
+
+.dark .p-dialog .p-dialog-title {
+  color: var(--dark-text-primary) !important;
+}
+
+.dark .p-dialog .p-dialog-content {
+  color: var(--dark-text-secondary) !important;
+}

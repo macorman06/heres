@@ -1,0 +1,52 @@
+/* ===========================================
+   PRIMEREACT GLOBAL OVERRIDES
+   =========================================== */
+
+/* Remove all focus outlines from PrimeReact (we use custom) */
+.p-component:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove default PrimeReact shadows */
+.p-component {
+  box-shadow: none !important;
+}
+
+/* Override PrimeReact primary color */
+.p-highlight {
+  background: var(--gecos-primary) !important;
+  color: white !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: var(--dark-bg-tertiary);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--dark-border-secondary);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-text-muted);
+}
