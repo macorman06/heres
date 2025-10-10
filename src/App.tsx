@@ -38,7 +38,7 @@ const PrivateRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
 };
 
 // Lista de rutas públicas que NO requieren autenticación
-const PUBLIC_ROUTES = ['/login', '/qr/register-member', '/privacy-policy'];
+const PUBLIC_ROUTES = ['/login', '/qr/register-member', '/activate', '/privacy-policy'];
 
 const AuthWatcher: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -70,6 +70,7 @@ function App() {
                 <Route path="/login" element={<Pages.LoginPage />} />
                 <Route path="/qr/register-member" element={<Pages.QRRegisterMember />} />
                 <Route path="/privacy-policy" element={<Pages.PrivacyPolicy />} />
+                <Route path="/activate/:token" element={<Pages.ActivateAccount />} />
 
                 {/* Rutas protegidas con Layout */}
                 <Route element={<PrivateRoute element={<Layout />} />}>

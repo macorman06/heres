@@ -1,5 +1,3 @@
-// src/pages/QRRegisterMember.tsx
-
 import React, { useState } from 'react';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
@@ -9,18 +7,25 @@ import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import '../styles/QRRegisterMember.css';
 import { seccionOptions } from '../types/options.ts';
-import { FormDataQRMember, FormErrorsQRMember } from '../types/qrform.types.ts';
+import {
+  FormDataQRMember,
+  FormErrorsQRMember,
+  centroJuvenilOptions,
+} from '../types/qrform.types.ts';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const QRRegisterMember: React.FC = () => {
   const [formData, setFormData] = useState<FormDataQRMember>({
     firstName: '',
-    lastName: '',
+    lastName1: '',
+    lastName2: '',
+    email: '',
     username: '',
     birthDate: '',
     grupo: '',
     seccion: '',
+    centro_juvenil: '',
   });
 
   const [errors, setErrors] = useState<FormErrorsQRMember>({});
@@ -36,14 +41,29 @@ export const QRRegisterMember: React.FC = () => {
       newErrors.firstName = 'El nombre es obligatorio';
     }
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Los apellidos son obligatorios';
+    if (!formData.lastName1.trim()) {
+      newErrors.lastName1 = 'Los apellidos son obligatorios';
+    }
+
+    if (!formData.lastName2.trim()) {
+      newErrors.lastName2 = 'Los apellidos son obligatorios';
+    }
+
+    if (formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = 'El correo electrónico no tiene un formato válido';
+      }
+    }
+
+    if (!formData.centro_juvenil.trim()) {
+      newErrors.centro_juvenil = 'Centro Juvenil es obligatorios';
     }
 
     if (!formData.username.trim()) {
       newErrors.username = 'El nombre de usuario es obligatorio';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'El nombre de usuario debe tener al menos 3 caracteres';
+    } else if (formData.username.length < 4) {
+      newErrors.username = 'El nombre de usuario debe tener al menos 4 caracteres';
     }
 
     if (!formData.birthDate) {
@@ -79,19 +99,22 @@ export const QRRegisterMember: React.FC = () => {
     setErrorMessage('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/qr/register-member`, {
+      const response = await fetch(`${API_BASE_URL}/register-member`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           firstName: formData.firstName,
-          lastName: formData.lastName,
+          lastName1: formData.lastName1,
+          lastName2: formData.lastName2,
+          email: formData.email,
           username: formData.username,
           birthDate: formData.birthDate,
           seccion: formData.seccion,
           consentGiven: true,
           consentDate: new Date().toISOString(),
+          centro_juvenil: formData.centro_juvenil,
         }),
       });
 
@@ -119,7 +142,9 @@ export const QRRegisterMember: React.FC = () => {
 
   const isFormComplete =
     formData.firstName.trim() !== '' &&
-    formData.lastName.trim() !== '' &&
+    formData.lastName1.trim() !== '' &&
+    formData.lastName2.trim() !== '' &&
+    formData.email.trim() !== '' &&
     formData.username.trim() !== '' &&
     formData.birthDate !== '' &&
     formData.seccion !== '' &&
@@ -138,8 +163,8 @@ export const QRRegisterMember: React.FC = () => {
                   style={{ fontSize: '4rem', color: 'var(--green-500)' }}
                 />
                 <h2>¡Registro Exitoso!</h2>
-                <p>Bienvenido/a al Centro Juvenil Juveliber.</p>
-                <p>Tu cuenta ha sido creada correctamente.</p>
+                <p>Bienvenido/a a HERES.</p>
+                <p>Revisa tu correo para confirmar tu cuenta.</p>
               </div>
             </Card>
           </div>
@@ -189,18 +214,52 @@ export const QRRegisterMember: React.FC = () => {
               </div>
 
               <div className="form-field">
-                <label htmlFor="lastName" className="required-field">
+                <label className="required-field">
                   Apellidos <span className="required-asterisk">*</span>
                 </label>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  {/* PRIMER APELLIDO */}
+                  <div style={{ flex: 1 }}>
+                    <InputText
+                      id="lastName1"
+                      value={formData.lastName1}
+                      onChange={(e) => handleInputChange('lastName1', e.target.value)}
+                      className={errors.lastName1 ? 'p-invalid' : ''}
+                      placeholder="Primer apellido"
+                      disabled={loading}
+                      style={{ width: '100%' }}
+                    />
+                    {errors.lastName1 && <small className="p-error">{errors.lastName1}</small>}
+                  </div>
+
+                  {/* SEGUNDO APELLIDO */}
+                  <div style={{ flex: 1 }}>
+                    <InputText
+                      id="lastName2"
+                      value={formData.lastName2}
+                      onChange={(e) => handleInputChange('lastName2', e.target.value)}
+                      placeholder="Segundo apellido"
+                      disabled={loading}
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label className="required-field">
+                  Correo Electrónico <span className="required-asterisk">*</span>
+                </label>
                 <InputText
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
-                  className={errors.lastName ? 'p-invalid' : ''}
-                  placeholder="Tus apellidos"
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className={errors.email ? 'p-invalid' : ''}
+                  placeholder="nombre.apellido@correo.com"
                   disabled={loading}
                 />
-                {errors.lastName && <small className="p-error">{errors.lastName}</small>}
+                {errors.email && <small className="p-error">{errors.email}</small>}
               </div>
 
               <div className="form-field">
@@ -236,19 +295,40 @@ export const QRRegisterMember: React.FC = () => {
               </div>
 
               <div className="form-field">
-                <label htmlFor="seccion" className="required-field">
-                  Sección <span className="required-asterisk">*</span>
+                <label className="required-field">
+                  Centro y Sección <span className="required-asterisk">*</span>
                 </label>
-                <Dropdown
-                  id="seccion"
-                  value={formData.seccion}
-                  options={seccionOptions}
-                  onChange={(e) => handleInputChange('seccion', e.value)}
-                  placeholder="Selecciona tu sección"
-                  className={errors.seccion ? 'p-invalid' : ''}
-                  disabled={loading}
-                />
-                {errors.seccion && <small className="p-error">{errors.seccion}</small>}
+                <div className="dropdown-row">
+                  {/* CENTRO JUVENIL */}
+                  <div className="dropdown-field">
+                    <Dropdown
+                      id="centro_juvenil"
+                      value={formData.centro_juvenil}
+                      options={centroJuvenilOptions}
+                      onChange={(e) => handleInputChange('centro_juvenil', e.value)}
+                      placeholder="Centro Juvenil"
+                      className={errors.centro_juvenil ? 'p-invalid' : ''}
+                      disabled={loading}
+                    />
+                    {errors.centro_juvenil && (
+                      <small className="p-error">{errors.centro_juvenil}</small>
+                    )}
+                  </div>
+
+                  {/* SECCIÓN */}
+                  <div className="dropdown-field">
+                    <Dropdown
+                      id="seccion"
+                      value={formData.seccion}
+                      options={seccionOptions}
+                      onChange={(e) => handleInputChange('seccion', e.value)}
+                      placeholder="Sección"
+                      className={errors.seccion ? 'p-invalid' : ''}
+                      disabled={loading}
+                    />
+                    {errors.seccion && <small className="p-error">{errors.seccion}</small>}
+                  </div>
+                </div>
               </div>
 
               <div className="consent-field">

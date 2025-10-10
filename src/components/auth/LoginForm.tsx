@@ -1,5 +1,6 @@
 // src/components/auth/LoginForm.tsx
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ AÑADIR
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
@@ -9,6 +10,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { ToastContext } from '../../App';
 
 export const LoginForm: React.FC = () => {
+  const navigate = useNavigate(); // ✅ AÑADIR
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegisterMode] = useState(false);
@@ -30,7 +32,6 @@ export const LoginForm: React.FC = () => {
       return;
     }
 
-    // Activar el spinner local
     setLocalLoading(true);
     const startTime = Date.now();
 
@@ -50,19 +51,16 @@ export const LoginForm: React.FC = () => {
         });
       }
     } finally {
-      // Calcular tiempo transcurrido
       const elapsedTime = Date.now() - startTime;
-      const minimumLoadingTime = 3000; // 3 segundos mínimo
+      const minimumLoadingTime = 3000;
       const remainingTime = Math.max(0, minimumLoadingTime - elapsedTime);
 
-      // Esperar el tiempo restante antes de ocultar el spinner
       setTimeout(() => {
         setLocalLoading(false);
       }, remainingTime);
     }
   };
 
-  // Combinar loading del contexto y local
   const showLoading = isLoading || localLoading;
 
   return (
@@ -144,6 +142,25 @@ export const LoginForm: React.FC = () => {
             </Button>
           </div>
         </form>
+
+        {/* ✅ NUEVO: Enlace a registro */}
+        <div className="login-divider">
+          <span>o</span>
+        </div>
+
+        <div className="login-register-section">
+          <p className="register-text">¿Primera vez aquí?</p>
+          <Button
+            type="button"
+            className="register-button"
+            outlined
+            onClick={() => navigate('/qr/register-member')}
+            disabled={showLoading}
+          >
+            <i className="pi pi-user-plus" style={{ marginRight: '8px' }}></i>
+            Crear nueva cuenta
+          </Button>
+        </div>
 
         <div className="login-footer">
           <p className="login-help">¿Problemas para acceder? Contacta al administrador.</p>

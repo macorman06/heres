@@ -10,7 +10,9 @@
   min-height: 100vh;
   width: 100vw;
   position: relative;
-  overflow: hidden;
+  /* ✅ CAMBIO: Permitir scroll vertical en móvil */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .qr-register-background {
@@ -35,15 +37,20 @@
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(1px);
   display: flex;
-  align-items: center;
+  /* ✅ CAMBIO: Alinear arriba para permitir scroll */
+  align-items: flex-start;
   justify-content: center;
   padding: 2rem;
+  /* ✅ CAMBIO: Altura mínima pero permitir crecer */
+  min-height: 100vh;
 }
 
 .qr-register-container {
   width: 100%;
-  max-width: 580px; /* Aumentado de 480px a 580px para acomodar los dropdowns */
+  max-width: 580px;
   z-index: 10;
+  /* ✅ CAMBIO: Añadir margen vertical */
+  margin: 20px auto;
 }
 
 /* ========================================
@@ -60,7 +67,7 @@
     0 15px 25px rgba(0, 0, 0, 0.05) !important;
   padding: 2.5rem !important;
   width: 100%;
-  box-sizing: border-box; /* Asegura que el padding no cause overflow */
+  box-sizing: border-box;
 }
 
 /* ========================================
@@ -118,7 +125,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 0; /* Previene overflow en flex/grid items */
+  min-width: 0;
 }
 
 .form-field label {
@@ -139,7 +146,23 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+  width: 100%;
+}
+
+/* Fila de dropdowns */
+.dropdown-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.dropdown-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-field .p-dropdown {
+  width: 100%;
 }
 
 /* ========================================
@@ -221,6 +244,30 @@
   color: var(--gecos-primary-hover);
 }
 
+/* Checkbox styles */
+.qr-register-form .p-checkbox .p-checkbox-box {
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.qr-register-form .p-checkbox:hover .p-checkbox-box {
+  border-color: var(--gecos-primary);
+}
+
+.qr-register-form .p-checkbox .p-checkbox-box.p-highlight {
+  background: var(--gecos-primary);
+  border-color: var(--gecos-primary);
+}
+
+.qr-register-form .p-checkbox .p-checkbox-box .p-checkbox-icon {
+  color: white;
+}
+
+.qr-register-form .p-checkbox.p-invalid .p-checkbox-box {
+  border-color: #dc2626;
+}
+
 /* ========================================
    7. PRIVACY NOTICE
    ======================================== */
@@ -255,6 +302,9 @@
 
 .form-actions {
   margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .qr-register-button {
@@ -292,12 +342,6 @@
   transform: none !important;
   box-shadow: none !important;
   opacity: 1 !important;
-}
-
-.form-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* ========================================
@@ -348,7 +392,23 @@
 }
 
 /* ========================================
-   11. ANIMACIONES
+   11. CAMPO OBLIGATORIO - ASTERISCO ROJO
+   ======================================== */
+
+.required-asterisk {
+  color: #dc2626;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.required-field {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ========================================
+   12. ANIMACIONES
    ======================================== */
 
 @keyframes logoFadeIn {
@@ -363,16 +423,25 @@
 }
 
 /* ========================================
-   12. RESPONSIVE
+   13. RESPONSIVE - MÓVIL
    ======================================== */
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .qr-register-page {
+    /* ✅ Asegurar scroll en móvil */
+    overflow-y: auto;
+  }
+
   .qr-register-overlay {
     padding: 1rem;
+    /* ✅ Alinear arriba en móvil */
+    align-items: flex-start;
   }
 
   .qr-register-container {
-    max-width: 100%; /* Ocupa todo el ancho en móviles */
+    max-width: 100%;
+    /* ✅ Reducir margen en móvil */
+    margin: 10px auto;
   }
 
   .qr-register-card {
@@ -396,10 +465,24 @@
   .form-row {
     grid-template-columns: 1fr;
   }
+
+  .dropdown-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-register-overlay {
+    padding: 0.5rem;
+  }
+
+  .qr-register-container {
+    margin: 5px auto;
+  }
 }
 
 /* ========================================
-   13. DARK MODE
+   14. DARK MODE
    ======================================== */
 
 .dark .qr-register-card {
@@ -449,67 +532,6 @@
   color: var(--dark-text-primary);
 }
 
-/* ========================================
-   CAMPO OBLIGATORIO - ASTERISCO ROJO
-   ======================================== */
-
-.required-asterisk {
-  color: #dc2626;
-  font-weight: 700;
-  margin-left: 2px;
-}
-
-.required-field {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-/* ========================================
-   CAMPO OBLIGATORIO - ASTERISCO ROJO
-   ======================================== */
-
-.required-asterisk {
-  color: #dc2626;
-  font-weight: 700;
-  margin-left: 2px;
-}
-
-.required-field {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-/* ========================================
-   14. CHECKBOX - ESTILOS MÍNIMOS (NO BLOQUEAN FUNCIONALIDAD)
-   ======================================== */
-
-/* Solo estilizamos el borde y colores, SIN tocar el pointer-events */
-.qr-register-form .p-checkbox .p-checkbox-box {
-  border: 2px solid rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-  transition: border-color 0.2s ease;
-}
-
-.qr-register-form .p-checkbox:hover .p-checkbox-box {
-  border-color: var(--gecos-primary);
-}
-
-.qr-register-form .p-checkbox .p-checkbox-box.p-highlight {
-  background: var(--gecos-primary);
-  border-color: var(--gecos-primary);
-}
-
-.qr-register-form .p-checkbox .p-checkbox-box .p-checkbox-icon {
-  color: white;
-}
-
-.qr-register-form .p-checkbox.p-invalid .p-checkbox-box {
-  border-color: #dc2626;
-}
-
-/* Dark mode para checkbox */
 .dark .qr-register-form .p-checkbox .p-checkbox-box {
   border: 2px solid rgba(156, 163, 175, 0.5);
 }
