@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -6,12 +6,7 @@ import { Message } from 'primereact/message';
 import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import '../styles/QRRegisterMember.css';
-import { seccionOptions } from '../types/options.ts';
-import {
-  FormDataQRMember,
-  FormErrorsQRMember,
-  centroJuvenilOptions,
-} from '../types/qrform.types.ts';
+import { FormDataQRMember, FormErrorsQRMember } from '../types/qrform.types.ts';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -25,7 +20,7 @@ export const QRRegisterMember: React.FC = () => {
     birthDate: '',
     grupo: '',
     seccion: '',
-    centro_juvenil: '',
+    centro_juvenil: 'CJ Juveliber', // Valor por defecto fijo
   });
 
   const [errors, setErrors] = useState<FormErrorsQRMember>({});
@@ -33,6 +28,54 @@ export const QRRegisterMember: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [grupoOptions, setGrupoOptions] = useState<{ label: string; value: string }[]>([]);
+
+  // Opciones de Sección
+  const seccionOptions = [
+    { label: 'CJ', value: 'CJ' },
+    { label: 'Chiqui', value: 'Chiqui' },
+  ];
+
+  // Actualizar opciones de Grupo según Sección seleccionada
+  useEffect(() => {
+    if (formData.seccion === 'CJ') {
+      setGrupoOptions([
+        { label: 'PREAS', value: 'PREAS' },
+        { label: 'A1', value: 'A1' },
+        { label: 'A2', value: 'A2' },
+        { label: 'J1', value: 'J1' },
+        { label: 'J2', value: 'J2' },
+        { label: 'J3', value: 'J3' },
+        { label: 'Animador/a', value: 'Animador/a' },
+      ]);
+      // Resetear grupo si no es válido para CJ
+      if (
+        formData.grupo &&
+        !['PREAS', 'A1', 'A2', 'J1', 'J2', 'J3', 'Animador/a'].includes(formData.grupo)
+      ) {
+        setFormData((prev) => ({ ...prev, grupo: '' }));
+      }
+    } else if (formData.seccion === 'Chiqui') {
+      setGrupoOptions([
+        { label: '1º y 2º', value: '1º y 2º' },
+        { label: '3º', value: '3º' },
+        { label: '4º', value: '4º' },
+        { label: '5º', value: '5º' },
+        { label: '6º', value: '6º' },
+        { label: 'Animador/a', value: 'Animador/a' },
+      ]);
+      // Resetear grupo si no es válido para Chiqui
+      if (
+        formData.grupo &&
+        !['1º y 2º', '3º', '4º', '5º', '6º', 'Animador/a'].includes(formData.grupo)
+      ) {
+        setFormData((prev) => ({ ...prev, grupo: '' }));
+      }
+    } else {
+      setGrupoOptions([]);
+      setFormData((prev) => ({ ...prev, grupo: '' }));
+    }
+  }, [formData.seccion]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrorsQRMember = {};
@@ -56,10 +99,6 @@ export const QRRegisterMember: React.FC = () => {
       }
     }
 
-    if (!formData.centro_juvenil.trim()) {
-      newErrors.centro_juvenil = 'Centro Juvenil es obligatorios';
-    }
-
     if (!formData.username.trim()) {
       newErrors.username = 'El nombre de usuario es obligatorio';
     } else if (formData.username.length < 4) {
@@ -80,6 +119,10 @@ export const QRRegisterMember: React.FC = () => {
       newErrors.seccion = 'Debes seleccionar una sección';
     }
 
+    if (!formData.grupo) {
+      newErrors.grupo = 'Debes seleccionar un grupo';
+    }
+
     if (!consent) {
       newErrors.consent = 'Debes aceptar el tratamiento de datos';
     }
@@ -90,14 +133,12 @@ export const QRRegisterMember: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) {
       return;
     }
 
     setLoading(true);
     setErrorMessage('');
-
     try {
       const response = await fetch(`${API_BASE_URL}/register-member`, {
         method: 'POST',
@@ -112,6 +153,7 @@ export const QRRegisterMember: React.FC = () => {
           username: formData.username,
           birthDate: formData.birthDate,
           seccion: formData.seccion,
+          grupo: formData.grupo,
           consentGiven: true,
           consentDate: new Date().toISOString(),
           centro_juvenil: formData.centro_juvenil,
@@ -148,236 +190,195 @@ export const QRRegisterMember: React.FC = () => {
     formData.username.trim() !== '' &&
     formData.birthDate !== '' &&
     formData.seccion !== '' &&
+    formData.grupo !== '' &&
     consent;
 
   if (success) {
     return (
-      <div className="qr-register-page">
-        <div className="qr-register-background" />
-        <div className="qr-register-overlay">
-          <div className="qr-register-container">
-            <Card className="qr-register-card success-card">
-              <div className="success-content">
-                <i
-                  className="pi pi-check-circle"
-                  style={{ fontSize: '4rem', color: 'var(--green-500)' }}
-                />
-                <h2>¡Registro Exitoso!</h2>
-                <p>Bienvenido/a a HERES.</p>
-                <p>Revisa tu correo para confirmar tu cuenta.</p>
-              </div>
-            </Card>
+      <div className="register-container">
+        <Card className="register-card success-card">
+          <div className="success-message">
+            <i className="pi pi-check-circle" style={{ fontSize: '4rem', color: '#22c55e' }}></i>
+            <h2>¡Registro Exitoso!</h2>
+            <p>Bienvenido/a a HERES.</p>
+            <p>Revisa tu correo para confirmar tu cuenta.</p>
           </div>
-        </div>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="qr-register-page">
-      <div className="qr-register-background" />
-      <div className="qr-register-overlay">
-        <div className="qr-register-container">
-          <Card className="qr-register-card">
-            <div className="qr-register-header">
-              <div className="qr-register-logo">
-                <img
-                  src="../../public/logos/web-app-manifest-192x192.png"
-                  alt="HERES Logo"
-                  className="app-logo"
-                />
-              </div>
-              <h1 className="qr-register-title">Registro de Nuevo Miembro</h1>
-              <p className="qr-register-subtitle">HERES - Herramienta de Recursos Salesianos</p>
+    <div className="register-container">
+      <Card className="register-card">
+        <h1 className="register-title">Registro de Nuevo Miembro</h1>
+        <p className="register-subtitle">HERES - Herramienta de Recursos Salesianos</p>
+
+        {errorMessage && (
+          <Message severity="error" text={errorMessage} className="error-message-banner" />
+        )}
+
+        <form onSubmit={handleSubmit} className="register-form">
+          {/* NOMBRE */}
+          <div className="form-field">
+            <label htmlFor="firstName">Nombre *</label>
+            <InputText
+              id="firstName"
+              value={formData.firstName}
+              onChange={(e) => handleInputChange('firstName', e.target.value)}
+              className={errors.firstName ? 'p-invalid' : ''}
+              placeholder="Tu nombre"
+              disabled={loading}
+            />
+            {errors.firstName && <small className="p-error">{errors.firstName}</small>}
+          </div>
+
+          {/* APELLIDOS */}
+          <div className="form-field">
+            <label>Apellidos *</label>
+            <div className="apellidos-container">
+              {/* PRIMER APELLIDO */}
+              <InputText
+                id="lastName1"
+                value={formData.lastName1}
+                onChange={(e) => handleInputChange('lastName1', e.target.value)}
+                className={errors.lastName1 ? 'p-invalid' : ''}
+                placeholder="Primer apellido"
+                disabled={loading}
+                style={{ width: '100%' }}
+              />
+              {errors.lastName1 && <small className="p-error">{errors.lastName1}</small>}
+
+              {/* SEGUNDO APELLIDO */}
+              <InputText
+                id="lastName2"
+                value={formData.lastName2}
+                onChange={(e) => handleInputChange('lastName2', e.target.value)}
+                placeholder="Segundo apellido"
+                disabled={loading}
+                style={{ width: '100%' }}
+              />
             </div>
+          </div>
 
-            {errorMessage && (
-              <div className="qr-register-error">
-                <Message severity="error" text={errorMessage} />
-              </div>
-            )}
+          {/* EMAIL */}
+          <div className="form-field">
+            <label htmlFor="email">Correo Electrónico *</label>
+            <InputText
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              className={errors.email ? 'p-invalid' : ''}
+              placeholder="nombre.apellido@correo.com"
+              disabled={loading}
+            />
+            {errors.email && <small className="p-error">{errors.email}</small>}
+          </div>
 
-            <form onSubmit={handleSubmit} className="qr-register-form">
-              <div className="form-field">
-                <label htmlFor="firstName" className="required-field">
-                  Nombre <span className="required-asterisk">*</span>
-                </label>
-                <InputText
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
-                  className={errors.firstName ? 'p-invalid' : ''}
-                  placeholder="Tu nombre"
-                  disabled={loading}
-                />
-                {errors.firstName && <small className="p-error">{errors.firstName}</small>}
-              </div>
+          {/* USERNAME */}
+          <div className="form-field">
+            <label htmlFor="username">Usuario *</label>
+            <small>(Nombre visible en juegos)</small>
+            <InputText
+              id="username"
+              value={formData.username}
+              onChange={(e) => handleInputChange('username', e.target.value)}
+              className={errors.username ? 'p-invalid' : ''}
+              placeholder="Tu nombre de usuario"
+              disabled={loading}
+            />
+            {errors.username && <small className="p-error">{errors.username}</small>}
+          </div>
 
-              <div className="form-field">
-                <label className="required-field">
-                  Apellidos <span className="required-asterisk">*</span>
-                </label>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  {/* PRIMER APELLIDO */}
-                  <div style={{ flex: 1 }}>
-                    <InputText
-                      id="lastName1"
-                      value={formData.lastName1}
-                      onChange={(e) => handleInputChange('lastName1', e.target.value)}
-                      className={errors.lastName1 ? 'p-invalid' : ''}
-                      placeholder="Primer apellido"
-                      disabled={loading}
-                      style={{ width: '100%' }}
-                    />
-                    {errors.lastName1 && <small className="p-error">{errors.lastName1}</small>}
-                  </div>
+          {/* FECHA DE NACIMIENTO */}
+          <div className="form-field">
+            <label htmlFor="birthDate">Fecha de Nacimiento *</label>
+            <InputText
+              id="birthDate"
+              type="date"
+              value={formData.birthDate}
+              onChange={(e) => handleInputChange('birthDate', e.target.value)}
+              className={errors.birthDate ? 'p-invalid' : ''}
+              max={new Date().toISOString().split('T')[0]}
+              disabled={loading}
+            />
+            {errors.birthDate && <small className="p-error">{errors.birthDate}</small>}
+          </div>
 
-                  {/* SEGUNDO APELLIDO */}
-                  <div style={{ flex: 1 }}>
-                    <InputText
-                      id="lastName2"
-                      value={formData.lastName2}
-                      onChange={(e) => handleInputChange('lastName2', e.target.value)}
-                      placeholder="Segundo apellido"
-                      disabled={loading}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                </div>
-              </div>
+          {/* SECCIÓN Y GRUPO */}
+          <div className="form-field">
+            <label>Sección y Grupo *</label>
+            <div className="seccion-grupo-container">
+              {/* SECCIÓN */}
+              <Dropdown
+                id="seccion"
+                value={formData.seccion}
+                options={seccionOptions}
+                onChange={(e) => handleInputChange('seccion', e.value)}
+                placeholder="Sección"
+                className={errors.seccion ? 'p-invalid' : ''}
+                disabled={loading}
+              />
+              {errors.seccion && <small className="p-error">{errors.seccion}</small>}
 
-              <div className="form-field">
-                <label className="required-field">
-                  Correo Electrónico <span className="required-asterisk">*</span>
-                </label>
-                <InputText
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className={errors.email ? 'p-invalid' : ''}
-                  placeholder="nombre.apellido@correo.com"
-                  disabled={loading}
-                />
-                {errors.email && <small className="p-error">{errors.email}</small>}
-              </div>
+              {/* GRUPO */}
+              <Dropdown
+                id="grupo"
+                value={formData.grupo}
+                options={grupoOptions}
+                onChange={(e) => handleInputChange('grupo', e.value)}
+                placeholder="Grupo"
+                className={errors.grupo ? 'p-invalid' : ''}
+                disabled={loading || !formData.seccion}
+              />
+              {errors.grupo && <small className="p-error">{errors.grupo}</small>}
+            </div>
+          </div>
 
-              <div className="form-field">
-                <label htmlFor="username" className="required-field">
-                  Usuario <span className="required-asterisk">*</span>
-                  <span className="field-hint"> (Nombre visible en juegos)</span>
-                </label>
-                <InputText
-                  id="username"
-                  value={formData.username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
-                  className={errors.username ? 'p-invalid' : ''}
-                  placeholder="Tu nombre de usuario"
-                  disabled={loading}
-                />
-                {errors.username && <small className="p-error">{errors.username}</small>}
-              </div>
+          {/* CONSENTIMIENTO */}
+          <div className="consent-field">
+            <Checkbox
+              inputId="consent"
+              checked={consent}
+              onChange={(e) => {
+                setConsent(e.checked || false);
+                if (errors.consent) {
+                  setErrors((prev) => ({ ...prev, consent: undefined }));
+                }
+              }}
+              className={errors.consent ? 'p-invalid' : ''}
+              disabled={loading}
+            />
+            <label htmlFor="consent">
+              Acepto el tratamiento de mis datos personales conforme a la{' '}
+              <a href="/privacy" target="_blank">
+                política de privacidad
+              </a>
+            </label>
+          </div>
+          {errors.consent && <small className="p-error">{errors.consent}</small>}
 
-              <div className="form-field">
-                <label htmlFor="birthDate" className="required-field">
-                  Fecha de Nacimiento <span className="required-asterisk">*</span>
-                </label>
-                <InputText
-                  id="birthDate"
-                  type="date"
-                  value={formData.birthDate}
-                  onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                  className={errors.birthDate ? 'p-invalid' : ''}
-                  max={new Date().toISOString().split('T')[0]}
-                  disabled={loading}
-                />
-                {errors.birthDate && <small className="p-error">{errors.birthDate}</small>}
-              </div>
+          {/* BOTÓN SUBMIT */}
+          <Button
+            type="submit"
+            label={loading ? 'Registrando...' : 'Registrarme'}
+            icon={loading ? 'pi pi-spin pi-spinner' : 'pi pi-user-plus'}
+            className="submit-button"
+            disabled={!isFormComplete || loading}
+          />
 
-              <div className="form-field">
-                <label className="required-field">
-                  Centro y Sección <span className="required-asterisk">*</span>
-                </label>
-                <div className="dropdown-row">
-                  {/* CENTRO JUVENIL */}
-                  <div className="dropdown-field">
-                    <Dropdown
-                      id="centro_juvenil"
-                      value={formData.centro_juvenil}
-                      options={centroJuvenilOptions}
-                      onChange={(e) => handleInputChange('centro_juvenil', e.value)}
-                      placeholder="Centro Juvenil"
-                      className={errors.centro_juvenil ? 'p-invalid' : ''}
-                      disabled={loading}
-                    />
-                    {errors.centro_juvenil && (
-                      <small className="p-error">{errors.centro_juvenil}</small>
-                    )}
-                  </div>
-
-                  {/* SECCIÓN */}
-                  <div className="dropdown-field">
-                    <Dropdown
-                      id="seccion"
-                      value={formData.seccion}
-                      options={seccionOptions}
-                      onChange={(e) => handleInputChange('seccion', e.value)}
-                      placeholder="Sección"
-                      className={errors.seccion ? 'p-invalid' : ''}
-                      disabled={loading}
-                    />
-                    {errors.seccion && <small className="p-error">{errors.seccion}</small>}
-                  </div>
-                </div>
-              </div>
-
-              <div className="consent-field">
-                <div className="consent-checkbox">
-                  <Checkbox
-                    inputId="consent"
-                    checked={consent}
-                    onChange={(e) => {
-                      setConsent(e.checked || false);
-                      if (errors.consent) {
-                        setErrors((prev) => ({ ...prev, consent: undefined }));
-                      }
-                    }}
-                    className={errors.consent ? 'p-invalid' : ''}
-                    disabled={loading}
-                  />
-                  <label htmlFor="consent" className="consent-label">
-                    Acepto el tratamiento de mis datos personales conforme a la{' '}
-                    <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
-                      política de privacidad
-                    </a>
-                    <span className="required-asterisk"> *</span>
-                  </label>
-                </div>
-                {errors.consent && <small className="p-error">{errors.consent}</small>}
-              </div>
-
-              <div className="privacy-notice">
-                <i className="pi pi-info-circle" />
-                <p>
-                  <strong>Protección de datos:</strong> Tus datos serán utilizados únicamente para
-                  gestionar tu participación en las actividades del centro juvenil. Puedes solicitar
-                  la eliminación de tus datos en cualquier momento.
-                </p>
-              </div>
-
-              <div className="form-actions">
-                <Button
-                  type="submit"
-                  label={loading ? 'Registrando...' : 'Registrarme'}
-                  icon={loading ? 'pi pi-spin pi-spinner' : 'pi pi-user-plus'}
-                  className={`qr-register-button ${loading ? 'qr-register-button-loading' : ''}`}
-                  disabled={loading || !isFormComplete}
-                />
-              </div>
-            </form>
-          </Card>
-        </div>
-      </div>
+          {/* AVISO DE PRIVACIDAD */}
+          <div className="privacy-notice">
+            <i className="pi pi-info-circle"></i>
+            <small>
+              Protección de datos: Tus datos serán utilizados únicamente para gestionar tu
+              participación en las actividades del centro juvenil. Puedes solicitar la eliminación
+              de tus datos en cualquier momento.
+            </small>
+          </div>
+        </form>
+      </Card>
     </div>
   );
 };
