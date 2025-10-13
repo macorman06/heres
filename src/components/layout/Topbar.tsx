@@ -165,17 +165,7 @@ export const Topbar: React.FC<TopbarProps> = ({}) => {
         </div>
 
         {/* Center section - Search */}
-        <div className="flex-1 max-w-md mx-8">
-          <div className="relative">
-            <InputText
-              type="text"
-              placeholder="Buscar..."
-              value={searchValue}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="input-search"
-            />
-          </div>
-        </div>
+        <div className="flex-1 max-w-md mx-8"></div>
 
         {/* Right section - User info */}
         <div className="flex items-center space-x-4">
