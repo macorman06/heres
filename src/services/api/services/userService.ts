@@ -1,6 +1,6 @@
 // src/services/api/services/userService.ts
 import { HttpClient } from '../core/httpClient';
-import { User, CreateUserRequest } from '../../../types';
+import { User, UserFormData } from '../../../types';
 
 export class UserService {
   constructor(private httpClient: HttpClient) {}
@@ -29,7 +29,7 @@ export class UserService {
   /**
    * Crea un nuevo usuario
    */
-  async createUser(userData: CreateUserRequest): Promise<User> {
+  async createUser(userData: UserFormData): Promise<User> {
     return this.httpClient.post<User>('/usuarios/create', userData);
   }
 
@@ -41,22 +41,9 @@ export class UserService {
   }
 
   /**
-   * Actualiza solo la puntuación de un usuario
-   */
-  async updatePuntuacion(id: number, puntuacion: number): Promise<{ mensaje: string }> {
-    return this.httpClient.put<{ mensaje: string }>(`/usuarios/${id}`, { puntuacion });
-  }
-
-  /**
    * Elimina un usuario
    */
   async deleteUser(id: number): Promise<{ mensaje: string }> {
     return this.httpClient.delete<{ mensaje: string }>(`/usuarios/${id}`);
   }
 }
-
-// Instancia singleton del servicio
-const httpClient = new HttpClient();
-const userService = new UserService(httpClient);
-
-export default userService;

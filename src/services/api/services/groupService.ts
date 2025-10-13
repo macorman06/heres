@@ -1,32 +1,56 @@
+// src/services/api/services/groupService.ts
 import { HttpClient } from '../core/httpClient';
-import type { Grupo } from '../../../types';
+
+export interface Group {
+  id: number;
+  nombre: string;
+  descripcion?: string;
+  miembros?: number[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CreateGroupRequest {
+  nombre: string;
+  descripcion?: string;
+  miembros?: number[];
+}
 
 export class GroupService {
   constructor(private httpClient: HttpClient) {}
 
-  async getGroups(): Promise<Grupo[]> {
-    return this.httpClient.get<Grupo[]>('/grupos');
+  /**
+   * Obtiene todos los grupos
+   */
+  async getGroups(): Promise<Group[]> {
+    return this.httpClient.get<Group[]>('/grupos');
   }
 
-  async getGroupById(id: number): Promise<Grupo> {
-    return this.httpClient.get<Grupo>(`/grupos/${id}`);
+  /**
+   * Obtiene un grupo por ID
+   */
+  async getGroupById(id: number): Promise<Group> {
+    return this.httpClient.get<Group>(`/grupos/${id}`);
   }
 
-  async createGroup(groupData: Partial<Grupo>): Promise<Grupo> {
-    return this.httpClient.post<Grupo>('/grupos', groupData);
+  /**
+   * Crea un nuevo grupo
+   */
+  async createGroup(groupData: CreateGroupRequest): Promise<Group> {
+    return this.httpClient.post<Group>('/grupos', groupData);
   }
 
-  async updateGroup(id: number, groupData: Partial<Grupo>): Promise<Grupo> {
-    return this.httpClient.put<Grupo>(`/grupos/${id}`, groupData);
+  /**
+   * Actualiza un grupo existente
+   */
+  async updateGroup(id: number, groupData: Partial<Group>): Promise<{ mensaje: string }> {
+    return this.httpClient.put<{ mensaje: string }>(`/grupos/${id}`, groupData);
   }
 
-  async deleteGroup(id: number): Promise<void> {
-    return this.httpClient.delete<void>(`/grupos/${id}`);
+  /**
+   * Elimina un grupo
+   */
+  async deleteGroup(id: number): Promise<{ mensaje: string }> {
+    return this.httpClient.delete<{ mensaje: string }>(`/grupos/${id}`);
   }
 }
-
-// ✅ Crear y exportar instancia
-const httpClient = new HttpClient();
-const groupService = new GroupService(httpClient);
-
-export default groupService;

@@ -1,10 +1,7 @@
 // src/hooks/useApi.ts
-
 import { useCallback, useState } from 'react';
-import { api } from '../services/api/index';
+import { userService, groupService } from '../services/api/index';
 import type { ApiError, Grupo, User } from '../types';
-
-console.log('🔧 [useApi.ts] Hook cargado');
 
 // ===== HOOK GENÉRICO =====
 export const useApi = <T>(apiFunction: (...args: unknown[]) => Promise<T>) => {
@@ -14,30 +11,24 @@ export const useApi = <T>(apiFunction: (...args: unknown[]) => Promise<T>) => {
 
   const execute = useCallback(
     async (...args: unknown[]): Promise<T> => {
-      console.log('🔄 [useApi] Execute llamado con args:', args);
       try {
         setLoading(true);
         setError(null);
-        console.log('🔄 [useApi] Ejecutando función API...');
         const result = await apiFunction(...args);
-        console.log('✅ [useApi] Resultado obtenido');
         setData(result);
         return result;
       } catch (err: unknown) {
         const errorMessage = (err as ApiError).message || 'Error desconocido';
-        console.error('❌ [useApi] Error:', errorMessage, err);
         setError(errorMessage);
         throw err;
       } finally {
         setLoading(false);
-        console.log('🔄 [useApi] Execute finalizado');
       }
     },
     [apiFunction]
   );
 
   const reset = useCallback(() => {
-    console.log('🔄 [useApi] Reset llamado');
     setData(null);
     setError(null);
     setLoading(false);
@@ -48,43 +39,35 @@ export const useApi = <T>(apiFunction: (...args: unknown[]) => Promise<T>) => {
 
 // ===== HOOK ESPECIALIZADO PARA USUARIOS =====
 export const useUsers = () => {
-  console.log('👥 [useUsers] Hook inicializado');
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchAllUsers = useCallback(async (): Promise<User[]> => {
-    console.log('👥 [useUsers] fetchAllUsers llamado');
-    const token = localStorage.getItem('authToken');
-    console.log('👥 [useUsers] Token presente:', !!token);
+    const token = localStorage.getItem('token');
 
     if (!token) {
-      console.log('⚠️ [useUsers] No hay token, retornando array vacío');
       return [];
     }
 
     try {
       setLoading(true);
       setError(null);
-      console.log('👥 [useUsers] Llamando a api.getUsers()...');
-      const userData = await api.getUsers();
-      console.log('✅ [useUsers] Usuarios obtenidos:', userData.length);
+      const userData = await userService.getUsers();
       setUsers(userData);
       return userData;
     } catch (err: unknown) {
-      console.error('❌ [useUsers] Error obteniendo usuarios:', err);
       if ((err as ApiError).status === 401) {
-        console.log('🔴 [useUsers] Error 401, retornando array vacío');
         return [];
       }
+
       const errorMessage = (err as ApiError).message || 'Error cargando usuarios';
       setError(errorMessage);
       throw err;
     } finally {
-      if (localStorage.getItem('authToken')) {
+      if (localStorage.getItem('token')) {
         setLoading(false);
       }
-      console.log('👥 [useUsers] fetchAllUsers finalizado');
     }
   }, []);
 
@@ -93,23 +76,19 @@ export const useUsers = () => {
 
 // ===== HOOK ESPECIALIZADO PARA GRUPOS =====
 export const useGroups = () => {
-  console.log('📚 [useGroups] Hook inicializado');
   const [groups, setGroups] = useState<Grupo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchAllGroups = useCallback(async (): Promise<Grupo[]> => {
-    console.log('📚 [useGroups] fetchAllGroups llamado');
     try {
       setLoading(true);
       setError(null);
-      const groupsData = await api.getGroups();
-      console.log('✅ [useGroups] Grupos obtenidos:', groupsData.length);
+      const groupsData = await groupService.getGroups();
       setGroups(groupsData);
       return groupsData;
     } catch (err: unknown) {
       const errorMessage = (err as ApiError).message || 'Error cargando grupos';
-      console.error('❌ [useGroups] Error:', errorMessage);
       setError(errorMessage);
       throw err;
     } finally {
@@ -118,16 +97,13 @@ export const useGroups = () => {
   }, []);
 
   const fetchGroupById = useCallback(async (id: number): Promise<Grupo> => {
-    console.log('📚 [useGroups] fetchGroupById llamado para id:', id);
     try {
       setLoading(true);
       setError(null);
-      const group = await api.getGroupById(id);
-      console.log('✅ [useGroups] Grupo obtenido:', group);
+      const group = await groupService.getGroupById(id);
       return group;
     } catch (err: unknown) {
       const errorMessage = (err as ApiError).message || 'Error cargando grupo';
-      console.error('❌ [useGroups] Error:', errorMessage);
       setError(errorMessage);
       throw err;
     } finally {
@@ -136,17 +112,14 @@ export const useGroups = () => {
   }, []);
 
   const createGroup = useCallback(async (groupData: Partial<Grupo>): Promise<Grupo> => {
-    console.log('➕ [useGroups] createGroup llamado');
     try {
       setLoading(true);
       setError(null);
-      const newGroup = await api.createGroup(groupData);
-      console.log('✅ [useGroups] Grupo creado:', newGroup);
+      const newGroup = await groupService.createGroup(groupData);
       setGroups((prevGroups) => [...prevGroups, newGroup]);
       return newGroup;
     } catch (err: unknown) {
       const errorMessage = (err as ApiError).message || 'Error creando grupo';
-      console.error('❌ [useGroups] Error:', errorMessage);
       setError(errorMessage);
       throw err;
     } finally {
@@ -155,19 +128,16 @@ export const useGroups = () => {
   }, []);
 
   const updateGroup = useCallback(async (id: number, groupData: Partial<Grupo>): Promise<Grupo> => {
-    console.log('🔄 [useGroups] updateGroup llamado para id:', id);
     try {
       setLoading(true);
       setError(null);
-      const updatedGroup = await api.updateGroup(id, groupData);
-      console.log('✅ [useGroups] Grupo actualizado:', updatedGroup);
+      const updatedGroup = await groupService.updateGroup(id, groupData);
       setGroups((prevGroups) =>
         prevGroups.map((group) => (group.id === id ? updatedGroup : group))
       );
       return updatedGroup;
     } catch (err: unknown) {
       const errorMessage = (err as ApiError).message || 'Error actualizando grupo';
-      console.error('❌ [useGroups] Error:', errorMessage);
       setError(errorMessage);
       throw err;
     } finally {
@@ -176,16 +146,13 @@ export const useGroups = () => {
   }, []);
 
   const deleteGroup = useCallback(async (id: number): Promise<void> => {
-    console.log('🗑️ [useGroups] deleteGroup llamado para id:', id);
     try {
       setLoading(true);
       setError(null);
-      await api.deleteGroup(id);
-      console.log('✅ [useGroups] Grupo eliminado');
+      await groupService.deleteGroup(id);
       setGroups((prevGroups) => prevGroups.filter((group) => group.id !== id));
     } catch (err: unknown) {
       const errorMessage = (err as ApiError).message || 'Error eliminando grupo';
-      console.error('❌ [useGroups] Error:', errorMessage);
       setError(errorMessage);
       throw err;
     } finally {
@@ -194,7 +161,6 @@ export const useGroups = () => {
   }, []);
 
   const clearError = useCallback(() => {
-    console.log('🧹 [useGroups] clearError llamado');
     setError(null);
   }, []);
 

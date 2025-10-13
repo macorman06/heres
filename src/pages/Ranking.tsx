@@ -1,4 +1,5 @@
 // src/pages/Ranking.tsx
+
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -8,28 +9,21 @@ import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
 import { Toast } from 'primereact/toast';
 import { ProgressSpinner } from 'primereact/progressspinner';
-
-// Importar el servicio API
-import { getRankings } from '../services/api';
+import { userService } from '../services/api/index';
 import type { User } from '../types';
+import { formatFullName, getUserInitials } from '../utils/formatters';
+import * as XLSX from 'xlsx';
 
 type SortField = 'nombre' | 'puntuacion';
 type SortOrder = 'asc' | 'desc';
 
 export interface ColumnBodyOptions {
-  /** Índice de la fila actual (0-based) */
   rowIndex: number;
-  /** Índice de la columna actual */
   columnIndex?: number;
-  /** Datos de la fila actual */
   rowData?: any;
-  /** Propiedades de la columna */
   column?: any;
-  /** Información del campo */
   field?: string;
-  /** Si la fila está congelada */
   frozenRow?: boolean;
-  /** Props adicionales */
   props?: any;
 }
 
@@ -40,10 +34,9 @@ export interface ColumnBodyOptions {
 export const Ranking: React.FC = () => {
   // === STATE ===
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<SortField>('puntuacion');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-
   const toast = useRef<Toast>(null);
 
   // === EFFECTS ===
@@ -58,7 +51,7 @@ export const Ranking: React.FC = () => {
   const fetchRanking = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await getRankings();
+      const data = await userService.getRanking();
       setUsers(data);
     } catch (error) {
       console.error('❌ Error al cargar el ranking:', error);
@@ -88,6 +81,54 @@ export const Ranking: React.FC = () => {
     [sortField]
   );
 
+  /**
+   * Exporta el ranking a Excel
+   */
+  const exportToExcel = useCallback(() => {
+    try {
+      // Preparar datos para exportación
+      const exportData = sortedUsers.map((user, index) => ({
+        Posición: index + 1,
+        Nombre: user.nombre,
+        Apellido: `${user.apellido1 || ''}`.trim(),
+        Puntuación: user.puntuacion || 0,
+      }));
+
+      // Crear libro de trabajo
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Ranking');
+
+      // Ajustar ancho de columnas
+      const maxWidths = [
+        { wch: 10 }, // Posición
+        { wch: 20 }, // Nombre
+        { wch: 30 }, // Apellido
+        { wch: 12 }, // Puntuación
+      ];
+      worksheet['!cols'] = maxWidths;
+
+      // Descargar archivo
+      const fileName = `ranking_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(workbook, fileName);
+
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Ranking exportado correctamente',
+        life: 3000,
+      });
+    } catch (error) {
+      console.error('❌ Error al exportar:', error);
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al exportar el ranking',
+        life: 3000,
+      });
+    }
+  }, [users]);
+
   // === COMPUTED VALUES ===
   /**
    * Usuarios ordenados según los criterios seleccionados
@@ -95,7 +136,6 @@ export const Ranking: React.FC = () => {
   const sortedUsers = useMemo(() => {
     const sorted = [...users].sort((a, b) => {
       let comparison = 0;
-
       if (sortField === 'nombre') {
         const nameA = `${a.nombre} ${a.apellido1 || ''}`.toLowerCase();
         const nameB = `${b.nombre} ${b.apellido1 || ''}`.toLowerCase();
@@ -103,10 +143,8 @@ export const Ranking: React.FC = () => {
       } else if (sortField === 'puntuacion') {
         comparison = (a.puntuacion || 0) - (b.puntuacion || 0);
       }
-
       return sortOrder === 'asc' ? comparison : -comparison;
     });
-
     return sorted;
   }, [users, sortField, sortOrder]);
 
@@ -120,7 +158,6 @@ export const Ranking: React.FC = () => {
         ? Math.round(users.reduce((acc, u) => acc + (u.puntuacion || 0), 0) / totalMembers)
         : 0;
     const maxScore = totalMembers > 0 ? Math.max(...users.map((u) => u.puntuacion || 0)) : 0;
-
     return { totalMembers, avgScore, maxScore };
   }, [users]);
 
@@ -146,17 +183,7 @@ export const Ranking: React.FC = () => {
 
     return (
       <div className="flex items-center gap-2">
-        <Badge
-          value={rank.toString()}
-          className={`${badgeClass} text-white font-bold text-lg`}
-          style={{
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        />
+        <Badge value={rank} size="large" className={badgeClass} />
         {icon && <span className="text-2xl">{icon}</span>}
       </div>
     );
@@ -166,27 +193,21 @@ export const Ranking: React.FC = () => {
    * Template para mostrar la información del usuario
    */
   const userTemplate = useCallback((rowData: User) => {
-    const fullName =
-      `${rowData.nombre} ${rowData.apellido1 || ''} ${rowData.apellido2 || ''}`.trim();
-    const initials =
-      `${rowData.nombre.charAt(0)}${rowData.apellido1?.charAt(0) || ''}`.toUpperCase();
+    const fullName = formatFullName(rowData.nombre, rowData.apellido1, rowData.apellido2);
+    const initials = getUserInitials(rowData.nombre, rowData.apellido1);
+    console.log('User initials:', initials);
+    console.log('Full name:', fullName);
 
     return (
       <div className="flex items-center gap-3">
-        <Avatar
-          label={initials}
-          size="large"
-          shape="circle"
-          className="bg-red-500 text-white font-bold"
-          style={{ width: '50px', height: '50px' }}
-        />
+        <Avatar label={initials} size="large" shape="circle" />
         <div>
-          <div className="font-semibold text-lg dark:text-white">{fullName}</div>
+          <div className="font-semibold">{fullName}</div>
           {rowData.centro_juvenil && (
-            <div className="text-sm text-gray-500 dark:text-gray-400">{rowData.centro_juvenil}</div>
+            <div className="text-sm text-gray-500">{rowData.centro_juvenil}</div>
           )}
           {rowData.seccion && rowData.seccion.length > 0 && (
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-blue-600">
               {Array.isArray(rowData.seccion) ? rowData.seccion.join(', ') : rowData.seccion}
             </div>
           )}
@@ -201,10 +222,9 @@ export const Ranking: React.FC = () => {
   const pointsTemplate = useCallback((rowData: User) => {
     const points = rowData.puntuacion || 0;
     return (
-      <div className="flex items-center gap-2 justify-end">
-        <i className="pi pi-star-fill text-yellow-500 text-xl" />
-        <span className="font-bold text-2xl text-red-600">{points}</span>
-        <span className="text-gray-500 dark:text-gray-400">pts</span>
+      <div className="flex items-center gap-2">
+        <span className="text-2xl font-bold text-primary">{points}</span>
+        <span className="text-sm text-gray-500">pts</span>
       </div>
     );
   }, []);
@@ -212,65 +232,48 @@ export const Ranking: React.FC = () => {
   // === RENDER ===
   if (loading && users.length === 0) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex justify-center items-center h-screen">
         <ProgressSpinner />
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="p-4">
       <Toast ref={toast} />
 
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          🏆 Ranking de Miembros
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Clasificación de miembros por puntuación.
-        </p>
+      <div className="mb-4">
+        <h1 className="text-3xl font-bold">🏆 Ranking de Miembros</h1>
+        <p className="text-gray-600">Clasificación de miembros por puntuación.</p>
       </div>
 
-      {/* Controles de ordenamiento */}
-      <Card className="mb-6">
-        <div className="flex flex-wrap gap-3 items-center justify-between">
-          <div className="flex flex-wrap gap-3 items-center">
-            <span className="font-semibold text-gray-700 dark:text-gray-300">Ordenar por:</span>
-            <Button
-              label="Nombre"
-              icon="pi pi-sort-alpha-down"
-              onClick={() => handleSort('nombre')}
-              className={sortField === 'nombre' ? 'btn-primary' : 'btn-secondary'}
-            />
-            <Button
-              label="Puntuación"
-              icon="pi pi-sort-numeric-down"
-              onClick={() => handleSort('puntuacion')}
-              className={sortField === 'puntuacion' ? 'btn-primary' : 'btn-secondary'}
-            />
-          </div>
+      {/* Controles de ordenamiento y exportación */}
+      <div className="mb-4 flex flex-wrap gap-3 items-center">
+        <span className="font-semibold">Ordenar por:</span>
+        <Button
+          label="Nombre"
+          icon="pi pi-sort-alpha-down"
+          onClick={() => handleSort('nombre')}
+          className={sortField === 'nombre' ? 'btn-primary' : 'btn-secondary'}
+        />
+        <Button
+          label="Puntuación"
+          icon="pi pi-sort-amount-down"
+          onClick={() => handleSort('puntuacion')}
+          className={sortField === 'puntuacion' ? 'btn-primary' : 'btn-secondary'}
+        />
+        <Badge value={sortOrder === 'asc' ? 'Ascendente' : 'Descendente'} />
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <i
-                className={`pi ${sortOrder === 'asc' ? 'pi-arrow-up' : 'pi-arrow-down'} text-red-600`}
-              />
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}
-              </span>
-            </div>
-            <Button
-              icon="pi pi-refresh"
-              onClick={fetchRanking}
-              loading={loading}
-              className="p-button-outlined p-button-secondary"
-              tooltip="Actualizar ranking"
-              tooltipOptions={{ position: 'top' }}
-            />
-          </div>
-        </div>
-      </Card>
+        {/* Botón de exportación */}
+        <Button
+          label="Exportar a Excel"
+          icon="pi pi-file-excel"
+          onClick={exportToExcel}
+          className="btn-primary ml-auto"
+          disabled={users.length === 0}
+        />
+      </div>
 
       {/* Top 3 destacado */}
       {sortField === 'puntuacion' && sortOrder === 'desc' && sortedUsers.length >= 3 && (
@@ -287,27 +290,19 @@ export const Ranking: React.FC = () => {
               `${user.nombre.charAt(0)}${user.apellido1?.charAt(0) || ''}`.toUpperCase();
 
             return (
-              <Card key={user.id} className={`border-2 ${colors[index]}`}>
-                <div className="text-center">
-                  <div className="text-6xl mb-3">{medals[index]}</div>
-                  <Avatar
-                    label={initials}
-                    size="xlarge"
-                    shape="circle"
-                    className="bg-red-500 text-white font-bold mb-3"
-                    style={{ width: '100px', height: '100px', fontSize: '2rem' }}
-                  />
-                  <h3 className="font-bold text-xl mb-2 dark:text-white">{fullName}</h3>
-                  {user.centro_juvenil && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                      {user.centro_juvenil}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-center gap-2">
-                    <i className="pi pi-star-fill text-yellow-500 text-2xl" />
-                    <span className="font-bold text-3xl text-red-600">{user.puntuacion || 0}</span>
-                    <span className="text-gray-500 dark:text-gray-400">pts</span>
-                  </div>
+              <Card
+                key={user.id}
+                className={`border-2 ${colors[index]} text-center transition-transform hover:scale-105`}
+              >
+                <div className="text-6xl mb-3">{medals[index]}</div>
+                <Avatar label={initials} size="xlarge" shape="circle" className="mb-3" />
+                <h3 className="text-xl font-bold mb-2">{fullName}</h3>
+                {user.centro_juvenil && (
+                  <p className="text-sm text-gray-500 mb-2">{user.centro_juvenil}</p>
+                )}
+                <div className="text-3xl font-bold text-primary">
+                  {user.puntuacion || 0}
+                  <span className="text-sm text-gray-500 ml-2">pts</span>
                 </div>
               </Card>
             );
@@ -318,30 +313,21 @@ export const Ranking: React.FC = () => {
       {/* Estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card>
-          <div className="flex items-center gap-3">
-            <i className="pi pi-users text-4xl text-blue-500" />
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Miembros</p>
-              <p className="text-2xl font-bold dark:text-white">{statistics.totalMembers}</p>
-            </div>
+          <div className="text-center">
+            <div className="text-gray-500 mb-2">Total Miembros</div>
+            <div className="text-3xl font-bold text-primary">{statistics.totalMembers}</div>
           </div>
         </Card>
         <Card>
-          <div className="flex items-center gap-3">
-            <i className="pi pi-chart-line text-4xl text-green-500" />
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Puntuación Media</p>
-              <p className="text-2xl font-bold dark:text-white">{statistics.avgScore}</p>
-            </div>
+          <div className="text-center">
+            <div className="text-gray-500 mb-2">Puntuación Media</div>
+            <div className="text-3xl font-bold text-primary">{statistics.avgScore}</div>
           </div>
         </Card>
         <Card>
-          <div className="flex items-center gap-3">
-            <i className="pi pi-trophy text-4xl text-yellow-500" />
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Puntuación Máxima</p>
-              <p className="text-2xl font-bold dark:text-white">{statistics.maxScore}</p>
-            </div>
+          <div className="text-center">
+            <div className="text-gray-500 mb-2">Puntuación Máxima</div>
+            <div className="text-3xl font-bold text-primary">{statistics.maxScore}</div>
           </div>
         </Card>
       </div>

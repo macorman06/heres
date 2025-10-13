@@ -1,15 +1,12 @@
+/* src/styles/5-overrides/primereact-overrides.css */
+
 /* ===========================================
    PRIMEREACT GLOBAL OVERRIDES
-   =========================================== */
+=========================================== */
 
 /* Remove all focus outlines from PrimeReact (we use custom) */
 .p-component:focus {
   outline: none !important;
-  box-shadow: none !important;
-}
-
-/* Remove default PrimeReact shadows */
-.p-component {
   box-shadow: none !important;
 }
 
@@ -49,4 +46,129 @@
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background: var(--dark-text-muted);
+}
+
+/* ========================================
+   GLOBAL PAGE TITLE CLASSES
+======================================== */
+
+.page-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: #111827; /* ✅ Color oscuro para modo claro */
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #4b5563; /* ✅ Gris oscuro para modo claro */
+  margin-bottom: 1.5rem;
+}
+
+/* ========================================
+   PRIMEREACT OVERRIDES
+======================================== */
+
+/* DataTable Header Override */
+.p-datatable .p-datatable-header {
+  background: var(--surface-card);
+  border: none;
+  padding: 1.5rem;
+}
+
+/* Card Override */
+.p-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  border: none;
+}
+
+.p-card .p-card-body {
+  padding: 0;
+}
+
+.p-card .p-card-content {
+  padding: 0;
+}
+
+/* Button Override */
+.p-button {
+  transition: all 0.2s ease;
+}
+
+.p-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Toast Override */
+.p-toast .p-toast-message {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Menu Override */
+.p-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+}
+
+.p-menu .p-menuitem-link {
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.p-menu .p-menuitem-link:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Badge Override */
+.p-badge {
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .dark .page-title {
+    color: #ffffff; /* ✅ Blanco para modo oscuro */
+  }
+
+  .dark .page-subtitle {
+    color: #9ca3af; /* ✅ Gris claro para modo oscuro */
+  }
+}
+
+/* Soporte para clase .dark en el body/html */
+.dark .page-title {
+  color: #ffffff;
+}
+
+.dark .page-subtitle {
+  color: #9ca3af;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.875rem;
+  }
 }

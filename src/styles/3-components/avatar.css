@@ -32,3 +32,27 @@
   height: 5rem !important;
   font-size: 2rem !important;
 }
+
+/* ===== AVATAR PROFILE HEADER (Nuevo) ===== */
+.profile-avatar-hero {
+  width: 180px !important;
+  height: 180px !important;
+  font-size: 4rem !important;
+  border-radius: 50% !important;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.1) !important; /* ✅ Solo gris */
+  transition: all 0.3s ease !important;
+  background: transparent !important;
+}
+
+.profile-avatar-hero:hover {
+  transform: scale(1.05) !important;
+}
+
+.profile-avatar-hero img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important; /* ✅ Imagen también redonda */
+}

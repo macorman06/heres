@@ -1,35 +1,23 @@
 // src/services/api/index.ts
-import authService from './services/authService';
-import userService from './services/userService';
-import groupService from './services/groupService';
+import { HttpClient } from './core/httpClient';
+import { AuthService } from './services/authService';
+import { UserService } from './services/userService';
+import { GroupService } from './services/groupService';
 
-// === IMPORTAR TIPOS CORRECTOS ===
-import type { User, Grupo, LoginRequest, RegisterRequest, CreateUserRequest } from '../../types';
+// Crear instancia única de HttpClient
+const httpClient = new HttpClient();
 
+// Crear y exportar servicios individuales
+export const authService = new AuthService(httpClient);
+export const userService = new UserService(httpClient);
+export const groupService = new GroupService(httpClient);
+
+// Exportar objeto API completo (opcional, para uso alternativo)
 export const api = {
-  // === AUTENTICACIÓN ===
-  login: (credentials: LoginRequest) => authService.login(credentials),
-  register: (userData: RegisterRequest) => authService.register(userData),
-  logout: () => authService.logout(),
-  getCurrentUser: () => authService.getCurrentUser(),
-  isAuthenticated: () => authService.isAuthenticated(),
-
-  // === USUARIOS ===
-  getUsers: () => userService.getUsers(),
-  getRanking: () => userService.getRanking(),
-  getUserById: (id: number) => userService.getUserById(id),
-  createUser: (userData: CreateUserRequest) => userService.createUser(userData),
-  updateUser: (id: number, userData: Partial<User>) => userService.updateUser(id, userData),
-  updatePuntuacion: (id: number, puntuacion: number) =>
-    userService.updatePuntuacion(id, puntuacion),
-  deleteUser: (id: number) => userService.deleteUser(id),
-
-  // === GRUPOS ===
-  getGroups: () => groupService.getGroups(),
-  getGroupById: (id: number) => groupService.getGroupById(id),
-  createGroup: (groupData: Partial<Grupo>) => groupService.createGroup(groupData),
-  updateGroup: (id: number, groupData: Partial<Grupo>) => groupService.updateGroup(id, groupData),
-  deleteGroup: (id: number) => groupService.deleteGroup(id),
+  auth: authService,
+  user: userService,
+  group: groupService,
 };
 
-export default api;
+// Exportar tipos para uso externo
+export type { Group, CreateGroupRequest } from './services/groupService';

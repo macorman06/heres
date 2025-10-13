@@ -39,7 +39,7 @@
 .p-card .p-card-footer {
   padding: 1rem 1.5rem !important;
   border-top: 1px solid var(--border-primary) !important;
-  background: var(--bg-secondary) !important;
+  background: var(--dark-bg-primary) !important;
 }
 
 /* Dark Mode */
@@ -49,11 +49,11 @@
 }
 
 .dark .p-card .p-card-title {
-  color: var(--dark-text-primary) !important;
+  background: var(--dark-bg-primary) !important;
 }
 
 .dark .p-card .p-card-content {
-  color: var(--dark-text-secondary) !important;
+  background: transparent !important;
 }
 
 .dark .p-card .p-card-footer {

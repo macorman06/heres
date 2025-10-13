@@ -37,6 +37,7 @@ import './styles/4-pages/grupos.css';
 import './styles/4-pages/privacy-policy.css';
 import './styles/4-pages/qr-register.css';
 import './styles/4-pages/about.css';
+import './styles/4-pages/members.css';
 
 // 5. OVERRIDES
 import './styles/5-overrides/primereact-overrides.css';

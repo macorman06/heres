@@ -35,3 +35,8 @@
   background-color: #6b7280 !important;
   color: #ffffff !important;
 }
+
+.p-badge.badge-purple {
+  background-color: #9333ea !important; /* o el morado que prefieras */
+  color: white !important;
+}

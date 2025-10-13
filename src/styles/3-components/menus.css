@@ -1,59 +1,43 @@
+/* src/styles/3-components/menus.css */
+
 /* ============================================
-   VARIABLES CSS - MODO CLARO Y OSCURO
-   ============================================ */
+   VARIABLES CSS - MODO CLARO (por defecto)
+============================================ */
 
 :root {
-  /* Modo Claro (por defecto) */
+  /* Modo Claro */
   --menu-bg: #ffffff;
   --menu-border: #e5e7eb;
   --menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-
   --menu-item-text: #374151;
   --menu-item-text-hover: #111827;
   --menu-item-icon: #6b7280;
   --menu-item-icon-hover: #374151;
   --menu-item-bg-hover: #f3f4f6;
-
   --menu-separator: #e5e7eb;
 }
 
-/* Modo Oscuro */
-.dark-mode,
-[data-theme='dark'],
-body.dark-mode {
-  --menu-bg: #1f2937;
-  --menu-border: #374151;
-  --menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+/* ============================================
+   VARIABLES CSS - MODO OSCURO
+============================================ */
 
-  --menu-item-text: #e5e7eb;
-  --menu-item-text-hover: #ffffff;
-  --menu-item-icon: #9ca3af;
-  --menu-item-icon-hover: #e5e7eb;
-  --menu-item-bg-hover: #374151;
-
-  --menu-separator: #4b5563;
-}
-
-/* Detección automática de preferencia del sistema */
 @media (prefers-color-scheme: dark) {
-  :root:not(.light-mode) {
+  :root {
     --menu-bg: #1f2937;
     --menu-border: #374151;
     --menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
-
     --menu-item-text: #e5e7eb;
     --menu-item-text-hover: #ffffff;
     --menu-item-icon: #9ca3af;
     --menu-item-icon-hover: #e5e7eb;
     --menu-item-bg-hover: #374151;
-
     --menu-separator: #4b5563;
   }
 }
 
 /* ============================================
    ESTILOS DEL MENU - CONTENEDOR PRINCIPAL
-   ============================================ */
+============================================ */
 
 .p-menu {
   background-color: var(--menu-bg) !important;
@@ -67,7 +51,7 @@ body.dark-mode {
 
 /* ============================================
    LISTA DEL MENU
-   ============================================ */
+============================================ */
 
 .p-menu .p-menu-list,
 .p-menu-list.p-reset {
@@ -78,7 +62,7 @@ body.dark-mode {
 
 /* ============================================
    ITEMS DEL MENU
-   ============================================ */
+============================================ */
 
 .p-menu .p-menuitem {
   margin: 0 !important;
@@ -92,8 +76,8 @@ body.dark-mode {
 }
 
 /* ============================================
-   ENLACES - ELIMINAR TODO SUBRAYADO Y DECORACIÓN
-   ============================================ */
+   ENLACES - ELIMINAR TODO SUBRAYADO
+============================================ */
 
 .p-menu .p-menuitem-link,
 .p-menu .p-menuitem-link:link,
@@ -126,7 +110,7 @@ body.dark-mode {
 
 /* ============================================
    TEXTO DE LOS ITEMS
-   ============================================ */
+============================================ */
 
 .p-menu .p-menuitem-text,
 .p-menuitem-text {
@@ -138,7 +122,7 @@ body.dark-mode {
 
 /* ============================================
    ICONOS DE LOS ITEMS
-   ============================================ */
+============================================ */
 
 .p-menu .p-menuitem-icon,
 .p-menuitem-icon {
@@ -149,7 +133,7 @@ body.dark-mode {
 
 /* ============================================
    ESTADOS: HOVER, FOCUS, ACTIVE
-   ============================================ */
+============================================ */
 
 /* Hover en el item completo */
 .p-menu .p-menuitem:hover .p-menuitem-content,
@@ -185,7 +169,7 @@ body.dark-mode {
 
 /* ============================================
    SEPARADORES
-   ============================================ */
+============================================ */
 
 .p-menu .p-menu-separator,
 .p-menu-separator {
@@ -198,7 +182,7 @@ body.dark-mode {
 
 /* ============================================
    OVERLAY Y ANIMACIONES
-   ============================================ */
+============================================ */
 
 .p-menu.p-menu-overlay {
   position: absolute !important;
@@ -217,7 +201,7 @@ body.dark-mode {
 
 /* ============================================
    ACCESIBILIDAD Y FOCUS
-   ============================================ */
+============================================ */
 
 .p-menu .p-menu-list:focus {
   outline: none !important;
@@ -230,8 +214,8 @@ body.dark-mode {
 }
 
 /* ============================================
-   ESTADOS DISABLED (por si acaso)
-   ============================================ */
+   ESTADOS DISABLED
+============================================ */
 
 .p-menu .p-menuitem.p-disabled .p-menuitem-link,
 .p-menu .p-menuitem[data-p-disabled='true'] .p-menuitem-link {
@@ -242,7 +226,7 @@ body.dark-mode {
 
 /* ============================================
    LIMPIAR ESTILOS DE NAVEGADORES
-   ============================================ */
+============================================ */
 
 .p-menu *,
 .p-menu *::before,

@@ -1,3 +1,4 @@
+// ProfilePage.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
@@ -5,46 +6,68 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
-import { Divider } from 'primereact/divider';
+import { Chip } from 'primereact/chip';
 import { Message } from 'primereact/message';
 import { Toast } from 'primereact/toast';
-import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
+import { Chips } from 'primereact/chips';
+import { Dropdown } from 'primereact/dropdown';
+import { Calendar } from 'primereact/calendar';
+import { Dialog } from 'primereact/dialog';
 import { useAuth } from '../hooks/useAuth';
+import axios from 'axios';
+import { centroJuvenilOptions, User } from '../types';
+import type { Sexo, Talla, CentroJuvenil } from '../types';
+import { TokenManager } from '../services/auth/tokenManager';
+import { formatFullName } from '../utils/formatters';
+
+// Interface para el formulario
+interface ProfileFormData {
+  nombre: string;
+  apellido1: string;
+  apellido2: string;
+  email: string;
+  telefono: string;
+  direccion: string;
+  localidad: string;
+  birthday: Date | null;
+  sexo: Sexo | '';
+  alergias: string[];
+  talla: Talla | '';
+  centro_juvenil: CentroJuvenil | '';
+}
 
 export const ProfilePage: React.FC = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
   const toast = useRef<Toast>(null);
 
-  // Estados para edición
-  const [isEditing, setIsEditing] = useState(false);
+  // Estados
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [edad, setEdad] = useState<number | null>(null);
 
   // Estados del formulario
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProfileFormData>({
     nombre: '',
     apellido1: '',
     apellido2: '',
     email: '',
     telefono: '',
     direccion: '',
-    ciudad: '',
-    codigo_postal: '',
-    fecha_nacimiento: '',
+    localidad: '',
+    birthday: null,
+    sexo: '',
+    alergias: [],
+    talla: '',
+    centro_juvenil: '',
   });
 
   // Estado para cambio de contraseña
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
-  const [showPasswordSection, setShowPasswordSection] = useState(false);
-
-  // Avatar
-  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -53,12 +76,28 @@ export const ProfilePage: React.FC = () => {
         apellido1: user.apellido1 || '',
         apellido2: user.apellido2 || '',
         email: user.email || '',
-        telefono: user.telefono || '',
+        telefono: user.telefono ? user.telefono.replace('+34', '') : '',
         direccion: user.direccion || '',
-        ciudad: user.ciudad || '',
-        codigo_postal: user.codigo_postal || '',
-        fecha_nacimiento: user.fecha_nacimiento || '',
+        localidad: user.localidad || '',
+        birthday: user.birthday ? new Date(user.birthday) : null,
+        sexo: user.sexo || '',
+        alergias: user.alergias || [],
+        talla: user.talla || '',
+        centro_juvenil: user.centro_juvenil || '',
       });
+
+      // Calcular edad
+      if (user.birthday) {
+        const birthDate = new Date(user.birthday);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+        setEdad(age);
+      }
+
       checkProfileImage();
     }
   }, [user]);
@@ -69,6 +108,17 @@ export const ProfilePage: React.FC = () => {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]/g, '');
+
+  const formatPhoneNumber = (value: string): string => {
+    const numbers = value.replace(/\D/g, '');
+    const limitedNumbers = numbers.slice(0, 9);
+    const parts = limitedNumbers.match(/.{1,3}/g);
+    return parts ? parts.join(' ') : '';
+  };
+
+  const extractPhoneNumbers = (formattedPhone: string): string => {
+    return formattedPhone.replace(/\D/g, '');
+  };
 
   const checkProfileImage = async () => {
     if (!user?.nombre || !user?.apellido1) return;
@@ -88,207 +138,26 @@ export const ProfilePage: React.FC = () => {
         setProfileImage(imagePath);
         return;
       } catch {
-        // Continue
+        // Continue to next extension
       }
     }
     setProfileImage(null);
   };
 
-  // En ProfilePage.tsx - ACTUALIZAR esta función
-
-  const handleImageUpload = (event: FileUploadHandlerEvent) => {
-    const file = event.files[0];
-    if (!file) return;
-
-    // Validar tamaño (máx 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'La imagen no puede superar los 5MB',
-        life: 3000,
-      });
-      return;
-    }
-
-    // Validar tipo
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Solo se permiten imágenes PNG, JPG o WEBP',
-        life: 3000,
-      });
-      return;
-    }
-
-    setIsUploadingImage(true);
-
-    try {
-      // Generar nombre del archivo
-      const baseFilename = `${cleanName(user?.nombre || '')}_${cleanName(user?.apellido1 || '')}`;
-      const filename = `${baseFilename}.png`;
-
-      // Leer el archivo y convertirlo a Data URL
-      const reader = new FileReader();
-
-      reader.onload = async (e) => {
-        try {
-          const dataUrl = e.target?.result as string;
-
-          // Procesar imagen con canvas (redimensionar y convertir a PNG)
-          const img = new Image();
-          img.onload = () => {
-            // Crear canvas para redimensionar
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-
-            if (!ctx) {
-              throw new Error('No se pudo crear canvas');
-            }
-
-            // Redimensionar manteniendo proporción (max 500x500)
-            let width = img.width;
-            let height = img.height;
-            const maxSize = 500;
-
-            if (width > height) {
-              if (width > maxSize) {
-                height *= maxSize / width;
-                width = maxSize;
-              }
-            } else {
-              if (height > maxSize) {
-                width *= maxSize / height;
-                height = maxSize;
-              }
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-
-            // Dibujar imagen redimensionada
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // Convertir a PNG blob
-            canvas.toBlob(
-              (blob) => {
-                if (!blob) {
-                  throw new Error('Error al convertir imagen');
-                }
-
-                // Crear URL local para previsualización
-                const imageUrl = URL.createObjectURL(blob);
-
-                // Actualizar estado con la nueva imagen
-                setProfileImage(`/users/${filename}?t=${Date.now()}`);
-
-                // ⚠️ IMPORTANTE: Aquí guardarías en localStorage o IndexedDB
-                // Por ahora, solo mostramos la previsualización
-                saveImageLocally(filename, blob);
-
-                toast.current?.show({
-                  severity: 'success',
-                  summary: 'Éxito',
-                  detail: '✅ Imagen de perfil actualizada',
-                  life: 3000,
-                });
-
-                // Disparar evento para actualizar otros componentes
-                window.dispatchEvent(
-                  new CustomEvent('profileImageUpdated', {
-                    detail: { filename, url: imageUrl },
-                  })
-                );
-              },
-              'image/png',
-              0.95
-            );
-          };
-
-          img.onerror = () => {
-            throw new Error('Error al cargar la imagen');
-          };
-
-          img.src = dataUrl;
-        } catch (error) {
-          console.error('❌ Error procesando imagen:', error);
-          toast.current?.show({
-            severity: 'error',
-            summary: 'Error',
-            detail: error instanceof Error ? error.message : 'Error procesando imagen',
-            life: 5000,
-          });
-        } finally {
-          setIsUploadingImage(false);
-        }
-      };
-
-      reader.onerror = () => {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error leyendo el archivo',
-          life: 3000,
-        });
-        setIsUploadingImage(false);
-      };
-
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error('❌ Error:', error);
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: error instanceof Error ? error.message : 'Error desconocido',
-        life: 5000,
-      });
-      setIsUploadingImage(false);
-    }
-  };
-
-  // ✅ Función para guardar imagen localmente (IndexedDB o localStorage)
-  const saveImageLocally = async (filename: string, blob: Blob) => {
-    try {
-      // Opción 1: IndexedDB (recomendado para imágenes)
-      const db = await openImageDB();
-      await saveImageToDB(db, filename, blob);
-    } catch (error) {
-      console.error('❌ Error guardando imagen:', error);
-    }
-  };
-
-  // Helper functions para IndexedDB
-  const openImageDB = (): Promise<IDBDatabase> => {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open('HeresProfileImages', 1);
-
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-
-      request.onupgradeneeded = (event) => {
-        const db = (event.target as IDBOpenDBRequest).result;
-        if (!db.objectStoreNames.contains('images')) {
-          db.createObjectStore('images', { keyPath: 'filename' });
-        }
-      };
-    });
-  };
-
-  const saveImageToDB = (db: IDBDatabase, filename: string, blob: Blob): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(['images'], 'readwrite');
-      const store = transaction.objectStore('images');
-      const request = store.put({ filename, blob, timestamp: Date.now() });
-
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  };
-
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
+    // Recalcular edad si cambia birthday
+    if (field === 'birthday' && value) {
+      const birthDate = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      setEdad(age);
+    }
   };
 
   const handlePasswordChange = (field: string, value: string) => {
@@ -297,52 +166,210 @@ export const ProfilePage: React.FC = () => {
 
   const handleSave = async () => {
     setIsSaving(true);
-    setSuccessMessage('');
-    setErrorMessage('');
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const token = TokenManager.getToken();
+      const cleanPhoneNumber = extractPhoneNumbers(formData.telefono);
 
-      if (user) {
-        updateUser({ ...user, ...formData });
+      const updatePayload: any = {
+        nombre: formData.nombre,
+        apellido1: formData.apellido1,
+        apellido2: formData.apellido2,
+        email: formData.email,
+      };
+
+      if (cleanPhoneNumber) {
+        updatePayload.telefono = `+34${cleanPhoneNumber}`;
       }
 
-      setSuccessMessage('✅ Perfil actualizado correctamente');
-      setIsEditing(false);
-    } catch (error) {
-      setErrorMessage('❌ Error al actualizar el perfil');
+      if (formData.direccion) {
+        updatePayload.direccion = formData.direccion;
+      }
+
+      if (formData.localidad) {
+        updatePayload.localidad = formData.localidad;
+      }
+
+      if (formData.birthday) {
+        updatePayload.birthday = formData.birthday.toISOString().split('T')[0];
+      }
+
+      if (formData.sexo) {
+        updatePayload.sexo = formData.sexo;
+      }
+
+      if (formData.alergias && formData.alergias.length > 0) {
+        updatePayload.alergias = formData.alergias;
+      }
+
+      if (formData.talla) {
+        updatePayload.talla = formData.talla;
+      }
+
+      if (formData.centro_juvenil) {
+        updatePayload.centro_juvenil = formData.centro_juvenil;
+      }
+
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/usuarios/${user?.id}`,
+        updatePayload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: '✅ Perfil actualizado correctamente',
+          life: 3000,
+        });
+
+        if (user) {
+          const updatedUser: User = {
+            ...user,
+            nombre: formData.nombre,
+            apellido1: formData.apellido1,
+            apellido2: formData.apellido2,
+            email: formData.email,
+            telefono: cleanPhoneNumber ? `+34${cleanPhoneNumber}` : user.telefono,
+            direccion: formData.direccion || user.direccion,
+            localidad: formData.localidad || user.localidad,
+            birthday: formData.birthday
+              ? formData.birthday.toISOString().split('T')[0]
+              : user.birthday,
+            sexo: formData.sexo || undefined,
+            alergias: formData.alergias.length > 0 ? formData.alergias : user.alergias,
+            talla: formData.talla || undefined,
+            centro_juvenil: formData.centro_juvenil || undefined,
+          };
+
+          updateUser(updatedUser);
+        }
+      }
+    } catch (error: any) {
       console.error('Error guardando perfil:', error);
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.response?.data?.error || '❌ Error al actualizar el perfil',
+        life: 5000,
+      });
     } finally {
       setIsSaving(false);
     }
   };
 
+  const handleCancel = () => {
+    if (user) {
+      setFormData({
+        nombre: user.nombre || '',
+        apellido1: user.apellido1 || '',
+        apellido2: user.apellido2 || '',
+        email: user.email || '',
+        telefono: user.telefono ? user.telefono.replace('+34', '') : '',
+        direccion: user.direccion || '',
+        localidad: user.localidad || '',
+        birthday: user.birthday ? new Date(user.birthday) : null,
+        sexo: user.sexo || '',
+        alergias: user.alergias || [],
+        talla: user.talla || '',
+        centro_juvenil: user.centro_juvenil || '',
+      });
+
+      toast.current?.show({
+        severity: 'info',
+        summary: 'Cancelado',
+        detail: 'Cambios descartados',
+        life: 2000,
+      });
+    }
+  };
+
   const handleChangePassword = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setErrorMessage('Las contraseñas no coinciden');
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Las contraseñas no coinciden',
+        life: 3000,
+      });
       return;
     }
 
     if (passwordData.newPassword.length < 6) {
-      setErrorMessage('La contraseña debe tener al menos 6 caracteres');
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'La contraseña debe tener al menos 6 caracteres',
+        life: 3000,
+      });
       return;
     }
 
-    setIsSaving(true);
-    setSuccessMessage('');
-    setErrorMessage('');
+    setIsChangingPassword(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const token = TokenManager.getToken();
 
-      setSuccessMessage('✅ Contraseña actualizada correctamente');
-      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      setShowPasswordSection(false);
-    } catch (error) {
-      setErrorMessage('❌ Error al cambiar la contraseña');
-      console.error('Error cambiando contraseña:', error);
+      if (!token) {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: '❌ No hay token de autenticación. Por favor, inicia sesión nuevamente.',
+          life: 5000,
+        });
+        setIsChangingPassword(false);
+        return;
+      }
+
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/usuarios/${user?.id}`,
+        { password: passwordData.newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: '✅ Contraseña actualizada correctamente. Cerrando sesión...',
+          life: 3000,
+        });
+
+        setPasswordData({ newPassword: '', confirmPassword: '' });
+        setShowPasswordDialog(false);
+
+        setTimeout(() => {
+          logout();
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error('❌ Error cambiando contraseña:', error);
+
+      const errorMessage =
+        error.response?.data?.msg ||
+        error.response?.data?.error ||
+        error.response?.data?.detail ||
+        '❌ Error al cambiar la contraseña';
+
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: errorMessage,
+        life: 5000,
+      });
     } finally {
-      setIsSaving(false);
+      setIsChangingPassword(false);
     }
   };
 
@@ -354,6 +381,7 @@ export const ProfilePage: React.FC = () => {
       animador: { label: 'Animador', severity: 'success' as const },
       miembro: { label: 'Miembro', severity: 'info' as const },
     };
+
     return (
       badges[role?.toLowerCase() as keyof typeof badges] || {
         label: 'Usuario',
@@ -363,7 +391,11 @@ export const ProfilePage: React.FC = () => {
   };
 
   if (!user) {
-    return <div>Cargando...</div>;
+    return (
+      <div className="flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <i className="pi pi-spin pi-spinner" style={{ fontSize: '3rem' }}></i>
+      </div>
+    );
   }
 
   const userInitials = user.nombre
@@ -375,293 +407,517 @@ export const ProfilePage: React.FC = () => {
 
   const roleBadge = getRoleBadge(user.rol || 'miembro');
 
+  const sexoOptions = [
+    { label: 'Masculino', value: 'M' },
+    { label: 'Femenino', value: 'F' },
+  ];
+
+  const tallaOptions = [
+    { label: 'XS', value: 'XS' },
+    { label: 'S', value: 'S' },
+    { label: 'M', value: 'M' },
+    { label: 'L', value: 'L' },
+    { label: 'XL', value: 'XL' },
+    { label: 'XXL', value: 'XXL' },
+  ];
+
   return (
     <div className="profile-page">
       <Toast ref={toast} />
 
-      <div className="profile-container">
-        {/* Mensajes */}
-        {successMessage && (
-          <Message severity="success" text={successMessage} className="w-full mb-3" />
-        )}
-        {errorMessage && <Message severity="error" text={errorMessage} className="w-full mb-3" />}
-
-        {/* Card principal con información del usuario */}
-        <Card className="profile-header-card">
-          <div className="profile-header">
-            <div className="profile-avatar-section">
-              {profileImage ? (
-                <Avatar
-                  image={profileImage}
-                  size="xlarge"
-                  shape="circle"
-                  className="profile-avatar-large"
-                />
-              ) : (
-                <Avatar
-                  label={userInitials}
-                  size="xlarge"
-                  shape="circle"
-                  className="profile-avatar-large"
-                  style={{ backgroundColor: '#3b82f6', color: '#ffffff', fontSize: '3rem' }}
-                />
-              )}
-
-              {/* ✅ NUEVO: FileUpload para cambiar foto */}
-              <div className="upload-overlay">
-                <FileUpload
-                  mode="basic"
-                  name="profileImage"
-                  accept="image/*"
-                  maxFileSize={5000000}
-                  customUpload
-                  uploadHandler={handleImageUpload}
-                  auto
-                  chooseLabel={isUploadingImage ? 'Subiendo...' : 'Cambiar foto'}
-                  className="profile-upload-btn"
-                  disabled={isUploadingImage}
-                />
-              </div>
-            </div>
-
-            <div className="profile-info">
-              <h2 className="profile-name">
-                {user.nombre} {user.apellido1} {user.apellido2}
-              </h2>
-              <p className="profile-email">{user.email}</p>
-              <Badge value={roleBadge.label} severity={roleBadge.severity} className="mt-2" />
-            </div>
-
-            <div className="profile-actions">
-              {!isEditing ? (
-                <Button
-                  label="Editar Perfil"
-                  icon="pi pi-user-edit"
-                  onClick={() => setIsEditing(true)}
-                />
-              ) : (
-                <>
-                  <Button
-                    label="Guardar"
-                    icon="pi pi-check"
-                    onClick={handleSave}
-                    loading={isSaving}
-                  />
-                  <Button
-                    label="Cancelar"
-                    icon="pi pi-times"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setFormData({
-                        nombre: user.nombre || '',
-                        apellido1: user.apellido1 || '',
-                        apellido2: user.apellido2 || '',
-                        email: user.email || '',
-                        telefono: user.telefono || '',
-                        direccion: user.direccion || '',
-                        ciudad: user.ciudad || '',
-                        codigo_postal: user.codigo_postal || '',
-                        fecha_nacimiento: user.fecha_nacimiento || '',
-                      });
-                    }}
-                    className="p-button-outlined p-button-secondary"
-                  />
-                </>
-              )}
-            </div>
+      <Card className="shadow-3">
+        {/* Header con Avatar a la izquierda */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '2rem',
+            padding: '2rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          {/* Avatar grande */}
+          <div style={{ flexShrink: 0 }}>
+            {profileImage ? (
+              <Avatar image={profileImage} shape="circle" className="profile-avatar-hero" />
+            ) : (
+              <Avatar label={userInitials} shape="circle" className="profile-avatar-hero" />
+            )}
           </div>
-        </Card>
 
-        {/* Resto del formulario (igual que antes) */}
-        <Card title="Información Personal" className="mt-3">
-          <div className="profile-form">
-            <div className="form-grid">
-              <div className="field">
-                <label htmlFor="nombre">Nombre *</label>
-                <InputText
-                  id="nombre"
-                  value={formData.nombre}
-                  onChange={(e) => handleInputChange('nombre', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
-              </div>
+          {/* Información del usuario */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              flex: 1,
+              minWidth: '0',
+            }}
+          >
+            <h1
+              style={{
+                fontSize: '2.5rem',
+                fontWeight: '700',
+                margin: '0 0 0.5rem 0',
+                color: 'var(--text-primary)',
+                lineHeight: '1.2',
+              }}
+            >
+              {formatFullName(user.nombre, user.apellido1, user.apellido2)}
+            </h1>
 
-              <div className="field">
-                <label htmlFor="apellido1">Primer Apellido *</label>
-                <InputText
-                  id="apellido1"
-                  value={formData.apellido1}
-                  onChange={(e) => handleInputChange('apellido1', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
-              </div>
+            <p
+              style={{
+                fontSize: '1.2rem',
+                color: 'var(--text-muted)',
+                margin: '0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
+              <i className="pi pi-envelope" style={{ fontSize: '1rem' }}></i>
+              {user.email}
+            </p>
+          </div>
+        </div>
 
-              <div className="field">
-                <label htmlFor="apellido2">Segundo Apellido</label>
-                <InputText
-                  id="apellido2"
-                  value={formData.apellido2}
-                  onChange={(e) => handleInputChange('apellido2', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
-              </div>
+        {/* Línea divisoria completa */}
+        <hr style={{ border: 'none', borderTop: '1px solid var(--border-primary)' }} />
 
-              <div className="field">
-                <label htmlFor="email">Email *</label>
-                <InputText
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
-              </div>
+        {/* SECCIÓN 1: INFORMACIÓN PERSONAL */}
+        <div style={{ padding: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h2
+              style={{
+                fontSize: '1.75rem',
+                fontWeight: '700',
+                marginBottom: '0.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                color: 'var(--text-primary)',
+              }}
+            >
+              <i className="pi pi-user" style={{ marginRight: '0.75rem', fontSize: '1.5rem' }}></i>
+              Información Personal
+            </h2>
+            <p
+              style={{
+                fontSize: '0.95rem',
+                color: 'var(--text-muted)',
+                marginLeft: '2.25rem',
+                marginTop: '0',
+              }}
+            >
+              Actualiza tus datos personales y de contacto
+            </p>
+          </div>
 
-              <div className="field">
-                <label htmlFor="telefono">Teléfono</label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', width: '100%' }}>
+            {/* Nombre */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="nombre">Nombre *</label>
+              <InputText
+                id="nombre"
+                value={formData.nombre}
+                onChange={(e) => handleInputChange('nombre', e.target.value)}
+                placeholder="Ej: Juan"
+              />
+            </div>
+
+            {/* Primer Apellido */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="apellido1">Primer Apellido *</label>
+              <InputText
+                id="apellido1"
+                value={formData.apellido1}
+                onChange={(e) => handleInputChange('apellido1', e.target.value)}
+                placeholder="Ej: García"
+              />
+            </div>
+
+            {/* Segundo Apellido */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="apellido2">Segundo Apellido</label>
+              <InputText
+                id="apellido2"
+                value={formData.apellido2}
+                onChange={(e) => handleInputChange('apellido2', e.target.value)}
+                placeholder="Ej: López"
+              />
+            </div>
+
+            {/* Email */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="email">Email *</label>
+              <InputText
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="Ej: juan.garcia@email.com"
+              />
+            </div>
+
+            {/* Teléfono */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="telefono">Teléfono</label>
+              <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">+34</span>
                 <InputText
                   id="telefono"
                   value={formData.telefono}
-                  onChange={(e) => handleInputChange('telefono', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="field">
-                <label htmlFor="fecha_nacimiento">Fecha de Nacimiento</label>
-                <InputText
-                  id="fecha_nacimiento"
-                  type="date"
-                  value={formData.fecha_nacimiento}
-                  onChange={(e) => handleInputChange('fecha_nacimiento', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="field field-full">
-                <label htmlFor="direccion">Dirección</label>
-                <InputText
-                  id="direccion"
-                  value={formData.direccion}
-                  onChange={(e) => handleInputChange('direccion', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="field">
-                <label htmlFor="ciudad">Ciudad</label>
-                <InputText
-                  id="ciudad"
-                  value={formData.ciudad}
-                  onChange={(e) => handleInputChange('ciudad', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="field">
-                <label htmlFor="codigo_postal">Código Postal</label>
-                <InputText
-                  id="codigo_postal"
-                  value={formData.codigo_postal}
-                  onChange={(e) => handleInputChange('codigo_postal', e.target.value)}
-                  disabled={!isEditing}
-                  className="w-full"
+                  onChange={(e) => {
+                    const formatted = formatPhoneNumber(e.target.value);
+                    handleInputChange('telefono', formatted);
+                  }}
+                  placeholder="Ej: 612 345 678"
+                  maxLength={11}
                 />
               </div>
             </div>
-          </div>
 
-          <Divider />
-
-          <div className="role-info">
-            <p>
-              <strong>Rol:</strong> <Badge value={roleBadge.label} severity={roleBadge.severity} />
-            </p>
-            <p className="text-muted">
-              El rol solo puede ser modificado por un administrador del sistema.
-            </p>
-          </div>
-        </Card>
-
-        {/* Sección de cambio de contraseña */}
-        <Card title="Seguridad" className="mt-3">
-          <div className="password-section">
-            {!showPasswordSection ? (
-              <Button
-                label="Cambiar Contraseña"
-                icon="pi pi-lock"
-                onClick={() => setShowPasswordSection(true)}
+            {/* Dirección */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="direccion">Dirección</label>
+              <InputText
+                id="direccion"
+                value={formData.direccion}
+                onChange={(e) => handleInputChange('direccion', e.target.value)}
+                placeholder="Ej: Calle Mayor 123"
               />
-            ) : (
-              <div className="form-grid">
-                <div className="field field-full">
-                  <label htmlFor="currentPassword">Contraseña Actual</label>
-                  <Password
-                    id="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
-                    feedback={false}
-                    toggleMask
-                    className="w-full"
-                  />
-                </div>
+            </div>
 
-                <div className="field">
-                  <label htmlFor="newPassword">Nueva Contraseña</label>
-                  <Password
-                    id="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-                    toggleMask
-                    className="w-full"
-                  />
-                </div>
+            {/* Localidad */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="localidad">Localidad</label>
+              <InputText
+                id="localidad"
+                value={formData.localidad}
+                onChange={(e) => handleInputChange('localidad', e.target.value)}
+                placeholder="Ej: Madrid"
+              />
+            </div>
 
-                <div className="field">
-                  <label htmlFor="confirmPassword">Confirmar Contraseña</label>
-                  <Password
-                    id="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-                    feedback={false}
-                    toggleMask
-                    className="w-full"
-                  />
-                </div>
+            {/* Fecha de Nacimiento */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="birthday">
+                Fecha de Nacimiento
+                {edad !== null && (
+                  <Chip label={`${edad} años`} className="ml-2" style={{ height: '24px' }} />
+                )}
+              </label>
+              <Calendar
+                id="birthday"
+                value={formData.birthday}
+                onChange={(e) => handleInputChange('birthday', e.value)}
+                dateFormat="dd/mm/yy"
+                showIcon
+                className="w-full"
+                placeholder="Selecciona una fecha"
+              />
+            </div>
 
-                <div className="field field-full flex gap-2">
-                  <Button
-                    label="Cancelar"
-                    icon="pi pi-times"
-                    onClick={() => {
-                      setShowPasswordSection(false);
-                      setPasswordData({
-                        currentPassword: '',
-                        newPassword: '',
-                        confirmPassword: '',
-                      });
-                    }}
-                  />
-                  <Button
-                    label="Guardar Contraseña"
-                    icon="pi pi-check"
-                    onClick={handleChangePassword}
-                    loading={isSaving}
-                  />
-                </div>
-              </div>
-            )}
+            {/* Sexo */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="sexo">Sexo</label>
+              <Dropdown
+                id="sexo"
+                value={formData.sexo}
+                options={sexoOptions}
+                onChange={(e) => handleInputChange('sexo', e.value)}
+                placeholder="Selecciona"
+                className="w-full"
+              />
+            </div>
+
+            {/* Talla */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="talla">Talla de camiseta</label>
+              <Dropdown
+                id="talla"
+                value={formData.talla}
+                options={tallaOptions}
+                onChange={(e) => handleInputChange('talla', e.value)}
+                placeholder="Selecciona talla"
+                className="w-full"
+              />
+            </div>
+
+            {/* Centro Juvenil */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label htmlFor="centro_juvenil">Centro Juvenil</label>
+              <Dropdown
+                id="centro_juvenil"
+                value={formData.centro_juvenil}
+                options={centroJuvenilOptions}
+                onChange={(e) => handleInputChange('centro_juvenil', e.value)}
+                placeholder="Selecciona un centro"
+                className="w-full"
+              />
+            </div>
+
+            {/* Alergias */}
+            <div className="field" style={{ flex: '1 1 100%', width: '100%' }}>
+              <label htmlFor="alergias">Alergias</label>
+              <Chips
+                id="alergias"
+                value={formData.alergias}
+                onChange={(e) => handleInputChange('alergias', e.value)}
+                separator=","
+                placeholder="Ej: Polen, Lácteos, Frutos secos..."
+              />
+              <small className="text-muted">Presiona Enter después de cada alergia</small>
+            </div>
           </div>
-        </Card>
-      </div>
+        </div>
+
+        {/* Línea divisoria completa */}
+        <hr style={{ border: 'none', borderTop: '1px solid var(--border-primary)' }} />
+
+        {/* SECCIÓN 2: INFORMACIÓN DEL SISTEMA */}
+        <div style={{ padding: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h2
+              style={{
+                fontSize: '1.75rem',
+                fontWeight: '700',
+                marginBottom: '0.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                color: 'var(--text-primary)',
+              }}
+            >
+              <i
+                className="pi pi-shield"
+                style={{ marginRight: '0.75rem', fontSize: '1.5rem' }}
+              ></i>
+              Información del Sistema
+            </h2>
+            <p
+              style={{
+                fontSize: '0.95rem',
+                color: 'var(--text-muted)',
+                marginLeft: '2.25rem',
+                marginTop: '0',
+              }}
+            >
+              Datos gestionados por el administrador del sistema
+            </p>
+          </div>
+
+          <Message
+            severity="info"
+            text="Los siguientes datos solo pueden ser modificados por un administrador del sistema."
+            style={{ width: '100%', marginBottom: '1.5rem' }}
+          />
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', width: '100%' }}>
+            {/* Rol */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label>Rol</label>
+              <div
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid var(--border-secondary)',
+                  borderRadius: 'var(--border-radius-md)',
+                  backgroundColor: 'var(--bg-secondary)',
+                  opacity: 0.7,
+                  display: 'flex',
+                  alignItems: 'center',
+                  minHeight: 'var(--field-height)',
+                }}
+              >
+                <Badge value={roleBadge.label} severity={roleBadge.severity} />
+              </div>
+            </div>
+
+            {/* Puntuación */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label>Puntuación</label>
+              <InputText value={`${user.puntuacion || 0} puntos (Juegos)`} disabled />
+            </div>
+
+            {/* Sección */}
+            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
+              <label>Sección</label>
+              <div
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid var(--border-secondary)',
+                  borderRadius: 'var(--border-radius-md)',
+                  backgroundColor: 'var(--bg-secondary)',
+                  opacity: 0.7,
+                  minHeight: 'var(--field-height)',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                {user.seccion && Array.isArray(user.seccion) && user.seccion.length > 0 ? (
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {user.seccion.map((sec: string, idx: number) => (
+                      <Badge key={idx} value={sec} severity="info" />
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-muted">No asignada</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Línea divisoria completa */}
+        <hr style={{ border: 'none', borderTop: '1px solid var(--border-primary)' }} />
+
+        {/* SECCIÓN 3: ZONA DE RIESGO */}
+        <div style={{ padding: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h2
+              style={{
+                fontSize: '1.75rem',
+                fontWeight: '700',
+                marginBottom: '0.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#dc2626',
+              }}
+            >
+              <i
+                className="pi pi-exclamation-triangle"
+                style={{ marginRight: '0.75rem', fontSize: '1.5rem' }}
+              ></i>
+              Zona de Riesgo
+            </h2>
+            <p
+              style={{
+                fontSize: '0.95rem',
+                color: 'var(--text-muted)',
+                marginLeft: '2.25rem',
+                marginTop: '0',
+              }}
+            >
+              Gestiona la seguridad de tu cuenta
+            </p>
+          </div>
+
+          <Button
+            label="Cambiar Contraseña"
+            icon="pi pi-key"
+            onClick={() => setShowPasswordDialog(true)}
+            className="btn-primary"
+          />
+        </div>
+
+        {/* Botones de Acción */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '0.75rem',
+            marginTop: '2rem',
+            paddingTop: '1.5rem',
+            borderTop: '1px solid var(--border-primary)',
+          }}
+        >
+          <Button
+            label="Descartar cambios"
+            icon="pi pi-times"
+            onClick={handleCancel}
+            className="p-button-outlined p-button-secondary"
+          />
+          <Button
+            label="Guardar"
+            icon="pi pi-check"
+            onClick={handleSave}
+            loading={isSaving}
+            className="p-button-primary"
+          />
+        </div>
+      </Card>
+
+      {/* DIÁLOGO DE CAMBIO DE CONTRASEÑA */}
+      <Dialog
+        header="Cambiar Contraseña"
+        visible={showPasswordDialog}
+        style={{ width: '500px' }}
+        onHide={() => {
+          setShowPasswordDialog(false);
+          setPasswordData({ newPassword: '', confirmPassword: '' });
+        }}
+        modal
+        draggable={false}
+        resizable={false}
+        maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+      >
+        <div style={{ padding: '1rem 0' }}>
+          <Message
+            severity="warn"
+            text="Después de cambiar tu contraseña, se cerrará tu sesión automáticamente."
+            style={{ width: '100%', marginBottom: '1.5rem' }}
+          />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '1rem' }}>
+            <div className="field">
+              <label htmlFor="newPassword">Nueva Contraseña</label>
+              <Password
+                id="newPassword"
+                value={passwordData.newPassword}
+                onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                toggleMask
+                className="w-full"
+                inputClassName="w-full"
+                promptLabel="Ingresa una contraseña"
+                weakLabel="Débil"
+                mediumLabel="Media"
+                strongLabel="Fuerte"
+                placeholder="Mínimo 6 caracteres"
+              />
+            </div>
+
+            <div className="field">
+              <label htmlFor="confirmPassword">Confirmar Contraseña</label>
+              <Password
+                id="confirmPassword"
+                value={passwordData.confirmPassword}
+                onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                feedback={false}
+                toggleMask
+                className="w-full"
+                inputClassName="w-full"
+                placeholder="Repite la contraseña"
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '0.75rem',
+              marginTop: '2rem',
+            }}
+          >
+            <Button
+              label="Cancelar"
+              icon="pi pi-times"
+              onClick={() => {
+                setShowPasswordDialog(false);
+                setPasswordData({ newPassword: '', confirmPassword: '' });
+              }}
+              className="p-button-outlined p-button-secondary"
+            />
+            <Button
+              label="Cambiar Contraseña"
+              icon="pi pi-check"
+              onClick={handleChangePassword}
+              loading={isChangingPassword}
+              className="btn-primary"
+            />
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

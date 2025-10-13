@@ -1,227 +1,386 @@
 // src/pages/Members.tsx
+
 import React, { useState, useRef, useEffect } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
+import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
 import { Card } from 'primereact/card';
-
-import { useAuth } from '../hooks/useAuth'; // ✅ auth global
-import { useUsers } from '../hooks/useApi'; // ✅ hook especializado
-import { RegisterData } from '../services/api';
-import { User } from '../types';
-import { MemberCard } from '../components/common/MemberCard';
-import { UserFormDialog } from '../components/common/UserFormDialog';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
-
-type FilterState = {
-  search: string;
-  rol: number | null;
-  centro: string | null;
-  hasAccess: boolean | null;
-};
+import { Badge } from 'primereact/badge';
+import { Message } from 'primereact/message';
+import { useAuth } from '../hooks/useAuth';
+import { userService } from '../services/api/index';
+import { formatFullName } from '../utils/formatters';
+import type { User } from '../types/user.types';
+import type { MenuItem } from 'primereact/menuitem';
+import { UserEditDialog } from '../components/dialog/UserEditDialog';
+import '../styles/4-pages/members.css';
 
 export const Members: React.FC = () => {
-  /* ------------  context & hooks  ------------ */
-  const { user: currentUser, hasPermission, canCreateUsers } = useAuth();
-  const { users, loading, error, fetchAllUsers, createNewUser, updateExistingUser } = useUsers();
+  const { user: currentUser } = useAuth();
   const toast = useRef<Toast>(null);
 
-  /* ------------  local state  ------------ */
-  const [filters, setFilters] = useState<FilterState>({
-    search: '',
-    rol: null,
-    centro: null,
-    hasAccess: null,
-  });
-  const [formVisible, setFormVisible] = useState(false);
-  const [viewMode, setViewMode] = useState(false);
+  // Menu refs
+  const rolMenuRef = useRef<Menu>(null);
+  const centroMenuRef = useRef<Menu>(null);
+  const seccionMenuRef = useRef<Menu>(null);
+
+  // ========================================
+  // STATE
+  // ========================================
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [globalFilter] = useState('');
+
+  const isSuperUser = currentUser?.rol_id === 1;
+  const userCentro = currentUser?.centro_juvenil || '';
+
+  const [dialogVisible, setDialogVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [isMounted, setIsMounted] = useState(true);
 
-  /* ------------  initial load  ------------ */
+  // Filtros seleccionados
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedCentros, setSelectedCentros] = useState<string[]>([]);
+  const [selectedSecciones, setSelectedSecciones] = useState<string[]>([]);
+
+  // ========================================
+  // EFFECTS
+  // ========================================
+
   useEffect(() => {
-    // ⚠️ Solo hacer fetch si hay token
-    const token = localStorage.getItem('authToken');
+    fetchUsers();
+  }, []);
 
-    if (!token) {
-      return;
-    }
+  useEffect(() => {
+    applyFilters();
+  }, [users, selectedRoles, selectedCentros, selectedSecciones, globalFilter]);
 
-    if (isMounted) {
-      fetchAllUsers().catch(() => {});
-    }
+  // ========================================
+  // DATA FETCHING
+  // ========================================
 
-    return () => {
-      setIsMounted(false);
-    };
-  }, []); // ⚠️ Array vacío - solo una vez al montar
-
-  /* ------------  helpers  ------------ */
-  const showToast = (severity: 'success' | 'error', summary: string, detail: string) =>
-    toast.current?.show({ severity, summary, detail, life: 3000 });
-
-  const handleFilter = (field: string, value: string) =>
-    setFilters((prev) => ({ ...prev, [field]: value }));
-
-  const clearFilters = () => setFilters({ search: '', rol: null, centro: null, hasAccess: null });
-
-  /* ------------  CRUD actions  ------------ */
-  const saveUser = async (data: RegisterData) => {
+  const fetchUsers = async () => {
     try {
-      if (selectedUser) {
-        await updateExistingUser(selectedUser.id, data);
-        showToast('success', 'Actualizado', 'Usuario actualizado');
-      } else {
-        await createNewUser(data);
-        showToast('success', 'Creado', 'Usuario creado');
-      }
-      setFormVisible(false);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        showToast('error', 'Error', err.message);
-      } else {
-        showToast('error', 'Error', String(err));
-      }
+      setLoading(true);
+      const data = await userService.getUsers();
+      const filteredData = isSuperUser ? data : data.filter((u) => u.centro_juvenil === userCentro);
+      setUsers(filteredData);
+    } catch (error) {
+      console.error('Error loading users:', error);
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al cargar usuarios',
+        life: 3000,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  /* ------------  UI handlers  ------------ */
-  const openNew = () => {
-    setSelectedUser(null);
-    setViewMode(false);
-    setFormVisible(true);
+  // ========================================
+  // FILTRADO
+  // ========================================
+
+  const applyFilters = () => {
+    let filtered = [...users];
+
+    // Filtro por roles
+    if (selectedRoles.length > 0) {
+      filtered = filtered.filter((u) => selectedRoles.includes(u.rol));
+    }
+
+    // Filtro por centros
+    if (selectedCentros.length > 0) {
+      filtered = filtered.filter(
+        (u) => u.centro_juvenil && selectedCentros.includes(u.centro_juvenil)
+      );
+    }
+
+    // Filtro por secciones
+    if (selectedSecciones.length > 0) {
+      filtered = filtered.filter((u) => u.seccion?.some((s) => selectedSecciones.includes(s)));
+    }
+
+    // Filtro global (búsqueda por texto)
+    if (globalFilter) {
+      const searchLower = globalFilter.toLowerCase();
+      filtered = filtered.filter(
+        (u) =>
+          u.nombre?.toLowerCase().includes(searchLower) ||
+          u.apellido1?.toLowerCase().includes(searchLower) ||
+          u.apellido2?.toLowerCase().includes(searchLower) ||
+          u.email?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    setFilteredUsers(filtered);
   };
 
-  const handleEdit = (user: User) => {
+  // ========================================
+  // MENU ITEMS
+  // ========================================
+
+  const toggleRole = (role: string) => {
+    setSelectedRoles((prev) =>
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
+    );
+  };
+
+  const toggleCentro = (centro: string) => {
+    setSelectedCentros((prev) =>
+      prev.includes(centro) ? prev.filter((c) => c !== centro) : [...prev, centro]
+    );
+  };
+
+  const toggleSeccion = (seccion: string) => {
+    setSelectedSecciones((prev) =>
+      prev.includes(seccion) ? prev.filter((s) => s !== seccion) : [...prev, seccion]
+    );
+  };
+
+  const rolMenuItems: MenuItem[] = [
+    {
+      label: 'Superusuario',
+      icon: selectedRoles.includes('superuser') ? 'pi pi-check' : '',
+      command: () => toggleRole('superuser'),
+    },
+    {
+      label: 'Director',
+      icon: selectedRoles.includes('director') ? 'pi pi-check' : '',
+      command: () => toggleRole('director'),
+    },
+    {
+      label: 'Coordinador',
+      icon: selectedRoles.includes('coordinador') ? 'pi pi-check' : '',
+      command: () => toggleRole('coordinador'),
+    },
+    {
+      label: 'Animador',
+      icon: selectedRoles.includes('animador') ? 'pi pi-check' : '',
+      command: () => toggleRole('animador'),
+    },
+    {
+      label: 'Miembro',
+      icon: selectedRoles.includes('miembro') ? 'pi pi-check' : '',
+      command: () => toggleRole('miembro'),
+    },
+  ];
+
+  const centroMenuItems: MenuItem[] = [
+    {
+      label: 'CJ Juveliber',
+      icon: selectedCentros.includes('CJ Juveliber') ? 'pi pi-check' : '',
+      command: () => toggleCentro('CJ Juveliber'),
+      disabled: !isSuperUser,
+    },
+    {
+      label: 'CJ La Balsa',
+      icon: selectedCentros.includes('CJ La Balsa') ? 'pi pi-check' : '',
+      command: () => toggleCentro('CJ La Balsa'),
+      disabled: !isSuperUser,
+    },
+    {
+      label: 'CJ Sotojoven',
+      icon: selectedCentros.includes('CJ Sotojoven') ? 'pi pi-check' : '',
+      command: () => toggleCentro('CJ Sotojoven'),
+      disabled: !isSuperUser,
+    },
+  ];
+
+  const seccionMenuItems: MenuItem[] = [
+    {
+      label: 'Chiqui',
+      icon: selectedSecciones.includes('Chiqui') ? 'pi pi-check' : '',
+      command: () => toggleSeccion('Chiqui'),
+    },
+    {
+      label: 'CJ',
+      icon: selectedSecciones.includes('CJ') ? 'pi pi-check' : '',
+      command: () => toggleSeccion('CJ'),
+    },
+  ];
+
+  // ========================================
+  // COLUMN HEADERS CON MENÚ
+  // ========================================
+
+  const rolHeader = (
+    <div className="flex align-items-center gap-2">
+      <span>Rol</span>
+      <Button
+        icon="pi pi-filter"
+        rounded
+        text
+        size="small"
+        onClick={(e) => rolMenuRef.current?.toggle(e)}
+        className={selectedRoles.length > 0 ? 'p-button-primary' : ''}
+      />
+      <Menu ref={rolMenuRef} model={rolMenuItems} popup />
+    </div>
+  );
+
+  const centroHeader = (
+    <div className="flex align-items-center gap-2">
+      <span>Centro</span>
+      <Button
+        icon="pi pi-filter"
+        rounded
+        text
+        size="small"
+        onClick={(e) => centroMenuRef.current?.toggle(e)}
+        className={selectedCentros.length > 0 ? 'p-button-primary' : ''}
+      />
+      <Menu ref={centroMenuRef} model={centroMenuItems} popup />
+    </div>
+  );
+
+  const seccionHeader = (
+    <div className="flex align-items-center gap-2">
+      <span>Sección</span>
+      <Button
+        icon="pi pi-filter"
+        rounded
+        text
+        size="small"
+        onClick={(e) => seccionMenuRef.current?.toggle(e)}
+        className={selectedSecciones.length > 0 ? 'p-button-primary' : ''}
+      />
+      <Menu ref={seccionMenuRef} model={seccionMenuItems} popup />
+    </div>
+  );
+
+  // ========================================
+  // HANDLERS
+  // ========================================
+
+  const handleUserClick = (user: User) => {
     setSelectedUser(user);
-    setViewMode(false);
-    setFormVisible(true);
+    setDialogVisible(true);
   };
 
-  const handleView = (user: User) => {
-    setSelectedUser(user);
-    setViewMode(true);
-    setFormVisible(true);
+  // ========================================
+  // TEMPLATES
+  // ========================================
+
+  const userTemplate = (rowData: User) => {
+    const fullName = formatFullName(rowData.nombre, rowData.apellido1, rowData.apellido2);
+    return (
+      <div>
+        <div className="font-semibold">{fullName}</div>
+        <div className="text-sm text-500">{rowData.email}</div>
+      </div>
+    );
   };
 
-  /* ------------  filtering  ------------ */
-  const filtered = users.filter((u) => {
-    /* search */
-    if (filters.search) {
-      const txt = filters.search.toLowerCase();
-      const full = `${u.nombre} ${u.apellido1} ${u.apellido2 ?? ''}`.toLowerCase();
-      if (!full.includes(txt) && !(u.email ?? '').toLowerCase().includes(txt)) return false;
-    }
-    /* rol */
-    if (filters.rol !== null && u.rol_id !== filters.rol) return false;
-    /* centro */
-    if (filters.centro && u.centro_juvenil !== filters.centro) return false;
-    /* acceso */
-    if (filters.hasAccess !== null) {
-      const hasAcc = !!(u.email && u.can_login);
-      if (hasAcc !== filters.hasAccess) return false;
-    }
-    return true;
-  });
+  const rolTemplate = (rowData: User) => {
+    const rolMap: any = {
+      superuser: { label: 'Superusuario', severity: 'danger' },
+      director: { label: 'Director', severity: 'danger' },
+      coordinador: { label: 'Coordinador', severity: 'warning' },
+      animador: { label: 'Animador', severity: 'success' },
+      miembro: { label: 'Miembro', severity: 'info' },
+    };
+    const rol = rolMap[rowData.rol?.toLowerCase()] || { label: 'Usuario', severity: 'info' };
+    return <Badge value={rol.label} severity={rol.severity as any} />;
+  };
 
-  const canShowEdit = hasPermission(3); // superuser-director-coordinador
+  const pointsTemplate = (rowData: User) => {
+    return (
+      <div className="flex align-items-center gap-2">
+        <span className="font-bold">{rowData.puntuacion || 0}</span>
+        <span className="text-500">pts</span>
+      </div>
+    );
+  };
 
-  /* ------------  render  ------------ */
-  if (loading) return <LoadingSpinner message="Cargando usuarios..." />;
-  if (error) return <div className="text-center text-red-600 py-8">Error: {error}</div>;
+  const actionTemplate = (rowData: User) => {
+    return (
+      <Button
+        icon="pi pi-pencil"
+        rounded
+        text
+        onClick={() => handleUserClick(rowData)}
+        tooltip="Editar usuario"
+      />
+    );
+  };
+
+  // ========================================
+  // RENDER
+  // ========================================
 
   return (
-    <div className="space-y-6">
-      {/* header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Gestión de Usuarios</h1>
-        {canCreateUsers() && <Button icon="pi pi-plus" label="Crear usuario" onClick={openNew} />}
+    <div className="members-page p-4">
+      <Toast ref={toast} />
+
+      <div>
+        <h1 className="page-title">👥 Gestión de Usuarios</h1>
+        <p className="page-subtitle">Administra y visualiza todos los usuarios del sistema.</p>
       </div>
 
-      {/* filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <span className="p-input-icon-left col-span-2">
-          <InputText
-            value={filters.search}
-            onChange={(e) => handleFilter('search', e.target.value)}
-            placeholder="Buscar..."
-            className="input-search"
+      {!isSuperUser && (
+        <Message
+          severity="info"
+          text={`🔒 Mostrando solo usuarios de: ${userCentro}`}
+          className="mb-3"
+        />
+      )}
+
+      <Card>
+        <DataTable
+          value={filteredUsers}
+          loading={loading}
+          emptyMessage="No se encontraron usuarios"
+          stripedRows={false}
+          showGridlines={false}
+        >
+          <Column
+            header="Usuario"
+            body={userTemplate}
+            sortable
+            field="nombre"
+            style={{ minWidth: '250px' }}
           />
-        </span>
-        <Dropdown
-          value={filters.rol}
-          onChange={(e) => handleFilter('rol', e.value)}
-          options={[
-            { label: 'Todos los roles', value: null },
-            { label: 'Superusuario', value: 1 },
-            { label: 'Director', value: 2 },
-            { label: 'Coordinador', value: 3 },
-            { label: 'Animador', value: 4 },
-            { label: 'Miembro', value: 5 },
-          ]}
-          placeholder="Rol"
-        />
-        <Button icon="pi pi-filter-slash" label="Limpiar" onClick={clearFilters} />
-      </div>
+          <Column
+            header={rolHeader}
+            body={rolTemplate}
+            sortable
+            field="rol"
+            style={{ width: '180px' }}
+          />
+          <Column
+            header="Puntos"
+            body={pointsTemplate}
+            sortable
+            field="puntuacion"
+            style={{ width: '100px' }}
+          />
+          <Column
+            header={centroHeader}
+            field="centro_juvenil"
+            sortable
+            style={{ width: '200px' }}
+          />
+          <Column
+            header={seccionHeader}
+            body={(rowData) => rowData.seccion?.join(', ') || '-'}
+            style={{ width: '180px' }}
+          />
+          <Column header="Acciones" body={actionTemplate} style={{ width: '80px' }} />
+        </DataTable>
+      </Card>
 
-      {/* stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <p className="font-medium">Total</p>
-          <h2>{filtered.length}</h2>
-        </Card>
-        <Card>
-          <p className="font-medium">Con acceso</p>
-          <h2>{filtered.filter((u) => u.email && u.can_login).length}</h2>
-        </Card>
-        <Card>
-          <p className="font-medium">Animadores</p>
-          <h2>{filtered.filter((u) => u.rol_id === 4).length}</h2>
-        </Card>
-        <Card>
-          <p className="font-medium">Miembros</p>
-          <h2>{filtered.filter((u) => u.rol_id === 5).length}</h2>
-        </Card>
-      </div>
-
-      {/* grid */}
-      {filtered.length === 0 ? (
-        <div className="text-center py-12">
-          <i className="pi pi-users text-4xl text-gray-400 mb-4"></i>
-          <p className="mb-2">
-            {filters.search ? 'No se encontraron usuarios' : 'No hay usuarios registrados'}
-          </p>
-          {canCreateUsers() && <Button label="Crear usuario" icon="pi pi-plus" onClick={openNew} />}
-        </div>
-      ) : (
-        <div className="flex flex-wrap gap-4">
-          {filtered.map((u) => (
-            <div key={u.id} style={{ flex: '1 1 220px', minWidth: 220, maxWidth: 280 }}>
-              <MemberCard
-                user={u}
-                currentUser={currentUser!}
-                onView={handleView}
-                onEdit={handleEdit}
-                showEditButton={canShowEdit}
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* dialogs */}
-      {formVisible && (
-        <UserFormDialog
-          visible={formVisible}
-          user={selectedUser}
-          viewMode={viewMode}
-          onHide={() => setFormVisible(false)}
-          onSave={saveUser}
-        />
-      )}
-
-      <Toast ref={toast} position="bottom-right" />
+      <UserEditDialog
+        visible={dialogVisible}
+        user={selectedUser}
+        onHide={() => setDialogVisible(false)}
+        onSave={fetchUsers}
+        maskClassName="dialog-dark-mask"
+      />
     </div>
   );
 };

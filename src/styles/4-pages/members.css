@@ -1,0 +1,311 @@
+/* src/styles/4-pages/members.css */
+
+/* ========================================
+   MEMBERS PAGE
+======================================== */
+
+.members-page {
+  min-height: 100vh;
+  background-color: transparent !important;
+}
+
+/* ========================================
+   DATATABLE HEADER CUSTOMIZATION
+======================================== */
+
+.members-page .p-datatable-header {
+  background-color: transparent !important;
+  border: none;
+  padding: 1.5rem;
+  border-radius: 8px 8px 0 0;
+}
+
+/* ========================================
+   DATATABLE CUSTOMIZATION
+======================================== */
+
+.members-page .p-datatable .p-datatable-tbody > tr > td {
+  padding: 0.5rem 1rem !important;
+  border-bottom: 1px solid var(--surface-border) !important;
+}
+
+.members-page .p-datatable .p-datatable-thead > tr > th {
+  padding: 0.75rem 1rem !important;
+  background-color: transparent !important;
+  border-bottom: 2px solid var(--gecos-primary) !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  color: #374151 !important; /* ✅ Gris oscuro para headers */
+}
+
+.members-page .p-datatable .p-datatable-tbody > tr {
+  background-color: transparent !important;
+  height: 60px;
+}
+
+.members-page .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: transparent !important;
+}
+
+/* ========================================
+   USER CELL STYLING - FORZADO PARA MODO CLARO
+======================================== */
+
+.members-page .font-semibold {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #111827 !important; /* ✅ Negro para nombres */
+  margin-bottom: 0.25rem !important;
+}
+
+.members-page .text-sm {
+  font-size: 0.85rem !important;
+}
+
+.members-page .text-500 {
+  color: #6b7280 !important; /* ✅ Gris medio para emails y pts */
+}
+
+/* ========================================
+   COLUMN TITLES
+======================================== */
+
+.members-page .p-column-title {
+  color: #374151 !important; /* ✅ Gris oscuro para títulos de columnas */
+}
+
+/* ========================================
+   TEXT IN CELLS (Centro, Sección)
+======================================== */
+
+.members-page .p-datatable .p-datatable-tbody > tr > td {
+  color: #111827 !important; /* ✅ Texto oscuro en celdas */
+}
+
+/* ========================================
+   BADGE STYLING
+======================================== */
+
+.members-page .p-badge {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ========================================
+   POINTS DISPLAY
+======================================== */
+
+.members-page .font-bold {
+  font-size: 1.1rem !important;
+  color: var(--gecos-primary) !important;
+}
+
+/* ========================================
+   ACTION BUTTONS
+======================================== */
+
+.members-page .p-button.p-button-rounded.p-button-text {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.members-page .p-button.p-button-rounded.p-button-text:hover {
+  background-color: var(--gecos-primary);
+  color: white;
+}
+
+/* ========================================
+   SEARCH BAR IN HEADER
+======================================== */
+
+.members-page .p-input-icon-left {
+  display: inline-block;
+}
+
+.members-page .p-input-icon-left > .p-inputtext {
+  padding-left: 2.5rem;
+}
+
+.members-page .p-input-icon-left > i {
+  left: 0.75rem;
+  color: #6b7280 !important;
+}
+
+/* ========================================
+   FILTER CHECKBOXES
+======================================== */
+
+.filter-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  min-width: 180px;
+}
+
+.filter-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.filter-checkbox-item input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--gecos-primary);
+}
+
+.filter-checkbox-item input[type='checkbox']:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.filter-checkbox-item label {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #374151 !important;
+  user-select: none;
+}
+
+.filter-checkbox-item:hover label {
+  color: var(--gecos-primary);
+}
+
+.filter-checkbox-item input[type='checkbox']:disabled + label {
+  cursor: not-allowed;
+  color: #9ca3af !important;
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .members-page .font-semibold {
+    color: #f9fafb !important;
+  }
+
+  .members-page .text-500 {
+    color: #d1d5db !important;
+  }
+
+  .members-page .p-column-title {
+    color: #e5e7eb !important;
+  }
+
+  .members-page .p-datatable .p-datatable-tbody > tr > td {
+    color: #f9fafb !important;
+  }
+
+  .members-page .p-datatable .p-datatable-thead > tr > th {
+    color: #e5e7eb !important;
+  }
+
+  .members-page .p-input-icon-left > i {
+    color: #9ca3af !important;
+  }
+
+  .filter-checkbox-item label {
+    color: #e5e7eb !important;
+  }
+
+  .filter-checkbox-item input[type='checkbox']:disabled + label {
+    color: #6b7280 !important;
+  }
+}
+
+.members-page .font-semibold {
+  color: #444444 !important;
+}
+
+.members-page .text-500 {
+  color: #444444 !important;
+}
+
+.members-page .p-column-title {
+  color: #444444 !important;
+}
+
+.members-page .p-datatable .p-datatable-tbody > tr > td {
+  color: #444444 !important;
+}
+
+.members-page .p-datatable .p-datatable-thead > tr > th {
+  color: #444444 !important;
+}
+
+.filter-checkbox-item label {
+  color: #444444 !important;
+}
+
+/* Soporte para clase .dark */
+.dark .members-page .font-semibold {
+  color: #f9fafb !important;
+}
+
+.dark .members-page .text-500 {
+  color: #d1d5db !important;
+}
+
+.dark .members-page .p-column-title {
+  color: #e5e7eb !important;
+}
+
+.dark .members-page .p-datatable .p-datatable-tbody > tr > td {
+  color: #f9fafb !important;
+}
+
+.dark .members-page .p-datatable .p-datatable-thead > tr > th {
+  color: #e5e7eb !important;
+}
+
+.dark .filter-checkbox-item label {
+  color: #e5e7eb !important;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .members-page .p-datatable-header {
+    padding: 1rem;
+  }
+
+  .members-page .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem !important;
+  }
+
+  .members-page .p-datatable .p-datatable-thead > tr > th {
+    padding: 0.5rem !important;
+    font-size: 0.75rem;
+  }
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+======================================== */
+
+.members-page .p-datatable .p-datatable-wrapper::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.members-page .p-datatable .p-datatable-wrapper::-webkit-scrollbar-track {
+  background: var(--surface-ground);
+  border-radius: 4px;
+}
+
+.members-page .p-datatable .p-datatable-wrapper::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 4px;
+}
+
+.members-page .p-datatable .p-datatable-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--gecos-primary);
+}

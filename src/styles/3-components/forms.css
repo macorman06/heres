@@ -53,6 +53,8 @@
   border-radius: var(--border-radius-md) !important;
   transition: all var(--transition-normal) !important;
   min-height: var(--field-height) !important;
+  width: auto !important; /* ✅ Cambiar a auto para ajuste dinámico */
+  min-width: 150px !important; /* ✅ Ancho mínimo */
 }
 
 .p-dropdown:hover {
@@ -75,6 +77,27 @@
   color: var(--text-muted) !important;
   cursor: not-allowed !important;
   opacity: 0.7 !important;
+}
+
+.p-dropdown-items-wrapper {
+  margin-top: 0.25rem !important; /* Espacio entre el dropdown y la lista */
+}
+
+.p-dropdown-items {
+  border: 1px solid var(--border-secondary) !important;
+  border-radius: var(--border-radius-md) !important;
+  padding: 0 !important; /* ✅ Eliminar padding del contenedor */
+}
+
+.p-dropdown-item {
+  border: none !important;
+  border-bottom: 1px solid var(--border-secondary) !important;
+  margin: 0 !important; /* ✅ Eliminar margen */
+  margin-bottom: 0 !important; /* ✅ Eliminar margin-bottom específicamente */
+}
+
+.p-dropdown-item:last-child {
+  border-bottom: none !important; /* ✅ Opcional: quitar el borde del último item */
 }
 
 /* MultiSelect */

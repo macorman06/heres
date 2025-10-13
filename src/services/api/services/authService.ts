@@ -1,40 +1,33 @@
 // src/services/api/services/authService.ts
 import { HttpClient } from '../core/httpClient';
-import { TokenManager } from '../../auth/tokenManager';
 import type { LoginRequest, RegisterRequest, AuthResponse } from '../../../types';
 
 export class AuthService {
   constructor(private httpClient: HttpClient) {}
 
+  /**
+   * Inicia sesión
+   */
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await this.httpClient.post<AuthResponse>('/auth/login', credentials);
-    TokenManager.setToken(response.token);
-    TokenManager.setUserData(response.usuario);
-    return response;
+    return this.httpClient.post<AuthResponse>('/auth/login', credentials);
   }
 
+  /**
+   * Registra un nuevo usuario
+   */
   async register(userData: RegisterRequest): Promise<AuthResponse> {
-    const response = await this.httpClient.post<AuthResponse>('/auth/register', userData);
-    TokenManager.setToken(response.token);
-    TokenManager.setUserData(response.usuario);
-    return response;
+    return this.httpClient.post<AuthResponse>('/auth/register', userData);
   }
 
-  logout(): void {
-    TokenManager.removeToken();
-    TokenManager.removeUserData();
-  }
+  /**
+   * Cierra sesión (opcional, si tienes endpoint en backend)
+   */
+  async logout(): Promise<void> {
+    // Si tienes endpoint de logout en backend, úsalo aquí
+    // return this.httpClient.post('/auth/logout');
 
-  getCurrentUser() {
-    return TokenManager.getUserData();
-  }
-
-  isAuthenticated(): boolean {
-    return TokenManager.isAuthenticated();
+    // Si no hay endpoint, solo limpia localmente
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 }
-
-const httpClient = new HttpClient();
-const authService = new AuthService(httpClient);
-
-export default authService;

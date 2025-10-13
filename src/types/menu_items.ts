@@ -53,6 +53,13 @@ export const MENU_ITEMS: MenuItemWithRoles[] = [
     allowedRoles: [ROLES.SUPERUSER, ROLES.DIRECTOR, ROLES.COORDINADOR, ROLES.ANIMADOR],
   },
   {
+    label: 'Miembros',
+    icon: 'pi pi-users',
+    route: '/members',
+    subtitle: 'Lista de miembros',
+    allowedRoles: [ROLES.SUPERUSER, ROLES.DIRECTOR, ROLES.COORDINADOR, ROLES.ANIMADOR],
+  },
+  {
     label: 'Ranking',
     icon: 'pi pi-trophy',
     route: '/ranking',

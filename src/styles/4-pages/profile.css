@@ -4,7 +4,6 @@
 
 .profile-page {
   padding: 2rem;
-  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -279,4 +278,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* Dropdowns con ancho dinámico basado en contenido */
+.profile-page .p-dropdown {
+  width: 100% !important;
+  min-width: fit-content !important;
+}
+
+/* Asegurar que el dropdown de talla tenga ancho adecuado */
+.profile-page .p-dropdown .p-dropdown-label {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Flex container responsive para los dropdowns */
+.profile-page .field {
+  min-width: 0; /* Permite que flex funcione correctamente */
 }

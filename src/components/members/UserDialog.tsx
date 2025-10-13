@@ -7,12 +7,12 @@ import { MultiSelect } from 'primereact/multiselect';
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
-import { User, CreateUserRequest, ROLES } from '../../services/api';
+import { User, UserFormData, ROLES } from '../../services/api';
 
 interface UserDialogProps {
   visible: boolean;
   onHide: () => void;
-  onSave: (userData: CreateUserRequest) => Promise<void>;
+  onSave: (userData: UserFormData) => Promise<void>;
   user?: User | null;
   loading?: boolean;
 }
@@ -53,7 +53,7 @@ export const UserDialog: React.FC<UserDialogProps> = ({
   user,
   loading = false,
 }) => {
-  const [formData, setFormData] = useState<CreateUserRequest>({
+  const [formData, setFormData] = useState<UserFormData>({
     nombre: '',
     apellido1: '',
     apellido2: '',
@@ -177,7 +177,7 @@ export const UserDialog: React.FC<UserDialogProps> = ({
     }
   };
 
-  const handleInputChange = (field: keyof CreateUserRequest, value: unknown) => {
+  const handleInputChange = (field: keyof UserFormData, value: unknown) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,

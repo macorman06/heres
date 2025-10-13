@@ -1,4 +1,4 @@
-import {User} from './user.types.ts'
+import { User } from './user.types.ts';
 
 export interface LoginRequest {
   email: string;
@@ -25,7 +25,7 @@ export interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => void;
-  updateUser: (userData: User) => void;
+  updateUser: (userData: Partial<User>) => void;
   clearError: () => void;
   hasPermission: (level: number) => boolean;
   canCreateUsers: () => boolean;
