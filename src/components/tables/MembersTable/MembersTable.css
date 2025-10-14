@@ -1,0 +1,227 @@
+/* src/components/tables/MembersTable/MembersTable.css */
+
+/* ========================================
+   MEMBERS TABLE
+======================================== */
+
+.members-table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--surface-card);
+}
+
+.members-table .p-datatable-header {
+  background: var(--surface-100);
+  border-bottom: 2px solid var(--surface-border);
+  padding: 1rem;
+}
+
+.members-table .p-datatable-thead > tr > th {
+  background: var(--surface-50);
+  color: var(--text-color);
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--surface-border);
+  white-space: nowrap;
+}
+
+.members-table .p-datatable-tbody > tr {
+  transition: background-color 0.2s ease;
+  height: 3.5rem;
+}
+
+.members-table .p-datatable-tbody > tr:hover {
+  background: var(--surface-hover);
+}
+
+.members-table .p-datatable-tbody > tr > td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--surface-border);
+  vertical-align: middle;
+  height: 3.5rem;
+  overflow: hidden;
+}
+
+/* ========================================
+   USER CELL (Nombre + Email)
+======================================== */
+
+.user-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: var(--text-color-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================================
+   ROL BADGE
+======================================== */
+
+.rol-badge {
+  font-size: 0.7rem !important;
+  padding: 0.35rem 0.65rem !important;
+  font-weight: 600;
+}
+
+/* ========================================
+   CENTRO CHIP
+======================================== */
+
+.centro-chip.p-chip {
+  height: 25px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 600 !important;
+  font-size: 0.7rem !important;
+  padding: 0 0.5rem !important;
+  border-radius: 4px !important;
+  white-space: nowrap;
+  border: none !important;
+}
+
+/* ========================================
+   SECCIÓN BADGES
+======================================== */
+
+.seccion-chips {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.seccion-badge {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--purple-100);
+  color: var(--purple-800);
+  border: 1px solid var(--purple-300);
+  border-radius: 10px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* ========================================
+   POINTS CELL
+======================================== */
+
+.points-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.points-value {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--gecos-primary);
+}
+
+.points-label {
+  font-size: 0.75rem;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+}
+
+/* ========================================
+   ACCIONES
+======================================== */
+
+.table-actions-compact {
+  display: flex;
+  gap: 0.15rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-actions-compact .p-button {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+}
+
+.table-actions-compact .p-button .p-button-icon {
+  font-size: 0.875rem;
+}
+
+.table-actions-compact .p-button:hover {
+  background: var(--surface-100);
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .members-table {
+    font-size: 0.875rem;
+  }
+
+  .members-table .p-datatable-thead > tr > th,
+  .members-table .p-datatable-tbody > tr > td {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .members-table .p-datatable-tbody > tr {
+    height: 3rem;
+  }
+
+  .members-table .p-datatable-tbody > tr > td {
+    height: 3rem;
+  }
+
+  .user-name {
+    font-size: 0.875rem;
+  }
+
+  .user-email {
+    font-size: 0.75rem;
+  }
+
+  .rol-badge {
+    font-size: 0.65rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  .centro-chip.p-chip {
+    height: 22px !important;
+    font-size: 0.65rem !important;
+    padding: 0 0.4rem !important;
+  }
+
+  .seccion-badge {
+    font-size: 0.6rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .points-value {
+    font-size: 0.875rem;
+  }
+
+  .table-actions-compact .p-button {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .members-table {
+    overflow-x: auto;
+  }
+}

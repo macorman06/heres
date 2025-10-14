@@ -286,14 +286,14 @@
 }
 
 .file-input:hover {
-  border-color: var(--primary-color);
+  border-color: var(--gecos-primary);
   background: var(--surface-hover);
 }
 
 .file-input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25);
+  border-color: var(--gecos-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--gecos-primary-rgb), 0.25);
 }
 
 .file-input::file-selector-button {
@@ -301,7 +301,7 @@
   margin-right: 1rem;
   border: none;
   border-radius: 4px;
-  background: var(--primary-color);
+  background: var(--gecos-primary);
   color: white;
   font-weight: 600;
   cursor: pointer;

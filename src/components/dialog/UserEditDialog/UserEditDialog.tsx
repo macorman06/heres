@@ -6,7 +6,6 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Chips } from 'primereact/chips';
-import { Password } from 'primereact/password';
 import { Avatar } from 'primereact/avatar';
 import { Toast } from 'primereact/toast';
 import type { Sexo, Talla, CentroJuvenil } from '../../../types/general.types.ts';
@@ -14,6 +13,7 @@ import { centroJuvenilOptions, sexoOptions, tallaOptions } from '../../../types/
 import type { User, UserFormData } from '../../../types/user.types.ts';
 import { ROLES } from '../../../types/user.types.ts';
 import { formatFullName, getUserInitials } from '../../../utils/formatters.ts';
+import { ChangePasswordDialog } from '../ChangePasswordDialog/ChangePasswordDialog';
 import axios from 'axios';
 import './UserEditDialog.css';
 
@@ -68,11 +68,7 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
   });
   const [isSaving, setIsSaving] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [showPasswordSection, setShowPasswordSection] = useState(false);
-  const [passwordData, setPasswordData] = useState({
-    newPassword: '',
-    confirmPassword: '',
-  });
+  const [showChangePasswordDialog, setShowChangePasswordDialog] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -93,19 +89,19 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
         puntuacion: user.puntuacion || 0,
       });
       checkProfileImage(user);
-      setShowPasswordSection(false);
-      setPasswordData({ newPassword: '', confirmPassword: '' });
     }
   }, [user]);
 
   const checkProfileImage = async (user: User) => {
     if (!user?.nombre || !user?.apellido1) return;
+
     const cleanName = (name: string) =>
       name
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-z0-9]/g, '');
+
     const baseFilename = `${cleanName(user.nombre)}_${cleanName(user.apellido1)}`;
     const extensions = ['png', 'jpg', 'jpeg', 'webp'];
 
@@ -210,63 +206,6 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
     }
   };
 
-  const handleChangePassword = async () => {
-    if (!user) return;
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Las contraseñas no coinciden',
-        life: 3000,
-      });
-      return;
-    }
-
-    if (passwordData.newPassword.length < 6) {
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'La contraseña debe tener al menos 6 caracteres',
-        life: 3000,
-      });
-      return;
-    }
-
-    try {
-      const authToken = localStorage.getItem('authToken');
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/usuarios/${user.id}`,
-        { password: passwordData.newPassword },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        toast.current?.show({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Contraseña actualizada correctamente',
-          life: 3000,
-        });
-        setPasswordData({ newPassword: '', confirmPassword: '' });
-        setShowPasswordSection(false);
-      }
-    } catch (error: any) {
-      console.error('Error cambiando contraseña:', error);
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.response?.data?.error || 'Error al cambiar contraseña',
-        life: 5000,
-      });
-    }
-  };
-
   const rolOptionsForm = [
     { label: 'Superusuario', value: ROLES.SUPERUSER },
     { label: 'Director', value: ROLES.DIRECTOR },
@@ -285,11 +224,11 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
   const dialogFooter = (
     <div className="flex gap-2 justify-content-end align-items-center flex-row-reverse">
       <Button
-        label="Guardar"
+        label="Guardar cambios"
         icon="pi pi-check"
         onClick={handleSave}
         loading={isSaving}
-        className="p-button-primary"
+        className="btn-primary"
       />
       <Button
         label="Cancelar"
@@ -307,16 +246,14 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
     <>
       <Toast ref={toast} />
       <Dialog
+        header={dialogHeader}
         visible={visible}
         onHide={onHide}
-        header={dialogHeader}
         footer={dialogFooter}
-        style={{ width: '60vw' }}
-        breakpoints={{ '960px': '75vw', '641px': '95vw' }}
-        maskClassName={maskClassName || 'dialog-dark-mask'}
         className="user-edit-dialog"
+        maskClassName={maskClassName || 'dialog-dark-mask'}
         draggable={false}
-        resizable={false}
+        style={{ width: '800px' }}
       >
         <div className="dialog-content">
           {/* Header con Avatar */}
@@ -328,12 +265,14 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
                 label={getUserInitials(user.nombre, user.apellido1)}
                 size="xlarge"
                 shape="circle"
-                style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}
+                style={{ backgroundColor: '#10b981', color: '#ffffff' }}
               />
             )}
-            <div className="user-info">
-              <h3>{formatFullName(user.nombre, user.apellido1, user.apellido2)}</h3>
-              <p>{user.email}</p>
+            <div className="user-header-info">
+              <h3 className="user-name">
+                {formatFullName(user.nombre, user.apellido1, user.apellido2)}
+              </h3>
+              <p className="user-email">{user.email}</p>
             </div>
           </div>
 
@@ -343,7 +282,7 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
               <i className="pi pi-user mr-2" />
               Información Personal
             </h3>
-            <div className="form-row">
+            <div className="form-grid">
               <div className="form-field">
                 <label htmlFor="nombre">
                   Nombre <span className="required">*</span>
@@ -366,8 +305,6 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
                   placeholder="Ej: García"
                 />
               </div>
-            </div>
-            <div className="form-row">
               <div className="form-field">
                 <label htmlFor="apellido2">Segundo Apellido</label>
                 <InputText
@@ -377,14 +314,12 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
                   placeholder="Ej: López"
                 />
               </div>
-              <div className="form-field">
+              <div className="form-field-full">
                 <label htmlFor="email">
                   Email <span className="required">*</span>
                 </label>
-                <InputText id="email" value={formData.email} disabled />
+                <InputText id="email" value={formData.email} disabled className="input-disabled" />
               </div>
-            </div>
-            <div className="form-row">
               <div className="form-field">
                 <label htmlFor="telefono">Teléfono</label>
                 <div className="p-inputgroup">
@@ -410,8 +345,6 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
                   type="date"
                 />
               </div>
-            </div>
-            <div className="form-row">
               <div className="form-field">
                 <label htmlFor="sexo">Sexo</label>
                 <Dropdown
@@ -434,8 +367,6 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
                   showClear
                 />
               </div>
-            </div>
-            <div className="form-row">
               <div className="form-field">
                 <label htmlFor="direccion">Dirección</label>
                 <InputText
@@ -454,8 +385,6 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
                   placeholder="Ej: Madrid"
                 />
               </div>
-            </div>
-            <div className="form-row">
               <div className="form-field">
                 <label htmlFor="centro_juvenil">Centro Juvenil</label>
                 <Dropdown
@@ -476,7 +405,7 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
                   separator=","
                   placeholder="Ej: Polen, Lácteos, Frutos secos..."
                 />
-                <small className="form-help-text">Presiona Enter después de cada alergia</small>
+                <small className="form-hint">Presiona Enter después de cada alergia</small>
               </div>
             </div>
           </div>
@@ -484,14 +413,14 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
           {/* Sección: Información del Sistema */}
           <div className="form-section">
             <h3 className="section-title">
-              <i className="pi pi-shield mr-2" />
+              <i className="pi pi-cog mr-2" />
               Información del Sistema
             </h3>
-            <div className="form-row">
+            <div className="form-grid">
               <div className="form-field">
-                <label htmlFor="rol">Rol</label>
+                <label htmlFor="rol_id">Rol</label>
                 <Dropdown
-                  id="rol"
+                  id="rol_id"
                   value={formData.rol_id}
                   options={rolOptionsForm}
                   onChange={(e) => handleInputChange('rol_id', e.value)}
@@ -501,7 +430,7 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
                 <label htmlFor="puntuacion">Puntuación</label>
                 <InputText
                   id="puntuacion"
-                  value={formData.puntuacion}
+                  value={formData.puntuacion.toString()}
                   onChange={(e) => handleInputChange('puntuacion', parseInt(e.target.value) || 0)}
                   type="number"
                 />
@@ -515,66 +444,26 @@ export const UserEditDialog: React.FC<UserEditDialogProps> = ({
               <i className="pi pi-lock mr-2" />
               Cambiar Contraseña
             </h3>
-            {!showPasswordSection ? (
-              <Button
-                label="Cambiar Contraseña"
-                icon="pi pi-key"
-                onClick={() => setShowPasswordSection(true)}
-                className="p-button-secondary p-button-outlined"
-              />
-            ) : (
-              <>
-                <div className="form-row">
-                  <div className="form-field">
-                    <label htmlFor="newPassword">Nueva Contraseña</label>
-                    <Password
-                      id="newPassword"
-                      value={passwordData.newPassword}
-                      onChange={(e) =>
-                        setPasswordData((prev) => ({ ...prev, newPassword: e.target.value }))
-                      }
-                      toggleMask
-                      inputClassName="w-full"
-                      placeholder="Mínimo 6 caracteres"
-                    />
-                  </div>
-                  <div className="form-field">
-                    <label htmlFor="confirmPassword">Confirmar Contraseña</label>
-                    <Password
-                      id="confirmPassword"
-                      value={passwordData.confirmPassword}
-                      onChange={(e) =>
-                        setPasswordData((prev) => ({ ...prev, confirmPassword: e.target.value }))
-                      }
-                      feedback={false}
-                      toggleMask
-                      inputClassName="w-full"
-                      placeholder="Repite la contraseña"
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    label="Guardar Contraseña"
-                    icon="pi pi-check"
-                    onClick={handleChangePassword}
-                    className="p-button-success"
-                  />
-                  <Button
-                    label="Cancelar"
-                    icon="pi pi-times"
-                    onClick={() => {
-                      setShowPasswordSection(false);
-                      setPasswordData({ newPassword: '', confirmPassword: '' });
-                    }}
-                    className="p-button-outlined p-button-secondary"
-                  />
-                </div>
-              </>
-            )}
+            <Button
+              label="Cambiar contraseña"
+              icon="pi pi-key"
+              onClick={() => {
+                setShowChangePasswordDialog(true);
+                onHide();
+              }}
+              className="p-button-secondary p-button-outlined"
+            />
           </div>
         </div>
       </Dialog>
+
+      <ChangePasswordDialog
+        visible={showChangePasswordDialog}
+        userId={user?.id || null}
+        onHide={() => setShowChangePasswordDialog(false)}
+        onSuccess={onSave}
+        maskClassName={maskClassName}
+      />
     </>
   );
 };

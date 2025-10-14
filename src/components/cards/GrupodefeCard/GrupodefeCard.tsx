@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import { Chip } from 'primereact/chip';
 import { Menu } from 'primereact/menu';
 import { MenuItem } from 'primereact/menuitem';
-import { Material } from '../../types/material.types';
+import { Material } from '../../../types/material.types.ts';
 import './GrupodefeCard.css';
 
 interface GrupodefeCardProps {
@@ -76,8 +76,8 @@ export const GrupodefeCard: React.FC<GrupodefeCardProps> = ({
 
   const menuItems: MenuItem[] = [
     {
-      label: 'Descargar',
-      icon: 'pi pi-download',
+      label: 'Visualizar',
+      icon: 'pi pi-eye',
       command: () => onDownload(material),
     },
     {

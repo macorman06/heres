@@ -1,0 +1,273 @@
+/* src/components/common/FilterHeader/FilterHeader.css */
+
+/* ========================================
+   FILTER HEADER CONTAINER
+======================================== */
+
+.filter-header-container {
+  background: var(--surface-card);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   FILTER FIELDS
+======================================== */
+
+/* Search Field */
+.filter-field.filter-search {
+  flex: 1 1 250px;
+  min-width: 200px;
+  position: relative;
+}
+
+.filter-field.filter-search .p-input-icon-left {
+  width: 100%;
+  display: block;
+}
+
+.filter-field.filter-search .p-input-icon-left > .pi {
+  position: absolute;
+  left: 0.875rem !important;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  color: var(--text-color-secondary);
+  z-index: 1;
+}
+
+.filter-field.filter-search .search-input {
+  width: 100%;
+  padding: 0.625rem 1rem 0.625rem 2.5rem !important;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--gecos-primary);
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.search-input::placeholder {
+  color: var(--text-color-secondary);
+  opacity: 0.7;
+}
+
+/* Dropdown Field */
+.filter-dropdown-inline {
+  flex: 0 0 auto;
+  min-width: 140px;
+  max-width: 180px;
+}
+
+/* SelectButton Field */
+.filter-select-bordered {
+  flex: 0 0 auto;
+}
+
+.filter-select-bordered .p-button {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--surface-border) !important;
+  background: var(--surface-0);
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.filter-select-bordered .p-button:not(.p-highlight):hover {
+  background: var(--surface-hover);
+  border-color: var(--gecos-primary) !important;
+}
+
+.filter-select-bordered .p-button.p-highlight {
+  background: var(--gecos-primary);
+  border-color: var(--gecos-primary) !important;
+  color: #ffffff;
+}
+
+.filter-select-bordered .p-button:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.filter-select-bordered .p-button:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.filter-select-bordered .p-button:not(:first-child) {
+  border-left: none !important;
+}
+/* MultiSelect Field */
+.filter-multiselect-inline {
+  flex: 0 0 auto;
+  min-width: 180px;
+  max-width: 250px;
+}
+
+/* Chips dentro del MultiSelect */
+.filter-multiselect-inline .p-multiselect-token {
+  padding: 0.2rem 0.5rem;
+  margin-right: 0.25rem;
+  background: var(--gecos-primary);
+  color: #ffffff;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.filter-multiselect-inline .p-multiselect-token-icon {
+  margin-left: 0.25rem;
+  font-size: 0.7rem;
+}
+
+/* Panel del MultiSelect */
+.filter-multiselect-inline .p-multiselect-panel .p-multiselect-header {
+  padding: 0.75rem 1rem;
+  background: var(--surface-50);
+}
+
+.filter-multiselect-inline .p-multiselect-panel .p-multiselect-items {
+  padding: 0.5rem 0;
+}
+
+.filter-multiselect-inline .p-multiselect-panel .p-multiselect-item {
+  padding: 0.625rem 1rem;
+  transition: background-color 0.2s;
+}
+
+.filter-multiselect-inline .p-multiselect-panel .p-multiselect-item:hover {
+  background: var(--surface-hover);
+}
+
+.filter-multiselect-inline .p-multiselect-panel .p-multiselect-item.p-highlight {
+  background: var(--primary-50);
+  color: var(--primary-700);
+}
+
+/* Ajustar responsive para MultiSelect */
+@media (max-width: 768px) {
+  .filter-multiselect-inline {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* ========================================
+   ACTION BUTTONS
+======================================== */
+
+.btn-clear-filters {
+  flex: 0 0 auto;
+  padding: 0.625rem 0.875rem;
+}
+
+.btn-clear-filters .p-button-icon {
+  font-size: 1rem;
+}
+
+.btn-view-mode {
+  flex: 0 0 auto;
+  padding: 0.625rem 0.875rem;
+}
+
+.btn-view-mode .p-button-icon {
+  font-size: 1rem;
+}
+
+/* ========================================
+   RESULTS COUNT
+======================================== */
+
+.results-count-inline {
+  flex: 0 0 auto;
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  padding: 0.625rem 1rem;
+  background: var(--surface-100);
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  margin-left: auto;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .filter-header-container {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-field.filter-search {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: auto;
+  }
+
+  .filter-select-bordered {
+    width: 100%;
+  }
+
+  .filter-select-bordered .p-selectbutton {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filter-dropdown-inline {
+    width: 100%;
+    max-width: none;
+  }
+
+  .btn-clear-filters,
+  .btn-view-mode {
+    width: 100%;
+  }
+
+  .results-count-inline {
+    margin-left: 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .filter-header-container {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .filter-select-bordered .p-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Ocultar botón de cerrar (X) en el header del MultiSelect */
+.filter-multiselect-inline .p-multiselect-panel .p-multiselect-header .p-multiselect-close {
+  display: none !important;
+}
+
+/* Ajustar padding del header sin el botón X */
+.filter-multiselect-inline .p-multiselect-panel .p-multiselect-header {
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Asegurar que el filtro de búsqueda ocupe todo el espacio */
+.filter-multiselect-inline .p-multiselect-panel .p-multiselect-filter-container {
+  flex: 1;
+}

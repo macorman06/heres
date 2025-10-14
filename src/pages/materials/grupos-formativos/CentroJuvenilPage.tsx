@@ -1,4 +1,5 @@
 // src/pages/materials/grupos-formativos/CentroJuvenilPage.tsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -7,20 +8,29 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { materialsService } from '../../../services/api/index';
 import { Material, MaterialFormData } from '../../../types/material.types';
 import { MaterialEditDialog } from '../../../components/dialog/MaterialEditDialog/MaterialEditDialog';
-import { GrupodefeCard } from '../../../components/cards/GrupodefeCard';
+import { GrupodefeCard } from '../../../components/cards/GrupodefeCard/GrupodefeCard.tsx';
+import { MaterialsTable } from '../../../components/tables/MaterialsTable/MaterialsTable';
+import { FilterHeader, FilterField } from '../../../components/common/FilterHeader/FilterHeader';
 import '../../../styles/4-pages/materials/centrojuvenil.css';
+import { useAuth } from '../../../hooks/useAuth';
 
 export const CentroJuvenilPage: React.FC = () => {
   const toast = useRef<Toast>(null);
+  const { user: currentUser } = useAuth();
 
   // Estados
   const [materiales, setMateriales] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm] = useState('');
-  const [sortBy] = useState('fecha_subida');
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState<Material | null>(null);
+
+  // Estados de filtros
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedGrupo, setSelectedGrupo] = useState<string | null>(null);
+  const [selectedIEF, setSelectedIEF] = useState<boolean | null>(null);
+  const [selectedFecha, setSelectedFecha] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Estado del formulario
   const [formData, setFormData] = useState<MaterialFormData>({
@@ -35,7 +45,6 @@ export const CentroJuvenilPage: React.FC = () => {
     file: undefined,
   });
 
-  // Cargar materiales al montar el componente
   useEffect(() => {
     fetchMateriales();
   }, []);
@@ -67,28 +76,27 @@ export const CentroJuvenilPage: React.FC = () => {
 
   const handleUpload = async () => {
     try {
-      if (!formData.titulo) {
+      if (!formData.titulo || !formData.file) {
         toast.current?.show({
           severity: 'warn',
           summary: 'Advertencia',
-          detail: 'El título es obligatorio',
+          detail: 'El título y el archivo son obligatorios',
           life: 3000,
         });
         return;
       }
 
-      if (!formData.file) {
+      if (!currentUser?.id) {
         toast.current?.show({
-          severity: 'warn',
-          summary: 'Advertencia',
-          detail: 'Debes seleccionar un archivo',
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Usuario no autenticado',
           life: 3000,
         });
         return;
       }
 
-      // Subir con archivo a R2
-      const result = await materialsService.uploadMaterial(formData);
+      const result = await materialsService.uploadMaterial(formData, currentUser.id);
 
       toast.current?.show({
         severity: 'success',
@@ -113,16 +121,13 @@ export const CentroJuvenilPage: React.FC = () => {
 
   const handleDownload = async (material: Material) => {
     try {
-      // Obtener URL firmada del backend
       const downloadData = await materialsService.downloadMaterial(material.id);
-
-      // Abrir en nueva pestaña
       window.open(downloadData.download_url, '_blank');
 
       toast.current?.show({
         severity: 'success',
         summary: 'Descargando',
-        detail: `${downloadData.filename} (${downloadData.size_mb} MB)`,
+        detail: `${downloadData.filename}`,
         life: 3000,
       });
     } catch (error: any) {
@@ -225,24 +230,92 @@ export const CentroJuvenilPage: React.FC = () => {
     });
   };
 
-  // Filtrar y ordenar materiales
-  const filteredAndSortedMaterials = [...materiales]
-    .filter((m) => {
-      if (!searchTerm) return true;
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedGrupo(null);
+    setSelectedIEF(null);
+    setSelectedFecha(null);
+  };
+
+  // Configuración de filtros para FilterHeader
+  const filterFields: FilterField[] = [
+    {
+      id: 'search',
+      type: 'search',
+      placeholder: 'Buscar por etiquetas...',
+      value: searchTerm,
+      onChange: setSearchTerm,
+    },
+    {
+      id: 'ief',
+      type: 'selectButton',
+      value: selectedIEF,
+      options: [
+        { label: 'Todos', value: null },
+        { label: 'Solo IEF', value: true },
+        { label: 'Sin IEF', value: false },
+      ],
+      onChange: setSelectedIEF,
+    },
+    {
+      id: 'grupo',
+      type: 'dropdown',
+      placeholder: 'Grupo',
+      value: selectedGrupo,
+      options: [
+        { label: 'Todos', value: null },
+        { label: 'J1', value: 'J1' },
+        { label: 'J2', value: 'J2' },
+        { label: 'J3', value: 'J3' },
+        { label: 'Animadores', value: 'Animadores' },
+      ],
+      onChange: setSelectedGrupo,
+      showClear: true,
+    },
+    {
+      id: 'fecha',
+      type: 'dropdown',
+      placeholder: 'Fecha',
+      value: selectedFecha,
+      options: [
+        { label: 'Todas', value: null },
+        { label: 'Última semana', value: '7days' },
+        { label: 'Último mes', value: '30days' },
+        { label: 'Último año', value: '365days' },
+      ],
+      onChange: setSelectedFecha,
+      showClear: true,
+    },
+  ];
+
+  // Filtrar materiales
+  const filteredMaterials = materiales.filter((m) => {
+    if (searchTerm) {
       const search = searchTerm.toLowerCase();
-      return (
-        m.titulo.toLowerCase().includes(search) ||
-        m.descripcion?.toLowerCase().includes(search) ||
-        m.etiquetas?.some((tag) => tag.toLowerCase().includes(search))
-      );
-    })
-    .sort((a, b) => {
-      if (sortBy === 'titulo') {
-        return a.titulo.localeCompare(b.titulo);
-      } else {
-        return new Date(b.fecha_subida).getTime() - new Date(a.fecha_subida).getTime();
-      }
-    });
+      const matchesSearch = m.etiquetas?.some((tag) => tag.toLowerCase().includes(search));
+      if (!matchesSearch) return false;
+    }
+
+    if (selectedGrupo && m.grupo !== selectedGrupo) return false;
+
+    if (selectedIEF !== null) {
+      const hasIEF = m.etiquetas?.some((tag) => tag.toLowerCase() === 'ief');
+      if (selectedIEF && !hasIEF) return false;
+      if (!selectedIEF && hasIEF) return false;
+    }
+
+    if (selectedFecha) {
+      const now = new Date();
+      const materialDate = new Date(m.fecha_subida);
+      const daysDiff = Math.floor((now.getTime() - materialDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (selectedFecha === '7days' && daysDiff > 7) return false;
+      if (selectedFecha === '30days' && daysDiff > 30) return false;
+      if (selectedFecha === '365days' && daysDiff > 365) return false;
+    }
+
+    return true;
+  });
 
   if (loading && materiales.length === 0) {
     return (
@@ -253,41 +326,61 @@ export const CentroJuvenilPage: React.FC = () => {
   }
 
   return (
-    <div className="centro-juvenil-page">
+    <div className="centrojuvenil-page">
       <Toast ref={toast} />
       <ConfirmDialog />
 
       {/* Header */}
       <div className="page-header">
-        <div>
+        <div className="header-text">
           <h1>📄 Centro Juvenil</h1>
-          <p>Grupos de fe de Centro Juvenil.</p>
+          <p className="header-subtitle">Grupos de fe de Centro Juvenil.</p>
         </div>
         <Button
           label="Subir Material"
           icon="pi pi-upload"
           onClick={() => setShowUploadDialog(true)}
-          className="btn-primary"
+          className="btn-primary btn-upload"
         />
       </div>
 
-      {/* Listado de materiales */}
-      <div className="materials-grid">
-        {filteredAndSortedMaterials.map((material) => (
-          <GrupodefeCard
-            key={material.id}
-            material={material}
-            onDownload={handleDownload}
-            onEdit={openEditDialog}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {/* FilterHeader Component */}
+      <FilterHeader
+        fields={filterFields}
+        onClearAll={clearFilters}
+        resultsCount={filteredMaterials.length}
+        resultsLabel={filteredMaterials.length === 1 ? 'material' : 'materiales'}
+        showViewToggle={true}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      />
+
+      {/* Visualización condicional: Grid o Lista */}
+      {viewMode === 'grid' ? (
+        <div className="materials-grid">
+          {filteredMaterials.map((material) => (
+            <GrupodefeCard
+              key={material.id}
+              material={material}
+              onDownload={handleDownload}
+              onEdit={openEditDialog}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      ) : (
+        <MaterialsTable
+          materials={filteredMaterials}
+          onDownload={handleDownload}
+          onEdit={openEditDialog}
+          onDelete={handleDelete}
+        />
+      )}
 
       {/* Mensaje si no hay resultados */}
-      {filteredAndSortedMaterials.length === 0 && !loading && (
+      {filteredMaterials.length === 0 && !loading && (
         <div className="empty-state">
-          <i className="pi pi-inbox"></i>
+          <i className="pi pi-inbox" />
           <p>No se encontraron materiales</p>
         </div>
       )}
