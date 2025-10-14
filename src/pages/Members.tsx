@@ -297,7 +297,16 @@ export const Members: React.FC = () => {
     );
   };
 
+  const canEditUser = (targetUser: User): boolean => {
+    if (!currentUser) return false;
+    return currentUser.rol_id < targetUser.rol_id;
+  };
+
   const actionTemplate = (rowData: User) => {
+    if (!canEditUser(rowData)) {
+      return null;
+    }
+
     return (
       <Button
         icon="pi pi-pencil"
@@ -370,7 +379,12 @@ export const Members: React.FC = () => {
             body={(rowData) => rowData.seccion?.join(', ') || '-'}
             style={{ width: '180px' }}
           />
-          <Column header="Acciones" body={actionTemplate} style={{ width: '80px' }} />
+          <Column
+            body={actionTemplate}
+            header="Acciones"
+            style={{ width: '100px' }}
+            alignFrozen="right"
+          />
         </DataTable>
       </Card>
 
