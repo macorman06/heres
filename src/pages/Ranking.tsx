@@ -195,8 +195,6 @@ export const Ranking: React.FC = () => {
   const userTemplate = useCallback((rowData: User) => {
     const fullName = formatFullName(rowData.nombre, rowData.apellido1, rowData.apellido2);
     const initials = getUserInitials(rowData.nombre, rowData.apellido1);
-    console.log('User initials:', initials);
-    console.log('Full name:', fullName);
 
     return (
       <div className="flex items-center gap-3">

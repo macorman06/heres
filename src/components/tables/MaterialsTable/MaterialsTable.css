@@ -1,0 +1,168 @@
+/* src/components/tables/MaterialsTable/MaterialsTable.css */
+
+/* ========================================
+   MATERIALS TABLE
+======================================== */
+
+.materials-table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--surface-card);
+}
+
+.materials-table .p-datatable-header {
+  background: var(--surface-100);
+  border-bottom: 2px solid var(--surface-border);
+  padding: 1rem;
+}
+
+.materials-table .p-datatable-thead > tr > th {
+  background: var(--surface-50);
+  color: var(--text-color);
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--surface-border);
+  white-space: nowrap;
+}
+
+.materials-table .p-datatable-tbody > tr {
+  transition: background-color 0.2s ease;
+  height: 3rem;
+}
+
+.materials-table .p-datatable-tbody > tr:hover {
+  background: var(--surface-hover);
+}
+
+.materials-table .p-datatable-tbody > tr > td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--surface-border);
+  vertical-align: middle;
+  height: 3rem;
+  overflow: hidden;
+}
+
+/* ========================================
+   CELDAS
+======================================== */
+
+.title-cell,
+.description-cell,
+.date-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 2rem;
+}
+
+.title-cell {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.description-cell {
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+}
+
+.date-cell {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
+/* ========================================
+   CHIPS
+======================================== */
+
+.chip-grupo.p-chip,
+.chip-categoria.p-chip {
+  height: 25px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 600 !important;
+  font-size: 0.7rem !important;
+  padding: 0 0.5rem !important;
+  border-radius: 4px !important;
+  white-space: nowrap;
+  border: none !important;
+}
+
+.chip-categoria.p-chip {
+  text-transform: capitalize;
+}
+
+/* ========================================
+   ACCIONES
+======================================== */
+
+.table-actions-compact {
+  display: flex;
+  gap: 0.15rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-actions-compact .p-button {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+}
+
+.table-actions-compact .p-button .p-button-icon {
+  font-size: 0.875rem;
+}
+
+.table-actions-compact .p-button:hover {
+  background: var(--surface-100);
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .materials-table {
+    font-size: 0.875rem;
+  }
+
+  .materials-table .p-datatable-thead > tr > th,
+  .materials-table .p-datatable-tbody > tr > td {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .materials-table .p-datatable-tbody > tr {
+    height: 2.5rem;
+  }
+
+  .materials-table .p-datatable-tbody > tr > td {
+    height: 2.5rem;
+  }
+
+  .table-actions-compact {
+    gap: 0.1rem;
+  }
+
+  .table-actions-compact .p-button {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .table-actions-compact .p-button .p-button-icon {
+    font-size: 0.75rem;
+  }
+
+  .chip-grupo.p-chip,
+  .chip-categoria.p-chip {
+    height: 22px !important;
+    font-size: 0.65rem !important;
+    padding: 0 0.4rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .materials-table {
+    overflow-x: auto;
+  }
+}

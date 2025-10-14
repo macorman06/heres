@@ -124,7 +124,7 @@
 }
 
 .p-menu .p-menuitem-link:hover {
-  background: var(--primary-color);
+  background: var(--gecos-primary);
   color: white;
 }
 

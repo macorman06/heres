@@ -55,10 +55,11 @@ export class MaterialsService {
   }
 
   /**
-   * NUEVO: Sube un material con archivo a R2
+   * Sube un material con archivo a R2
    */
   async uploadMaterial(
-    data: MaterialFormData
+    data: MaterialFormData,
+    userId: number // <-- AÑADIR ESTE PARÁMETRO
   ): Promise<{ id: number; titulo: string; mensaje: string }> {
     const formData = new FormData();
 
@@ -66,6 +67,8 @@ export class MaterialsService {
     if (data.file) {
       formData.append('file', data.file);
     }
+
+    formData.append('user_id', userId.toString());
 
     // Añadir campos de texto
     formData.append('titulo', data.titulo);
@@ -79,19 +82,18 @@ export class MaterialsService {
     if (data.etiquetas && data.etiquetas.length > 0) {
       formData.append('etiquetas', data.etiquetas.join(','));
     }
+
     if (data.visible_para_grupos && data.visible_para_grupos.length > 0) {
       formData.append('visible_para_grupos', data.visible_para_grupos.join(','));
     }
 
-    // Enviar con multipart/form-data
     return this.httpClient.post<{ id: number; titulo: string; mensaje: string }>(
       '/materiales/upload',
       formData
     );
   }
-
   /**
-   * NUEVO: Obtiene URL firmada para descargar archivo
+   * Obtiene URL firmada para descargar archivo
    */
   async downloadMaterial(id: number): Promise<DownloadResponse> {
     return this.httpClient.get<DownloadResponse>(`/materiales/${id}/download`);
@@ -115,7 +117,7 @@ export class MaterialsService {
   }
 
   /**
-   * NUEVO: Obtiene uso de storage R2
+   * Obtiene uso de storage R2
    */
   async getStorageUsage(): Promise<{
     total_objects: number;

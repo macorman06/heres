@@ -121,7 +121,7 @@
 .material-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-  border-color: var(--primary-color);
+  border-color: var(--gecos-primary);
 }
 
 .material-card .p-card-body {
@@ -449,5 +449,443 @@
     background: var(--primary-900);
     color: var(--primary-200);
     border: 1px solid var(--primary-700);
+  }
+}
+
+/* ========================================
+   SEARCH & FILTER BAR - TODO EN FILA
+======================================== */
+
+.search-filter-bar-row {
+  background: var(--surface-card);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.search-box-inline {
+  flex: 1 1 250px; /* Crece para ocupar espacio disponible */
+  min-width: 200px;
+  position: relative;
+}
+
+.search-box-inline .p-input-icon-left {
+  width: 100%;
+  display: block; /* Asegurar que ocupa todo el ancho */
+}
+
+.search-box-inline .p-input-icon-left > .pi {
+  position: absolute;
+  left: 0.875rem !important;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  color: var(--text-color-secondary);
+  z-index: 1;
+}
+
+.search-box-inline .search-input {
+  width: 100%; /* Asegurar 100% del ancho */
+  padding: 0.625rem 1rem 0.625rem 2.5rem !important;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--gecos-primary);
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.search-input::placeholder {
+  color: var(--text-color-secondary);
+  opacity: 0.7;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.625rem 1rem 0.625rem 2.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--gecos-primary);
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+/* SelectButton con bordes visibles */
+.filter-select-bordered {
+  flex: 0 0 auto;
+}
+
+.filter-select-bordered .p-button {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--surface-border) !important;
+  background: var(--surface-0);
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.filter-select-bordered .p-button:not(.p-highlight):hover {
+  background: var(--surface-hover);
+  border-color: var(--gecos-primary) !important;
+}
+
+.filter-select-bordered .p-button.p-highlight {
+  background: var(--gecos-primary);
+  border-color: var(--gecos-primary) !important;
+  color: #ffffff;
+}
+
+.filter-select-bordered .p-button:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.filter-select-bordered .p-button:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.filter-select-bordered .p-button:not(:first-child) {
+  border-left: none !important;
+}
+
+/* Dropdowns inline */
+.filter-dropdown-inline {
+  flex: 0 0 auto;
+  min-width: 140px;
+  max-width: 180px;
+}
+
+/* Botón limpiar filtros */
+.btn-clear-filters {
+  flex: 0 0 auto;
+  padding: 0.625rem 0.875rem;
+}
+
+.btn-clear-filters .p-button-icon {
+  font-size: 1rem;
+}
+
+/* Contador de resultados inline */
+.results-count-inline {
+  flex: 0 0 auto;
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  padding: 0.625rem 1rem;
+  background: var(--surface-100);
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  margin-left: auto;
+}
+
+/* ========================================
+   BOTÓN SUBIR - MÓVIL SOLO ICONO
+======================================== */
+
+.btn-upload .p-button-label {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  /* Botón upload solo icono */
+  .btn-upload .p-button-label {
+    display: none;
+  }
+
+  .btn-upload {
+    width: auto !important;
+    padding: 0.75rem !important;
+  }
+
+  .btn-upload .p-button-icon {
+    margin-right: 0 !important;
+  }
+
+  /* Filtros adaptados a móvil */
+  .search-filter-bar-row {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box-inline {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: auto;
+  }
+
+  .filter-select-bordered {
+    width: 100%;
+  }
+
+  .filter-select-bordered .p-selectbutton {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filter-dropdown-inline {
+    width: 100%;
+    max-width: none;
+  }
+
+  .btn-clear-filters {
+    width: 100%;
+  }
+
+  .results-count-inline {
+    margin-left: 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-header {
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .btn-upload {
+    flex-shrink: 0;
+  }
+
+  .search-filter-bar-row {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .filter-select-bordered .p-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* ========================================
+   BOTÓN CAMBIAR VISTA
+======================================== */
+
+.btn-view-mode {
+  flex: 0 0 auto;
+  padding: 0.625rem 0.875rem;
+}
+
+.btn-view-mode .p-button-icon {
+  font-size: 1rem;
+}
+/* ========================================
+   VISTA DE TABLA (LISTA TIPO EXCEL)
+======================================== */
+
+.materials-table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--surface-card);
+}
+
+.materials-table .p-datatable-header {
+  background: var(--surface-100);
+  border-bottom: 2px solid var(--surface-border);
+  padding: 1rem;
+}
+
+.materials-table .p-datatable-thead > tr > th {
+  background: var(--surface-50);
+  color: var(--text-color);
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--surface-border);
+  white-space: nowrap;
+}
+
+.materials-table .p-datatable-tbody > tr {
+  transition: background-color 0.2s ease;
+  height: 3rem; /* Altura fija de fila */
+}
+
+.materials-table .p-datatable-tbody > tr:hover {
+  background: var(--surface-hover);
+}
+
+.materials-table .p-datatable-tbody > tr > td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--surface-border);
+  vertical-align: middle;
+  height: 3rem; /* Altura fija */
+  overflow: hidden;
+}
+
+/* Celdas con truncate de una línea */
+.title-cell,
+.description-cell,
+.date-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 2rem;
+}
+
+.title-cell {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.description-cell {
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+}
+
+.date-cell {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
+/* Etiquetas en tabla - Compactas y una línea */
+.tags-cell-compact {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tag-badge-compact {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--primary-50);
+  color: var(--primary-700);
+  border: 1px solid var(--primary-200);
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tag-more {
+  font-size: 0.7rem;
+  color: var(--text-color-secondary);
+  font-weight: 600;
+  padding: 0 0.25rem;
+  white-space: nowrap;
+}
+
+/* Acciones en tabla - Compactas */
+.table-actions-compact {
+  display: flex;
+  gap: 0.15rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-actions-compact .p-button {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+}
+
+.table-actions-compact .p-button .p-button-icon {
+  font-size: 0.875rem;
+}
+
+.table-actions-compact .p-button:hover {
+  background: var(--surface-100);
+}
+
+/* Responsive para tabla */
+@media (max-width: 768px) {
+  .materials-table {
+    font-size: 0.875rem;
+  }
+
+  .materials-table .p-datatable-thead > tr > th,
+  .materials-table .p-datatable-tbody > tr > td {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .materials-table .p-datatable-tbody > tr {
+    height: 2.5rem;
+  }
+
+  .materials-table .p-datatable-tbody > tr > td {
+    height: 2.5rem;
+  }
+
+  .table-actions-compact {
+    gap: 0.1rem;
+  }
+
+  .table-actions-compact .p-button {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .table-actions-compact .p-button .p-button-icon {
+    font-size: 0.75rem;
+  }
+
+  .chip-grupo,
+  .chip-tipo,
+  .tag-badge-compact {
+    font-size: 0.625rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  /* Botón vista en móvil */
+  .btn-view-mode {
+    width: 100%;
+  }
+}
+
+/* Scrollbar horizontal para tabla en móvil */
+@media (max-width: 576px) {
+  .materials-table {
+    overflow-x: auto;
+  }
+}
+
+/* Chips para Grupo y Categoría - Solo estructura, colores inline */
+.chip-grupo.p-chip,
+.chip-categoria.p-chip {
+  height: 25px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 600 !important;
+  font-size: 0.7rem !important;
+  padding: 0 0.5rem !important;
+  border-radius: 4px !important;
+  white-space: nowrap;
+  border: none !important;
+}
+
+.chip-categoria.p-chip {
+  text-transform: capitalize;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chip-grupo.p-chip,
+  .chip-categoria.p-chip {
+    height: 22px !important;
+    font-size: 0.65rem !important;
+    padding: 0 0.4rem !important;
   }
 }
