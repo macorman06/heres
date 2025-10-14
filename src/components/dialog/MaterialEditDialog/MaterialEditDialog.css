@@ -1,0 +1,352 @@
+/* src/components/dialog/MaterialEditDialog/MaterialEditDialog.css */
+
+/* ========================================
+   DIALOG OVERLAY - FONDO NEGRO CON OPACIDAD
+   ======================================== */
+
+.dialog-dark-mask {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(2px);
+}
+
+/* ========================================
+   DIALOG CONTAINER
+   ======================================== */
+
+.dialog-header-custom {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.material-edit-dialog .p-dialog {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+}
+
+.material-edit-dialog .p-dialog-header {
+  border-bottom: 1px solid var(--surface-border);
+  padding: 1.5rem;
+}
+
+.material-edit-dialog .p-dialog-content {
+  padding: 0;
+  overflow-y: auto;
+  max-height: calc(90vh - 200px);
+}
+
+.material-edit-dialog .p-dialog-footer {
+  border-top: 1px solid var(--surface-border);
+  padding: 1.5rem;
+  background: var(--surface-50);
+}
+
+/* ========================================
+   DIALOG HEADER CONTENT
+   ======================================== */
+
+.dialog-header-content {
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.dialog-header-content i {
+  font-size: 1.25rem;
+  color: var(--gecos-primary);
+}
+
+/* ========================================
+   DIALOG CONTENT
+   ======================================== */
+
+.dialog-content {
+  padding: 1.5rem;
+}
+
+/* ========================================
+   FORM SECTIONS
+   ======================================== */
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+}
+
+.section-title i {
+  color: var(--gecos-primary);
+  font-size: 1.1rem;
+}
+
+/* ========================================
+   FORM LAYOUT - FLEXBOX
+   ======================================== */
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-field {
+  flex: 1 1 calc(50% - 0.5rem);
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-field-full {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-field:last-child,
+.form-field-full:last-child {
+  margin-bottom: 0;
+}
+
+/* ========================================
+   FORM LABELS
+   ======================================== */
+
+.form-field label,
+.form-field-full label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.form-field label .required,
+.form-field-full label .required {
+  color: var(--red-500);
+  margin-left: 0.25rem;
+  font-weight: bold;
+}
+
+/* ========================================
+   FORM INPUTS
+   ======================================== */
+
+.form-field .p-inputtext,
+.form-field .p-dropdown,
+.form-field .p-chips,
+.form-field-full .p-inputtext,
+.form-field-full .p-dropdown,
+.form-field-full .p-chips {
+  width: 100%;
+}
+
+.form-field .p-inputtext:focus,
+.form-field-full .p-inputtext:focus {
+  border-color: var(--gecos-primary);
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+/* ========================================
+   HELP TEXT
+   ======================================== */
+
+.form-help-text {
+  font-size: 0.75rem;
+  color: var(--text-color-secondary);
+  margin-top: 0.35rem;
+  font-style: italic;
+  display: block;
+}
+
+/* ========================================
+   DIALOG FOOTER ACTIONS
+   ======================================== */
+
+.dialog-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.dialog-footer-actions .p-button {
+  min-width: 100px;
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+
+.material-edit-dialog .p-dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.material-edit-dialog .p-dialog-content::-webkit-scrollbar-track {
+  background: var(--surface-ground);
+  border-radius: 4px;
+}
+
+.material-edit-dialog .p-dialog-content::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 4px;
+}
+
+.material-edit-dialog .p-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--gecos-primary);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .material-edit-dialog .p-dialog {
+    width: 95vw !important;
+    margin: 0;
+  }
+
+  .form-field {
+    flex: 1 1 100%;
+    min-width: auto;
+  }
+
+  .dialog-content {
+    padding: 1rem;
+  }
+
+  .form-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 0.95rem;
+  }
+
+  .dialog-footer-actions {
+    flex-direction: column;
+  }
+
+  .dialog-footer-actions .p-button {
+    width: 100%;
+  }
+
+  .dialog-header-content {
+    font-size: 1.1rem;
+  }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+.material-edit-dialog .p-dialog-enter-active {
+  animation: dialog-fade-in 0.3s ease-out;
+}
+
+.material-edit-dialog .p-dialog-exit-active {
+  animation: dialog-fade-out 0.2s ease-in;
+}
+
+/* ========================================
+   FILE INPUT STYLING
+   ======================================== */
+
+.file-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 6px;
+  background: var(--surface-ground);
+  color: var(--text-color);
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.file-input:hover {
+  border-color: var(--primary-color);
+  background: var(--surface-hover);
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25);
+}
+
+.file-input::file-selector-button {
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.file-input::file-selector-button:hover {
+  background: var(--primary-600);
+}
+
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: var(--primary-50);
+  border: 1px solid var(--primary-200);
+  border-radius: 4px;
+  color: var(--primary-700);
+  font-size: 0.875rem;
+}
+
+.file-selected i {
+  color: var(--primary-600);
+}
+
+.file-size {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--text-color-secondary);
+}
+
+/* ========================================
+   FORM GRID 2 COLUMNS
+   ======================================== */
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

@@ -30,6 +30,11 @@ export class HttpClient {
           config.headers.Authorization = `Bearer ${token}`;
         }
 
+        // Si es FormData, eliminar Content-Type para que el navegador lo configure automáticamente
+        if (config.data instanceof FormData) {
+          delete config.headers['Content-Type'];
+        }
+
         return config;
       },
       (error) => {
@@ -76,6 +81,11 @@ export class HttpClient {
   }
 
   async post<T, D = any>(url: string, data?: D): Promise<T> {
+    if (data instanceof FormData) {
+      const response: AxiosResponse<T> = await this.api.post(url, data);
+      return response.data;
+    }
+
     return this.deduplication.executeUniqueRequest('POST', url, data, async () => {
       const response: AxiosResponse<T> = await this.api.post(url, data);
       return response.data;

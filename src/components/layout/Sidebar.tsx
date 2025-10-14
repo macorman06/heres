@@ -74,7 +74,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       <nav className="flex-1 p-2 overflow-y-auto" role="navigation" aria-label="Menú principal">
         <ul className="space-y-1">
           {menuItems.map((item) => {
-            const isActive = location.pathname === item.route;
+            const isActive =
+              location.pathname === item.route ||
+              (item.route !== '/' && location.pathname.startsWith(item.route));
             return (
               <li key={item.route}>
                 <button
