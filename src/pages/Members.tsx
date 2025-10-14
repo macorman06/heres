@@ -14,7 +14,7 @@ import { userService } from '../services/api/index';
 import { formatFullName } from '../utils/formatters';
 import type { User } from '../types/user.types';
 import type { MenuItem } from 'primereact/menuitem';
-import { UserEditDialog } from '../components/dialog/UserEditDialog';
+import { UserEditDialog } from '../components/dialog/UserEditDialog/UserEditDialog.tsx';
 import '../styles/4-pages/members.css';
 
 export const Members: React.FC = () => {

@@ -1,0 +1,234 @@
+/* src/components/dialog/UserEditDialog/UserEditDialog.css */
+
+/* Dialog Overlay */
+.dialog-dark-mask {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(2px);
+}
+
+/* Dialog Container */
+.user-edit-dialog .p-dialog {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+}
+
+.user-edit-dialog .p-dialog-header {
+  border-bottom: 1px solid var(--surface-border);
+  padding: 1.5rem;
+}
+
+.user-edit-dialog .p-dialog-content {
+  padding: 0;
+  overflow-y: auto;
+  max-height: calc(90vh - 200px);
+}
+
+.user-edit-dialog .p-dialog-footer {
+  border-top: 1px solid var(--surface-border);
+  padding: 1.5rem;
+  background: var(--surface-50);
+}
+
+/* Dialog Header */
+.dialog-header-custom {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.dialog-header-custom i {
+  font-size: 1.25rem;
+  color: var(--gecos-primary);
+}
+
+/* Dialog Content */
+.dialog-content {
+  padding: 1.5rem;
+}
+
+/* User Header with Avatar */
+.user-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--surface-border);
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.user-info p {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+}
+
+.section-title i {
+  color: var(--gecos-primary);
+  font-size: 1.1rem;
+}
+
+/* Form Layout */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-field {
+  flex: 1 1 calc(50% - 0.5rem);
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field-full {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form Labels */
+.form-field label,
+.form-field-full label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.form-field label .required,
+.form-field-full label .required {
+  color: var(--red-500);
+  margin-left: 0.25rem;
+  font-weight: bold;
+}
+
+/* Form Inputs */
+.form-field .p-inputtext,
+.form-field .p-dropdown,
+.form-field .p-chips,
+.form-field-full .p-inputtext,
+.form-field-full .p-dropdown,
+.form-field-full .p-chips {
+  width: 100%;
+}
+
+.form-field .p-inputtext:focus,
+.form-field-full .p-inputtext:focus {
+  border-color: var(--gecos-primary);
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+/* Help Text */
+.form-help-text {
+  font-size: 0.75rem;
+  color: var(--text-color-secondary);
+  margin-top: 0.35rem;
+  font-style: italic;
+  display: block;
+}
+
+/* Dialog Footer Actions */
+.dialog-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.dialog-footer-actions .p-button {
+  min-width: 100px;
+}
+
+/* Scrollbar */
+.user-edit-dialog .p-dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.user-edit-dialog .p-dialog-content::-webkit-scrollbar-track {
+  background: var(--surface-ground);
+  border-radius: 4px;
+}
+
+.user-edit-dialog .p-dialog-content::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 4px;
+}
+
+.user-edit-dialog .p-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--gecos-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-edit-dialog .p-dialog {
+    width: 95vw !important;
+    margin: 0;
+  }
+
+  .form-field {
+    flex: 1 1 100%;
+    min-width: auto;
+  }
+
+  .dialog-content {
+    padding: 1rem;
+  }
+
+  .form-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 0.95rem;
+  }
+
+  .dialog-footer-actions {
+    flex-direction: column;
+  }
+
+  .dialog-footer-actions .p-button {
+    width: 100%;
+  }
+
+  .user-header {
+    flex-direction: column;
+    text-align: center;
+  }
+}
