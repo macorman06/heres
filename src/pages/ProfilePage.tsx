@@ -1,13 +1,12 @@
-// ProfilePage.tsx
+// src/pages/ProfilePage.tsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
-import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
 import { Chip } from 'primereact/chip';
-import { Message } from 'primereact/message';
 import { Toast } from 'primereact/toast';
 import { Chips } from 'primereact/chips';
 import { Dropdown } from 'primereact/dropdown';
@@ -19,8 +18,9 @@ import { centroJuvenilOptions, User } from '../types';
 import type { Sexo, Talla, CentroJuvenil } from '../types';
 import { TokenManager } from '../services/auth/tokenManager';
 import { formatFullName } from '../utils/formatters';
+import { userService } from '../services/api/index';
+import { avatarCache } from '../utils/avatarCache';
 
-// Interface para el formulario
 interface ProfileFormData {
   nombre: string;
   apellido1: string;
@@ -44,7 +44,6 @@ export const ProfilePage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [edad, setEdad] = useState<number | null>(null);
 
   // Estados del formulario
@@ -97,17 +96,8 @@ export const ProfilePage: React.FC = () => {
         }
         setEdad(age);
       }
-
-      checkProfileImage();
     }
   }, [user]);
-
-  const cleanName = (name: string) =>
-    name
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]/g, '');
 
   const formatPhoneNumber = (value: string): string => {
     const numbers = value.replace(/\D/g, '');
@@ -120,34 +110,8 @@ export const ProfilePage: React.FC = () => {
     return formattedPhone.replace(/\D/g, '');
   };
 
-  const checkProfileImage = async () => {
-    if (!user?.nombre || !user?.apellido1) return;
-
-    const baseFilename = `${cleanName(user.nombre)}_${cleanName(user.apellido1)}`;
-    const extensions = ['png', 'jpg', 'jpeg', 'webp'];
-
-    for (const ext of extensions) {
-      const imagePath = `/users/${baseFilename}.${ext}`;
-      try {
-        const img = new Image();
-        await new Promise((resolve, reject) => {
-          img.onload = () => resolve(null);
-          img.onerror = () => reject();
-          img.src = imagePath;
-        });
-        setProfileImage(imagePath);
-        return;
-      } catch {
-        // Continue to next extension
-      }
-    }
-    setProfileImage(null);
-  };
-
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-
-    // Recalcular edad si cambia birthday
     if (field === 'birthday' && value) {
       const birthDate = new Date(value);
       const today = new Date();
@@ -164,9 +128,61 @@ export const ProfilePage: React.FC = () => {
     setPasswordData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // ✅ ACTUALIZADO: Subir avatar e invalidar caché
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de archivo
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Solo se permiten archivos PNG, JPG, JPEG o WEBP',
+        life: 3000,
+      });
+      return;
+    }
+
+    // Validar tamaño (máx 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El archivo no puede superar 5MB',
+        life: 3000,
+      });
+      return;
+    }
+
+    try {
+      await userService.uploadAvatar(userId, file);
+      avatarCache.remove(userId); // ✅ Invalidar caché
+
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: '✅ Foto de perfil actualizada correctamente',
+        life: 3000,
+      });
+    } catch (error: any) {
+      console.error('Error subiendo avatar:', error);
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.response?.data?.error || '❌ Error al subir la foto de perfil',
+        life: 5000,
+      });
+    } finally {
+      // Limpiar input
+      event.target.value = '';
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
-
     try {
       const token = TokenManager.getToken();
       const cleanPhoneNumber = extractPhoneNumbers(formData.telefono);
@@ -178,37 +194,15 @@ export const ProfilePage: React.FC = () => {
         email: formData.email,
       };
 
-      if (cleanPhoneNumber) {
-        updatePayload.telefono = `+34${cleanPhoneNumber}`;
-      }
-
-      if (formData.direccion) {
-        updatePayload.direccion = formData.direccion;
-      }
-
-      if (formData.localidad) {
-        updatePayload.localidad = formData.localidad;
-      }
-
-      if (formData.birthday) {
-        updatePayload.birthday = formData.birthday.toISOString().split('T')[0];
-      }
-
-      if (formData.sexo) {
-        updatePayload.sexo = formData.sexo;
-      }
-
-      if (formData.alergias && formData.alergias.length > 0) {
+      if (cleanPhoneNumber) updatePayload.telefono = `+34${cleanPhoneNumber}`;
+      if (formData.direccion) updatePayload.direccion = formData.direccion;
+      if (formData.localidad) updatePayload.localidad = formData.localidad;
+      if (formData.birthday) updatePayload.birthday = formData.birthday.toISOString().split('T')[0];
+      if (formData.sexo) updatePayload.sexo = formData.sexo;
+      if (formData.alergias && formData.alergias.length > 0)
         updatePayload.alergias = formData.alergias;
-      }
-
-      if (formData.talla) {
-        updatePayload.talla = formData.talla;
-      }
-
-      if (formData.centro_juvenil) {
-        updatePayload.centro_juvenil = formData.centro_juvenil;
-      }
+      if (formData.talla) updatePayload.talla = formData.talla;
+      if (formData.centro_juvenil) updatePayload.centro_juvenil = formData.centro_juvenil;
 
       const response = await axios.put(
         `${import.meta.env.VITE_API_URL}/usuarios/${user?.id}`,
@@ -232,22 +226,9 @@ export const ProfilePage: React.FC = () => {
         if (user) {
           const updatedUser: User = {
             ...user,
-            nombre: formData.nombre,
-            apellido1: formData.apellido1,
-            apellido2: formData.apellido2,
-            email: formData.email,
+            ...updatePayload,
             telefono: cleanPhoneNumber ? `+34${cleanPhoneNumber}` : user.telefono,
-            direccion: formData.direccion || user.direccion,
-            localidad: formData.localidad || user.localidad,
-            birthday: formData.birthday
-              ? formData.birthday.toISOString().split('T')[0]
-              : user.birthday,
-            sexo: formData.sexo || undefined,
-            alergias: formData.alergias.length > 0 ? formData.alergias : user.alergias,
-            talla: formData.talla || undefined,
-            centro_juvenil: formData.centro_juvenil || undefined,
           };
-
           updateUser(updatedUser);
         }
       }
@@ -312,21 +293,8 @@ export const ProfilePage: React.FC = () => {
     }
 
     setIsChangingPassword(true);
-
     try {
       const token = TokenManager.getToken();
-
-      if (!token) {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: '❌ No hay token de autenticación. Por favor, inicia sesión nuevamente.',
-          life: 5000,
-        });
-        setIsChangingPassword(false);
-        return;
-      }
-
       const response = await axios.put(
         `${import.meta.env.VITE_API_URL}/usuarios/${user?.id}`,
         { password: passwordData.newPassword },
@@ -355,17 +323,10 @@ export const ProfilePage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('❌ Error cambiando contraseña:', error);
-
-      const errorMessage =
-        error.response?.data?.msg ||
-        error.response?.data?.error ||
-        error.response?.data?.detail ||
-        '❌ Error al cambiar la contraseña';
-
       toast.current?.show({
         severity: 'error',
         summary: 'Error',
-        detail: errorMessage,
+        detail: error.response?.data?.error || '❌ Error al cambiar la contraseña',
         life: 5000,
       });
     } finally {
@@ -391,19 +352,8 @@ export const ProfilePage: React.FC = () => {
   };
 
   if (!user) {
-    return (
-      <div className="flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-        <i className="pi pi-spin pi-spinner" style={{ fontSize: '3rem' }}></i>
-      </div>
-    );
+    return <div>Cargando...</div>;
   }
-
-  const userInitials = user.nombre
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
 
   const roleBadge = getRoleBadge(user.rol || 'miembro');
 
@@ -425,423 +375,329 @@ export const ProfilePage: React.FC = () => {
     <div className="profile-page">
       <Toast ref={toast} />
 
-      <Card className="shadow-3">
-        {/* Header con Avatar a la izquierda */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '2rem',
-            padding: '2rem',
-            flexWrap: 'wrap',
-          }}
-        >
-          {/* Avatar grande */}
-          <div style={{ flexShrink: 0 }}>
-            {profileImage ? (
-              <Avatar image={profileImage} shape="circle" className="profile-avatar-hero" />
-            ) : (
-              <Avatar label={userInitials} shape="circle" className="profile-avatar-hero" />
-            )}
+      {/* Header con Avatar */}
+      <Card className="profile-header-card mb-4">
+        <div className="flex align-items-center gap-4">
+          {/* ✅ Usar componente UserAvatar */}
+          <div className="relative">
+            <UserAvatar
+              userId={user.id}
+              nombre={user.nombre}
+              apellido={user.apellido1}
+              size="large"
+            />
+
+            {/* Botón para cambiar foto */}
+            <input
+              type="file"
+              id="avatar-upload"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              onChange={handleAvatarUpload}
+              style={{ display: 'none' }}
+            />
+            <label htmlFor="avatar-upload">
+              <Button
+                icon="pi pi-camera"
+                className="p-button-rounded p-button-sm"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  backgroundColor: 'white',
+                  color: '#6366f1',
+                  border: '2px solid #6366f1',
+                }}
+                tooltip="Cambiar foto de perfil"
+                tooltipOptions={{ position: 'bottom' }}
+                onClick={() => document.getElementById('avatar-upload')?.click()}
+              />
+            </label>
           </div>
 
           {/* Información del usuario */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              flex: 1,
-              minWidth: '0',
-            }}
-          >
-            <h1
-              style={{
-                fontSize: '2.5rem',
-                fontWeight: '700',
-                margin: '0 0 0.5rem 0',
-                color: 'var(--text-primary)',
-                lineHeight: '1.2',
-              }}
-            >
+          <div className="flex-1">
+            <h2 className="m-0 mb-2">
               {formatFullName(user.nombre, user.apellido1, user.apellido2)}
-            </h1>
-
-            <p
-              style={{
-                fontSize: '1.2rem',
-                color: 'var(--text-muted)',
-                margin: '0',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              <i className="pi pi-envelope" style={{ fontSize: '1rem' }}></i>
-              {user.email}
-            </p>
-          </div>
-        </div>
-
-        {/* Línea divisoria completa */}
-        <hr style={{ border: 'none', borderTop: '1px solid var(--border-primary)' }} />
-
-        {/* SECCIÓN 1: INFORMACIÓN PERSONAL */}
-        <div style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h2
-              style={{
-                fontSize: '1.75rem',
-                fontWeight: '700',
-                marginBottom: '0.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                color: 'var(--text-primary)',
-              }}
-            >
-              <i className="pi pi-user" style={{ marginRight: '0.75rem', fontSize: '1.5rem' }}></i>
-              Información Personal
             </h2>
-            <p
-              style={{
-                fontSize: '0.95rem',
-                color: 'var(--text-muted)',
-                marginLeft: '2.25rem',
-                marginTop: '0',
-              }}
-            >
-              Actualiza tus datos personales y de contacto
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', width: '100%' }}>
-            {/* Nombre */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="nombre">Nombre *</label>
-              <InputText
-                id="nombre"
-                value={formData.nombre}
-                onChange={(e) => handleInputChange('nombre', e.target.value)}
-                placeholder="Ej: Juan"
-              />
-            </div>
-
-            {/* Primer Apellido */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="apellido1">Primer Apellido *</label>
-              <InputText
-                id="apellido1"
-                value={formData.apellido1}
-                onChange={(e) => handleInputChange('apellido1', e.target.value)}
-                placeholder="Ej: García"
-              />
-            </div>
-
-            {/* Segundo Apellido */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="apellido2">Segundo Apellido</label>
-              <InputText
-                id="apellido2"
-                value={formData.apellido2}
-                onChange={(e) => handleInputChange('apellido2', e.target.value)}
-                placeholder="Ej: López"
-              />
-            </div>
-
-            {/* Email */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="email">Email *</label>
-              <InputText
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="Ej: juan.garcia@email.com"
-              />
-            </div>
-
-            {/* Teléfono */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="telefono">Teléfono</label>
-              <div className="p-inputgroup">
-                <span className="p-inputgroup-addon">+34</span>
-                <InputText
-                  id="telefono"
-                  value={formData.telefono}
-                  onChange={(e) => {
-                    const formatted = formatPhoneNumber(e.target.value);
-                    handleInputChange('telefono', formatted);
-                  }}
-                  placeholder="Ej: 612 345 678"
-                  maxLength={11}
-                />
-              </div>
-            </div>
-
-            {/* Dirección */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="direccion">Dirección</label>
-              <InputText
-                id="direccion"
-                value={formData.direccion}
-                onChange={(e) => handleInputChange('direccion', e.target.value)}
-                placeholder="Ej: Calle Mayor 123"
-              />
-            </div>
-
-            {/* Localidad */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="localidad">Localidad</label>
-              <InputText
-                id="localidad"
-                value={formData.localidad}
-                onChange={(e) => handleInputChange('localidad', e.target.value)}
-                placeholder="Ej: Madrid"
-              />
-            </div>
-
-            {/* Fecha de Nacimiento */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="birthday">
-                Fecha de Nacimiento
-                {edad !== null && (
-                  <Chip label={`${edad} años`} className="ml-2" style={{ height: '24px' }} />
-                )}
-              </label>
-              <Calendar
-                id="birthday"
-                value={formData.birthday}
-                onChange={(e) => handleInputChange('birthday', e.value)}
-                dateFormat="dd/mm/yy"
-                showIcon
-                className="w-full"
-                placeholder="Selecciona una fecha"
-              />
-            </div>
-
-            {/* Sexo */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="sexo">Sexo</label>
-              <Dropdown
-                id="sexo"
-                value={formData.sexo}
-                options={sexoOptions}
-                onChange={(e) => handleInputChange('sexo', e.value)}
-                placeholder="Selecciona"
-                className="w-full"
-              />
-            </div>
-
-            {/* Talla */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="talla">Talla de camiseta</label>
-              <Dropdown
-                id="talla"
-                value={formData.talla}
-                options={tallaOptions}
-                onChange={(e) => handleInputChange('talla', e.value)}
-                placeholder="Selecciona talla"
-                className="w-full"
-              />
-            </div>
-
-            {/* Centro Juvenil */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label htmlFor="centro_juvenil">Centro Juvenil</label>
-              <Dropdown
-                id="centro_juvenil"
-                value={formData.centro_juvenil}
-                options={centroJuvenilOptions}
-                onChange={(e) => handleInputChange('centro_juvenil', e.value)}
-                placeholder="Selecciona un centro"
-                className="w-full"
-              />
-            </div>
-
-            {/* Alergias */}
-            <div className="field" style={{ flex: '1 1 100%', width: '100%' }}>
-              <label htmlFor="alergias">Alergias</label>
-              <Chips
-                id="alergias"
-                value={formData.alergias}
-                onChange={(e) => handleInputChange('alergias', e.value)}
-                separator=","
-                placeholder="Ej: Polen, Lácteos, Frutos secos..."
-              />
-              <small className="text-muted">Presiona Enter después de cada alergia</small>
+            <p className="text-600 m-0 mb-2">{user.email}</p>
+            <div className="flex gap-2 align-items-center">
+              <Badge value={roleBadge.label} severity={roleBadge.severity} />
+              {user.puntuacion !== undefined && (
+                <Badge value={`${user.puntuacion} pts`} severity="success" />
+              )}
             </div>
           </div>
-        </div>
-
-        {/* Línea divisoria completa */}
-        <hr style={{ border: 'none', borderTop: '1px solid var(--border-primary)' }} />
-
-        {/* SECCIÓN 2: INFORMACIÓN DEL SISTEMA */}
-        <div style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h2
-              style={{
-                fontSize: '1.75rem',
-                fontWeight: '700',
-                marginBottom: '0.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                color: 'var(--text-primary)',
-              }}
-            >
-              <i
-                className="pi pi-shield"
-                style={{ marginRight: '0.75rem', fontSize: '1.5rem' }}
-              ></i>
-              Información del Sistema
-            </h2>
-            <p
-              style={{
-                fontSize: '0.95rem',
-                color: 'var(--text-muted)',
-                marginLeft: '2.25rem',
-                marginTop: '0',
-              }}
-            >
-              Datos gestionados por el administrador del sistema
-            </p>
-          </div>
-
-          <Message
-            severity="info"
-            text="Los siguientes datos solo pueden ser modificados por un administrador del sistema."
-            style={{ width: '100%', marginBottom: '1.5rem' }}
-          />
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', width: '100%' }}>
-            {/* Rol */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label>Rol</label>
-              <div
-                style={{
-                  padding: '0.75rem',
-                  border: '1px solid var(--border-secondary)',
-                  borderRadius: 'var(--border-radius-md)',
-                  backgroundColor: 'var(--bg-secondary)',
-                  opacity: 0.7,
-                  display: 'flex',
-                  alignItems: 'center',
-                  minHeight: 'var(--field-height)',
-                }}
-              >
-                <Badge value={roleBadge.label} severity={roleBadge.severity} />
-              </div>
-            </div>
-
-            {/* Puntuación */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label>Puntuación</label>
-              <InputText value={`${user.puntuacion || 0} puntos (Juegos)`} disabled />
-            </div>
-
-            {/* Sección */}
-            <div className="field" style={{ flex: '1 1 calc(33.333% - 1rem)', minWidth: '250px' }}>
-              <label>Sección</label>
-              <div
-                style={{
-                  padding: '0.75rem',
-                  border: '1px solid var(--border-secondary)',
-                  borderRadius: 'var(--border-radius-md)',
-                  backgroundColor: 'var(--bg-secondary)',
-                  opacity: 0.7,
-                  minHeight: 'var(--field-height)',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                {user.seccion && Array.isArray(user.seccion) && user.seccion.length > 0 ? (
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {user.seccion.map((sec: string, idx: number) => (
-                      <Badge key={idx} value={sec} severity="info" />
-                    ))}
-                  </div>
-                ) : (
-                  <span className="text-muted">No asignada</span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Línea divisoria completa */}
-        <hr style={{ border: 'none', borderTop: '1px solid var(--border-primary)' }} />
-
-        {/* SECCIÓN 3: ZONA DE RIESGO */}
-        <div style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h2
-              style={{
-                fontSize: '1.75rem',
-                fontWeight: '700',
-                marginBottom: '0.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                color: '#dc2626',
-              }}
-            >
-              <i
-                className="pi pi-exclamation-triangle"
-                style={{ marginRight: '0.75rem', fontSize: '1.5rem' }}
-              ></i>
-              Zona de Riesgo
-            </h2>
-            <p
-              style={{
-                fontSize: '0.95rem',
-                color: 'var(--text-muted)',
-                marginLeft: '2.25rem',
-                marginTop: '0',
-              }}
-            >
-              Gestiona la seguridad de tu cuenta
-            </p>
-          </div>
-
-          <Button
-            label="Cambiar Contraseña"
-            icon="pi pi-key"
-            onClick={() => setShowPasswordDialog(true)}
-            className="btn-primary"
-          />
-        </div>
-
-        {/* Botones de Acción */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '0.75rem',
-            marginTop: '2rem',
-            paddingTop: '1.5rem',
-            borderTop: '1px solid var(--border-primary)',
-          }}
-        >
-          <Button
-            label="Descartar cambios"
-            icon="pi pi-times"
-            onClick={handleCancel}
-            className="p-button-outlined p-button-secondary"
-          />
-          <Button
-            label="Guardar"
-            icon="pi pi-check"
-            onClick={handleSave}
-            loading={isSaving}
-            className="p-button-primary"
-          />
         </div>
       </Card>
+
+      {/* SECCIÓN 1: INFORMACIÓN PERSONAL */}
+      <Card className="mb-4">
+        <div className="card-header mb-4">
+          <h3 className="text-xl font-semibold m-0 mb-2">Información Personal</h3>
+          <p className="text-600 m-0">Actualiza tus datos personales y de contacto</p>
+        </div>
+
+        <div className="grid">
+          {/* Nombre */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="nombre" className="block mb-2 font-semibold">
+              Nombre *
+            </label>
+            <InputText
+              id="nombre"
+              value={formData.nombre}
+              onChange={(e) => handleInputChange('nombre', e.target.value)}
+              placeholder="Ej: Juan"
+              className="w-full"
+            />
+          </div>
+
+          {/* Primer Apellido */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="apellido1" className="block mb-2 font-semibold">
+              Primer Apellido *
+            </label>
+            <InputText
+              id="apellido1"
+              value={formData.apellido1}
+              onChange={(e) => handleInputChange('apellido1', e.target.value)}
+              placeholder="Ej: García"
+              className="w-full"
+            />
+          </div>
+
+          {/* Segundo Apellido */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="apellido2" className="block mb-2 font-semibold">
+              Segundo Apellido
+            </label>
+            <InputText
+              id="apellido2"
+              value={formData.apellido2}
+              onChange={(e) => handleInputChange('apellido2', e.target.value)}
+              placeholder="Ej: López"
+              className="w-full"
+            />
+          </div>
+
+          {/* Email */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="email" className="block mb-2 font-semibold">
+              Email *
+            </label>
+            <InputText
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              placeholder="Ej: juan.garcia@email.com"
+              className="w-full"
+            />
+          </div>
+
+          {/* Teléfono */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="telefono" className="block mb-2 font-semibold">
+              Teléfono
+            </label>
+            <div className="p-inputgroup">
+              <span className="p-inputgroup-addon">+34</span>
+              <InputText
+                id="telefono"
+                value={formData.telefono}
+                onChange={(e) => {
+                  const formatted = formatPhoneNumber(e.target.value);
+                  handleInputChange('telefono', formatted);
+                }}
+                placeholder="Ej: 612 345 678"
+                maxLength={11}
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          {/* Dirección */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="direccion" className="block mb-2 font-semibold">
+              Dirección
+            </label>
+            <InputText
+              id="direccion"
+              value={formData.direccion}
+              onChange={(e) => handleInputChange('direccion', e.target.value)}
+              placeholder="Ej: Calle Mayor 123"
+              className="w-full"
+            />
+          </div>
+
+          {/* Localidad */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="localidad" className="block mb-2 font-semibold">
+              Localidad
+            </label>
+            <InputText
+              id="localidad"
+              value={formData.localidad}
+              onChange={(e) => handleInputChange('localidad', e.target.value)}
+              placeholder="Ej: Madrid"
+              className="w-full"
+            />
+          </div>
+
+          {/* Fecha de Nacimiento */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="birthday" className="block mb-2 font-semibold">
+              Fecha de Nacimiento
+              {edad !== null && <Badge value={`${edad} años`} severity="info" className="ml-2" />}
+            </label>
+            <Calendar
+              id="birthday"
+              value={formData.birthday}
+              onChange={(e) => handleInputChange('birthday', e.value)}
+              dateFormat="dd/mm/yy"
+              showIcon
+              className="w-full"
+              placeholder="Selecciona una fecha"
+            />
+          </div>
+
+          {/* Sexo */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="sexo" className="block mb-2 font-semibold">
+              Sexo
+            </label>
+            <Dropdown
+              id="sexo"
+              value={formData.sexo}
+              options={sexoOptions}
+              onChange={(e) => handleInputChange('sexo', e.value)}
+              placeholder="Selecciona"
+              className="w-full"
+            />
+          </div>
+
+          {/* Talla */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="talla" className="block mb-2 font-semibold">
+              Talla de camiseta
+            </label>
+            <Dropdown
+              id="talla"
+              value={formData.talla}
+              options={tallaOptions}
+              onChange={(e) => handleInputChange('talla', e.value)}
+              placeholder="Selecciona talla"
+              className="w-full"
+            />
+          </div>
+
+          {/* Centro Juvenil */}
+          <div className="col-12 md:col-6">
+            <label htmlFor="centro" className="block mb-2 font-semibold">
+              Centro Juvenil
+            </label>
+            <Dropdown
+              id="centro"
+              value={formData.centro_juvenil}
+              options={centroJuvenilOptions}
+              onChange={(e) => handleInputChange('centro_juvenil', e.value)}
+              placeholder="Selecciona un centro"
+              className="w-full"
+            />
+          </div>
+
+          {/* Alergias */}
+          <div className="col-12">
+            <label htmlFor="alergias" className="block mb-2 font-semibold">
+              Alergias
+            </label>
+            <Chips
+              id="alergias"
+              value={formData.alergias}
+              onChange={(e) => handleInputChange('alergias', e.value)}
+              separator=","
+              placeholder="Ej: Polen, Lácteos, Frutos secos..."
+              className="w-full"
+            />
+            <small className="text-600">Presiona Enter después de cada alergia</small>
+          </div>
+        </div>
+      </Card>
+
+      {/* SECCIÓN 2: INFORMACIÓN DEL SISTEMA */}
+      <Card className="mb-4">
+        <div className="card-header mb-4">
+          <h3 className="text-xl font-semibold m-0 mb-2">Información del Sistema</h3>
+          <p className="text-600 m-0">Datos gestionados por el administrador del sistema</p>
+        </div>
+
+        <div className="grid">
+          {/* Rol */}
+          <div className="col-12 md:col-4">
+            <label className="block mb-2 font-semibold">Rol</label>
+            <Badge value={roleBadge.label} severity={roleBadge.severity} />
+          </div>
+
+          {/* Puntuación */}
+          <div className="col-12 md:col-4">
+            <label className="block mb-2 font-semibold">Puntuación</label>
+            <Badge value={`${user.puntuacion || 0} puntos`} severity="success" />
+          </div>
+
+          {/* Sección */}
+          <div className="col-12 md:col-4">
+            <label className="block mb-2 font-semibold">Sección</label>
+            <div className="flex gap-2 flex-wrap">
+              {user.seccion && Array.isArray(user.seccion) && user.seccion.length > 0 ? (
+                user.seccion.map((sec: string, idx: number) => (
+                  <Chip key={idx} label={sec} className="mr-2" />
+                ))
+              ) : (
+                <span className="text-600">No asignada</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* SECCIÓN 3: ZONA DE RIESGO */}
+      <Card className="mb-4 border-danger">
+        <div className="card-header mb-4">
+          <h3 className="text-xl font-semibold m-0 mb-2 text-danger">Zona de Riesgo</h3>
+          <p className="text-600 m-0">Gestiona la seguridad de tu cuenta</p>
+        </div>
+
+        <Button
+          label="Cambiar Contraseña"
+          icon="pi pi-lock"
+          onClick={() => setShowPasswordDialog(true)}
+          severity="danger"
+          outlined
+        />
+      </Card>
+
+      {/* Botones de Acción */}
+      <div className="flex justify-content-end gap-2">
+        <Button
+          label="Cancelar"
+          icon="pi pi-times"
+          onClick={handleCancel}
+          severity="secondary"
+          outlined
+        />
+        <Button
+          label="Guardar Cambios"
+          icon="pi pi-check"
+          onClick={handleSave}
+          loading={isSaving}
+        />
+      </div>
 
       {/* DIÁLOGO DE CAMBIO DE CONTRASEÑA */}
       <Dialog
         header="Cambiar Contraseña"
         visible={showPasswordDialog}
-        style={{ width: '500px' }}
+        style={{ width: '400px' }}
         onHide={() => {
           setShowPasswordDialog(false);
           setPasswordData({ newPassword: '', confirmPassword: '' });
@@ -849,56 +705,44 @@ export const ProfilePage: React.FC = () => {
         modal
         draggable={false}
         resizable={false}
-        maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
       >
-        <div style={{ padding: '1rem 0' }}>
-          <Message
-            severity="warn"
-            text="Después de cambiar tu contraseña, se cerrará tu sesión automáticamente."
-            style={{ width: '100%', marginBottom: '1.5rem' }}
-          />
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '1rem' }}>
-            <div className="field">
-              <label htmlFor="newPassword">Nueva Contraseña</label>
-              <Password
-                id="newPassword"
-                value={passwordData.newPassword}
-                onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-                toggleMask
-                className="w-full"
-                inputClassName="w-full"
-                promptLabel="Ingresa una contraseña"
-                weakLabel="Débil"
-                mediumLabel="Media"
-                strongLabel="Fuerte"
-                placeholder="Mínimo 6 caracteres"
-              />
-            </div>
-
-            <div className="field">
-              <label htmlFor="confirmPassword">Confirmar Contraseña</label>
-              <Password
-                id="confirmPassword"
-                value={passwordData.confirmPassword}
-                onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-                feedback={false}
-                toggleMask
-                className="w-full"
-                inputClassName="w-full"
-                placeholder="Repite la contraseña"
-              />
-            </div>
+        <div className="flex flex-column gap-4">
+          <div className="field">
+            <label htmlFor="newPassword" className="block mb-2 font-semibold">
+              Nueva Contraseña
+            </label>
+            <Password
+              id="newPassword"
+              value={passwordData.newPassword}
+              onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+              toggleMask
+              className="w-full"
+              inputClassName="w-full"
+              promptLabel="Ingresa una contraseña"
+              weakLabel="Débil"
+              mediumLabel="Media"
+              strongLabel="Fuerte"
+              placeholder="Mínimo 6 caracteres"
+            />
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '0.75rem',
-              marginTop: '2rem',
-            }}
-          >
+          <div className="field">
+            <label htmlFor="confirmPassword" className="block mb-2 font-semibold">
+              Confirmar Contraseña
+            </label>
+            <Password
+              id="confirmPassword"
+              value={passwordData.confirmPassword}
+              onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+              feedback={false}
+              toggleMask
+              className="w-full"
+              inputClassName="w-full"
+              placeholder="Repite la contraseña"
+            />
+          </div>
+
+          <div className="flex justify-content-end gap-2">
             <Button
               label="Cancelar"
               icon="pi pi-times"
@@ -906,14 +750,15 @@ export const ProfilePage: React.FC = () => {
                 setShowPasswordDialog(false);
                 setPasswordData({ newPassword: '', confirmPassword: '' });
               }}
-              className="p-button-outlined p-button-secondary"
+              severity="secondary"
+              outlined
             />
             <Button
-              label="Cambiar Contraseña"
+              label="Cambiar"
               icon="pi pi-check"
               onClick={handleChangePassword}
               loading={isChangingPassword}
-              className="btn-primary"
+              severity="danger"
             />
           </div>
         </div>

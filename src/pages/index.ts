@@ -14,7 +14,7 @@ export { QRRegisterMember } from './QRRegisterMember.tsx';
 export { PrivacyPolicy } from './PrivacyPolicy.tsx';
 export { Ranking } from './Ranking';
 export { ActivateAccount } from './ActivateAccount';
-
+export { Tasks } from './Tasks';
 // ============================================
 // MATERIALES - PÁGINA PRINCIPAL
 // ============================================

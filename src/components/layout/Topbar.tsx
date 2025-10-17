@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Menu } from 'primereact/menu';
-import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { useAuth } from '../../hooks/useAuth';
-
+import { UserAvatar } from '../common/UserAvatar';
+import './Topbar.css';
 interface TopbarProps {
   sidebarCollapsed: boolean;
 }
@@ -28,67 +28,11 @@ export const Topbar: React.FC<TopbarProps> = ({}) => {
   const [searchValue, setSearchValue] = useState('');
   const menuRef = useRef<Menu>(null);
   const navigate = useNavigate();
-
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
   const { user, logout } = useAuth();
-
-  const generateImageFilename = (nombre: string, apellido1: string): string => {
-    const cleanName = (name: string) =>
-      name
-        .toLowerCase()
-        .normalize('NFD') // Descomponer caracteres acentuados
-        .replace(/[\u0300-\u036f]/g, '') // Eliminar diacríticos
-        .replace(/[^a-z0-9]/g, '') // Solo letras y números
-        .trim();
-
-    const cleanNombre = cleanName(nombre);
-    const cleanApellido1 = cleanName(apellido1);
-
-    return `${cleanNombre}_${cleanApellido1}`;
-  };
-
-  useEffect(() => {
-    if (!user?.nombre || !user?.apellido1) {
-      setImageLoaded(true);
-      return;
-    }
-
-    const checkImageExists = async () => {
-      const baseFilename = generateImageFilename(user.nombre, user.apellido1 ?? '');
-
-      const extensions = ['png', 'jpg', 'jpeg', 'webp'];
-
-      for (const ext of extensions) {
-        const imagePath = `/users/${baseFilename}.${ext}`;
-
-        try {
-          const img = new Image();
-          await new Promise<void>((resolve, reject) => {
-            img.onload = () => resolve();
-            img.onerror = () => reject();
-            img.src = imagePath;
-          });
-
-          setProfileImage(imagePath);
-          setImageLoaded(true);
-          return;
-        } catch {
-          // Continue to next extension
-        }
-      }
-
-      setProfileImage(null);
-      setImageLoaded(true);
-    };
-
-    checkImageExists();
-  }, [user?.nombre, user?.apellido1]);
 
   const handleLogout = async () => {
     try {
-      logout(); // Esto limpia el token, usuario y redirige a /login
+      logout();
     } catch (error) {
       console.error('❌ Error durante logout:', error);
     }
@@ -135,85 +79,39 @@ export const Topbar: React.FC<TopbarProps> = ({}) => {
     );
   };
 
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    if (value.trim()) {
-      /* empty */
-    }
-  };
-
-  const displayName = user?.nombre || 'Usuario';
-  const fullName = `${user?.nombre || ''} ${user?.apellido1 || ''}`.trim() || 'Usuario';
+  const displayName = user ? `${user.nombre} ${user.apellido1}` : 'Usuario';
   const displayRole = user?.rol || 'miembro';
-  const userInitials = displayName
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-
   const roleBadge = getRoleBadge(displayRole);
 
   return (
-    <header className="w-100% bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-      <div className="flex items-center justify-between">
-        {/* Left section - Title */}
-        <div className="flex items-center">
-          <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
-            {getPageTitle(location.pathname)}
-          </h1>
-        </div>
+    <div className="topbar">
+      {/* Título de página */}
+      <div className="topbar-left">
+        <h2 className="page-title">{getPageTitle(location.pathname)}</h2>
+      </div>
 
-        {/* Center section - Search */}
-        <div className="flex-1 max-w-md mx-8"></div>
+      {/* Área de usuario */}
+      <div className="topbar-right">
+        <ThemeToggle />
 
-        {/* Right section - User info */}
-        <div className="flex items-center space-x-4">
-          <ThemeToggle />
+        <div className="user-section" onClick={(e) => menuRef.current?.toggle(e)}>
+          <UserAvatar
+            userId={user?.id || 0}
+            nombre={user?.nombre || ''}
+            apellido={user?.apellido1 || ''}
+            size="medium"
+          />
 
-          {/* User Menu */}
-          <div className="flex items-center space-x-3">
-            {/* User Info */}
-            <div className="hidden md:block text-right">
-              <div className="text-sm font-medium text-gray-900 dark:text-white">{fullName}</div>
-              <div className="text-xs">
-                <Badge value={roleBadge.label} severity={roleBadge.severity} className="text-xs" />
-              </div>
-            </div>
-
-            <button
-              onClick={(e) => menuRef.current?.toggle(e)}
-              className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-full"
-            >
-              {imageLoaded && (
-                <>
-                  {profileImage ? (
-                    <div className="w-10 h-10 relative">
-                      <img
-                        src={profileImage}
-                        alt={`${fullName} - Foto de perfil`}
-                        className="w-full h-full object-cover rounded-full border-2 border-gray-300 dark:border-gray-600"
-                        onError={() => {
-                          setProfileImage(null);
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <Avatar
-                      label={userInitials}
-                      shape="circle"
-                      className="bg-gradient-to-br from-red-500 to-red-600 text-white font-medium border-2 border-gray-300 dark:border-gray-600"
-                    />
-                  )}
-                </>
-              )}
-              <i className="pi pi-chevron-down text-xs text-gray-500 dark:text-gray-400 ml-1"></i>
-            </button>
+          <div className="user-info">
+            <span className="user-name">{displayName}</span>
+            <Badge value={roleBadge.label} severity={roleBadge.severity} className="role-badge" />
           </div>
 
-          <Menu model={userMenuItems} popup ref={menuRef} />
+          <i className="pi pi-chevron-down" />
         </div>
+
+        <Menu model={userMenuItems} popup ref={menuRef} />
       </div>
-    </header>
+    </div>
   );
 };

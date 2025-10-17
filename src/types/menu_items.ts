@@ -27,7 +27,7 @@ export const MENU_ITEMS: MenuItemWithRoles[] = [
   {
     label: 'Actividades',
     icon: 'pi pi-calendar',
-    route: '/actividades',
+    route: '/activities',
     subtitle: 'Eventos y talleres',
     allowedRoles: [ROLES.SUPERUSER, ROLES.DIRECTOR, ROLES.COORDINADOR, ROLES.ANIMADOR],
   },
@@ -57,6 +57,13 @@ export const MENU_ITEMS: MenuItemWithRoles[] = [
     icon: 'pi pi-users',
     route: '/members',
     subtitle: 'Lista de miembros',
+    allowedRoles: [ROLES.SUPERUSER, ROLES.DIRECTOR, ROLES.COORDINADOR, ROLES.ANIMADOR],
+  },
+  {
+    label: 'Tareas',
+    icon: 'pi pi-users',
+    route: '/tasks',
+    subtitle: 'Tareas y responsabilidades',
     allowedRoles: [ROLES.SUPERUSER, ROLES.DIRECTOR, ROLES.COORDINADOR, ROLES.ANIMADOR],
   },
   {

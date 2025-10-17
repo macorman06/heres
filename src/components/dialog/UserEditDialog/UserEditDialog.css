@@ -1,12 +1,18 @@
 /* src/components/dialog/UserEditDialog/UserEditDialog.css */
 
-/* Dialog Overlay */
+/* ========================================
+   DIALOG OVERLAY - FONDO NEGRO CON OPACIDAD
+   ======================================== */
+
 .dialog-dark-mask {
   background-color: rgba(0, 0, 0, 0.3) !important;
   backdrop-filter: blur(2px);
 }
 
-/* Dialog Container */
+/* ========================================
+   DIALOG CONTAINER
+   ======================================== */
+
 .user-edit-dialog .p-dialog {
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -19,8 +25,8 @@
 }
 
 .user-edit-dialog .p-dialog-content {
-  padding: 0;
-  overflow-y: auto;
+  padding: 1.5rem; /* ✅ Padding aquí directamente */
+  overflow-y: auto; /* ✅ Solo scroll en este nivel */
   max-height: calc(90vh - 200px);
 }
 
@@ -30,50 +36,212 @@
   background: var(--surface-50);
 }
 
-/* Dialog Header */
-.dialog-header-custom {
+/* ========================================
+   DIALOG HEADER CONTENT
+   ======================================== */
+
+.dialog-header-content {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   color: var(--text-color);
   font-weight: 600;
   font-size: 1.25rem;
 }
 
-.dialog-header-custom i {
+.dialog-header-content i {
   font-size: 1.25rem;
   color: var(--gecos-primary);
 }
 
-/* Dialog Content */
-.dialog-content {
-  padding: 1.5rem;
-}
+/* ========================================
+   DIALOG CONTENT
+   ======================================== */
 
-/* User Header with Avatar */
-.user-header {
+.user-profile-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
+  padding: 2rem;
+  min-height: 100px; /* ✅ Altura mínima para que quepa el círculo */
+  background: linear-gradient(135deg, var(--gecos-primary) 0%, var(--gecos-secondary) 100%);
+  border-radius: 12px;
   margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid var(--surface-border);
+  position: relative;
+  overflow: visible; /* ✅ Cambiar de hidden a visible */
 }
 
-.user-info h3 {
-  margin: 0;
-  font-size: 1.25rem;
+.user-profile-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path fill="%23ffffff" fill-opacity="0.05" d="M0 0v46.29c47.79 22.2 103.59 32.17 158 28 70.36-5.37 136.33-33.31 206.8-37.5 73.84-4.36 147.54 16.88 218.2 35.26 69.27 18 138.3 24.88 209.4 13.08 36.15-6 69.85-17.84 104.45-29.34C989.49 25 1113-14.29 1200 52.47V0z"></path></svg>')
+    no-repeat bottom;
+  background-size: cover;
+  opacity: 0.3;
+  border-radius: 12px; /* ✅ Mismo radio que el contenedor */
+}
+
+.avatar-section {
+  position: relative;
+  z-index: 1;
+}
+
+.avatar-upload-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-upload-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 0;
+}
+
+.avatar-upload-container:hover {
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.05);
+}
+
+.avatar-upload-container.uploading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.user-avatar-large {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  z-index: 1;
+}
+
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 1s ease;
+  color: white;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+.avatar-upload-container:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-overlay i {
+  font-size: 1.8rem;
+}
+
+.avatar-overlay span {
+  font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-color);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.user-info p {
-  margin: 0.25rem 0 0 0;
+.avatar-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  z-index: 3;
+}
+
+.user-info-section {
+  flex: 1;
+  color: white;
+  z-index: 1;
+}
+
+.user-full-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: #4b4b4b;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.user-email {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+}
+
+.user-email i {
   font-size: 0.9rem;
-  color: var(--text-color-secondary);
 }
 
-/* Form Sections */
+.user-no-email {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
+
+.user-no-email i {
+  font-size: 0.8rem;
+}
+
+/* ========================================
+   FORM SECTIONS
+   ======================================== */
+
 .form-section {
   margin-bottom: 2rem;
 }
@@ -98,7 +266,10 @@
   font-size: 1.1rem;
 }
 
-/* Form Layout */
+/* ========================================
+   FORM LAYOUT - FLEXBOX
+   ======================================== */
+
 .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -111,8 +282,8 @@
 }
 
 .form-field {
-  flex: 1 1 calc(50% - 0.5rem);
-  min-width: 250px;
+  flex: 1 1 calc(33.333% - 0.75rem);
+  min-width: 0px;
   display: flex;
   flex-direction: column;
 }
@@ -123,7 +294,10 @@
   flex-direction: column;
 }
 
-/* Form Labels */
+/* ========================================
+   FORM LABELS
+   ======================================== */
+
 .form-field label,
 .form-field-full label {
   display: block;
@@ -140,13 +314,18 @@
   font-weight: bold;
 }
 
-/* Form Inputs */
+/* ========================================
+   FORM INPUTS
+   ======================================== */
+
 .form-field .p-inputtext,
 .form-field .p-dropdown,
-.form-field .p-chips,
+.form-field .p-calendar,
+.form-field .p-multiselect,
 .form-field-full .p-inputtext,
 .form-field-full .p-dropdown,
-.form-field-full .p-chips {
+.form-field-full .p-calendar,
+.form-field-full .p-multiselect {
   width: 100%;
 }
 
@@ -156,7 +335,10 @@
   box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
 }
 
-/* Help Text */
+/* ========================================
+   HELP TEXT
+   ======================================== */
+
 .form-help-text {
   font-size: 0.75rem;
   color: var(--text-color-secondary);
@@ -165,7 +347,10 @@
   display: block;
 }
 
-/* Dialog Footer Actions */
+/* ========================================
+   DIALOG FOOTER ACTIONS
+   ======================================== */
+
 .dialog-footer-actions {
   display: flex;
   justify-content: flex-end;
@@ -176,7 +361,10 @@
   min-width: 100px;
 }
 
-/* Scrollbar */
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+
 .user-edit-dialog .p-dialog-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -195,11 +383,39 @@
   background: var(--gecos-primary);
 }
 
-/* Responsive */
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
 @media (max-width: 768px) {
   .user-edit-dialog .p-dialog {
     width: 95vw !important;
     margin: 0;
+  }
+
+  .user-profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .user-full-name {
+    font-size: 1.5rem;
+  }
+
+  .user-email,
+  .user-no-email {
+    justify-content: center;
+  }
+
+  .avatar-upload-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .avatar-fallback {
+    font-size: 2rem;
   }
 
   .form-field {
@@ -227,8 +443,30 @@
     width: 100%;
   }
 
-  .user-header {
-    flex-direction: column;
-    text-align: center;
+  .dialog-header-content {
+    font-size: 1.1rem;
   }
+}
+
+/* ========================================
+   FIX: Asegurar que la imagen se muestra
+   ======================================== */
+
+.user-avatar-large[style*='display: block'] {
+  display: block !important;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar-fallback {
+  pointer-events: none;
+}
+
+/* Asegurar que el overlay no bloquea clicks */
+.avatar-overlay {
+  pointer-events: none;
+}
+
+.avatar-upload-container {
+  pointer-events: all;
 }

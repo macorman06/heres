@@ -44,7 +44,7 @@ export const useUsers = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchAllUsers = useCallback(async (): Promise<User[]> => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
 
     if (!token) {
       return [];
@@ -65,7 +65,7 @@ export const useUsers = () => {
       setError(errorMessage);
       throw err;
     } finally {
-      if (localStorage.getItem('token')) {
+      if (localStorage.getItem('authToken')) {
         setLoading(false);
       }
     }

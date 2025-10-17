@@ -1,0 +1,107 @@
+/* src/components/tables/PruebasTable/PruebasTable.css */
+
+.pruebas-table {
+  margin-top: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.pruebas-table .p-datatable-thead > tr > th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.75rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.pruebas-table .p-datatable-tbody > tr {
+  height: 3rem;
+}
+
+.pruebas-table .p-datatable-tbody > tr > td {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+.nombre-cell {
+  display: flex;
+  align-items: center;
+  max-width: 150px;
+}
+
+.nombre-text {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.descripcion-cell {
+  max-width: 250px;
+}
+
+.descripcion-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+/* ============ FIX PARA CHIPS SIN ROMPER COLORES ============ */
+.chip-container {
+  max-width: 100%;
+  display: inline-block;
+}
+
+.pruebas-table .p-chip {
+  white-space: nowrap;
+  max-width: 100%;
+  display: inline-flex;
+}
+
+.pruebas-table .p-chip .p-chip-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px; /* Ancho máximo del texto del chip */
+}
+/* ============ FIN FIX ============ */
+
+.actions-cell {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.actions-cell .p-button {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pruebas-table .p-datatable-thead > tr > th,
+  .pruebas-table .p-datatable-tbody > tr > td {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .actions-cell .p-button {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .nombre-cell {
+    max-width: 120px;
+  }
+
+  .pruebas-table .p-chip .p-chip-text {
+    max-width: 100px;
+  }
+}

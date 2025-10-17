@@ -1,20 +1,6 @@
 // src/services/api/services/groupService.ts
 import { HttpClient } from '../core/httpClient';
-
-export interface Group {
-  id: number;
-  nombre: string;
-  descripcion?: string;
-  miembros?: number[];
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface CreateGroupRequest {
-  nombre: string;
-  descripcion?: string;
-  miembros?: number[];
-}
+import { Grupo, GrupoFormData, UpdateGrupoRequest } from '../../../types/group.types';
 
 export class GroupService {
   constructor(private httpClient: HttpClient) {}
@@ -22,28 +8,35 @@ export class GroupService {
   /**
    * Obtiene todos los grupos
    */
-  async getGroups(): Promise<Group[]> {
-    return this.httpClient.get<Group[]>('/grupos');
+  async getGroups(): Promise<Grupo[]> {
+    return this.httpClient.get<Grupo[]>('/grupos');
+  }
+
+  /**
+   * Obtiene grupos filtrados por centro del usuario actual
+   */
+  async getGroupsByCentro(): Promise<Grupo[]> {
+    return this.httpClient.get<Grupo[]>('/grupos/por-centro');
   }
 
   /**
    * Obtiene un grupo por ID
    */
-  async getGroupById(id: number): Promise<Group> {
-    return this.httpClient.get<Group>(`/grupos/${id}`);
+  async getGroupById(id: number): Promise<Grupo> {
+    return this.httpClient.get<Grupo>(`/grupos/${id}`);
   }
 
   /**
    * Crea un nuevo grupo
    */
-  async createGroup(groupData: CreateGroupRequest): Promise<Group> {
-    return this.httpClient.post<Group>('/grupos', groupData);
+  async createGroup(groupData: GrupoFormData): Promise<Grupo> {
+    return this.httpClient.post<Grupo>('/grupos', groupData);
   }
 
   /**
    * Actualiza un grupo existente
    */
-  async updateGroup(id: number, groupData: Partial<Group>): Promise<{ mensaje: string }> {
+  async updateGroup(id: number, groupData: UpdateGrupoRequest): Promise<{ mensaje: string }> {
     return this.httpClient.put<{ mensaje: string }>(`/grupos/${id}`, groupData);
   }
 
@@ -52,5 +45,19 @@ export class GroupService {
    */
   async deleteGroup(id: number): Promise<{ mensaje: string }> {
     return this.httpClient.delete<{ mensaje: string }>(`/grupos/${id}`);
+  }
+
+  /**
+   * Actualiza responsables de un grupo
+   */
+  async updateResponsables(id: number, responsables: number[]): Promise<{ mensaje: string }> {
+    return this.httpClient.put<{ mensaje: string }>(`/grupos/${id}/responsables`, { responsables });
+  }
+
+  /**
+   * Actualiza la lista de miembros de un grupo
+   */
+  async updateGroupMembers(id: number, usuarios_ids: number[]): Promise<{ mensaje: string }> {
+    return this.httpClient.put<{ mensaje: string }>(`/grupos/${id}/miembros`, { usuarios_ids });
   }
 }

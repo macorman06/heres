@@ -6,6 +6,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Badge } from 'primereact/badge';
 import { Chip } from 'primereact/chip';
+import { UserAvatar } from '../../common/UserAvatar';
 import { formatFullName } from '../../../utils/formatters';
 import type { User } from '../../../types/user.types';
 import './MembersTable.css';
@@ -23,13 +24,25 @@ export const MembersTable: React.FC<MembersTableProps> = ({
   canEditUser,
   loading = false,
 }) => {
+  const avatarTemplate = (rowData: User) => {
+    return (
+      <UserAvatar
+        userId={rowData.id}
+        nombre={rowData.nombre}
+        apellido={rowData.apellido1}
+        hasAvatar={!!rowData.foto_perfil}
+        size="medium"
+      />
+    );
+  };
+
   // Template para Usuario (nombre + email)
   const userTemplate = (rowData: User) => {
     const fullName = formatFullName(rowData.nombre, rowData.apellido1, rowData.apellido2);
     return (
       <div className="user-cell">
-        <div className="user-name">{fullName}</div>
-        <div className="user-email">{rowData.email}</div>
+        <span className="user-name">{fullName}</span>
+        <span className="user-email">{rowData.email}</span>
       </div>
     );
   };
@@ -46,15 +59,29 @@ export const MembersTable: React.FC<MembersTableProps> = ({
       animador: { label: 'Animador', severity: 'success' },
       miembro: { label: 'Miembro', severity: 'info' },
     };
+
     const rol = rolMap[rowData.rol?.toLowerCase()] || { label: 'Usuario', severity: 'info' };
-    return <Badge value={rol.label} severity={rol.severity} className="rol-badge" />;
+    return <Badge value={rol.label} severity={rol.severity} />;
+  };
+
+  // Template para Grupo
+  const grupoTemplate = (rowData: User) => {
+    if (!rowData.grupo_nombre) return <span className="text-muted">-</span>;
+    return (
+      <Chip
+        label={rowData.grupo_nombre}
+        style={{
+          backgroundColor: rowData.grupo_color || '#E5E7EB',
+          color: '#1F2937',
+        }}
+      />
+    );
   };
 
   // Template para Centro Juvenil con Chip
   const centroTemplate = (rowData: User) => {
     if (!rowData.centro_juvenil) return '-';
 
-    // Colores según centro
     const centroColors: Record<string, { bg: string; text: string }> = {
       'CJ Juveliber': { bg: '#DBEAFE', text: '#1E40AF' },
       'CJ La Balsa': { bg: '#D1FAE5', text: '#065F46' },
@@ -66,11 +93,7 @@ export const MembersTable: React.FC<MembersTableProps> = ({
     return (
       <Chip
         label={rowData.centro_juvenil}
-        className="centro-chip"
-        style={{
-          backgroundColor: colors.bg,
-          color: colors.text,
-        }}
+        style={{ backgroundColor: colors.bg, color: colors.text }}
       />
     );
   };
@@ -82,9 +105,7 @@ export const MembersTable: React.FC<MembersTableProps> = ({
     return (
       <div className="seccion-chips">
         {rowData.seccion.map((s, idx) => (
-          <span key={idx} className="seccion-badge">
-            {s}
-          </span>
+          <Chip key={idx} label={s} className="seccion-chip" />
         ))}
       </div>
     );
@@ -107,37 +128,47 @@ export const MembersTable: React.FC<MembersTableProps> = ({
     }
 
     return (
-      <div className="table-actions-compact">
-        <Button
-          icon="pi pi-pencil"
-          rounded
-          text
-          onClick={() => onEditUser(rowData)}
-          tooltip="Editar usuario"
-          tooltipOptions={{ position: 'left' }}
-        />
-      </div>
+      <Button
+        icon="pi pi-pencil"
+        rounded
+        text
+        severity="info"
+        onClick={() => onEditUser(rowData)}
+        tooltip="Editar usuario"
+        tooltipOptions={{ position: 'left' }}
+      />
     );
   };
 
   return (
     <DataTable
       value={users}
+      loading={loading}
+      paginator
+      rows={10}
+      rowsPerPageOptions={[5, 10, 25, 50]}
+      dataKey="id"
+      emptyMessage="No se encontraron usuarios"
       className="members-table"
       stripedRows
-      showGridlines
-      responsiveLayout="scroll"
-      loading={loading}
-      emptyMessage="No se encontraron usuarios"
     >
+      <Column body={avatarTemplate} style={{ width: '30px', textAlign: 'center' }} frozen />
+
       <Column
+        field="nombre"
         header="Usuario"
         body={userTemplate}
         sortable
-        sortField="nombre"
-        style={{ minWidth: '250px', maxWidth: '350px' }}
+        style={{ minWidth: '250px' }}
       />
       <Column field="rol" header="Rol" body={rolTemplate} sortable style={{ width: '150px' }} />
+      <Column
+        field="grupo_nombre"
+        header="Grupo"
+        body={grupoTemplate}
+        sortable
+        style={{ width: '150px' }}
+      />
       <Column
         field="centro_juvenil"
         header="Centro"
@@ -145,7 +176,12 @@ export const MembersTable: React.FC<MembersTableProps> = ({
         sortable
         style={{ width: '180px' }}
       />
-      <Column field="seccion" header="Sección" body={seccionTemplate} style={{ width: '150px' }} />
+      <Column
+        field="seccion"
+        header="Secciones"
+        body={seccionTemplate}
+        style={{ width: '180px' }}
+      />
       <Column
         field="puntuacion"
         header="Puntuación"
@@ -153,7 +189,12 @@ export const MembersTable: React.FC<MembersTableProps> = ({
         sortable
         style={{ width: '120px' }}
       />
-      <Column header="Acciones" body={actionsTemplate} style={{ width: '100px' }} />
+      <Column
+        body={actionsTemplate}
+        style={{ width: '80px', textAlign: 'center' }}
+        frozen
+        alignFrozen="right"
+      />
     </DataTable>
   );
 };

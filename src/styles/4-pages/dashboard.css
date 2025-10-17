@@ -1,0 +1,401 @@
+/* ============================================================================
+   DASHBOARD PAGE STYLES
+   Sistema HERES - Centro Juvenil
+
+   Archivo: src/styles/4-pages/dashboard.css
+   Descripción: Estilos específicos para la página principal del dashboard
+   ============================================================================ */
+
+/* ============================================================================
+   1. LAYOUT PRINCIPAL
+   ============================================================================ */
+
+.dashboard-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ============================================================================
+   2. HEADER DE BIENVENIDA
+   ============================================================================ */
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.dashboard-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary, #6b7280);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ============================================================================
+   3. GRID DE ESTADÍSTICAS
+   ============================================================================ */
+
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Tarjeta individual de estadística */
+.stat-card {
+  background: var(--card-background, #ffffff);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color, #e5e7eb);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Icono de la stat card */
+.stat-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+/* Variantes de color para iconos */
+.stat-card--blue .stat-card__icon {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.stat-card--green .stat-card__icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.stat-card--purple .stat-card__icon {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.stat-card--orange .stat-card__icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+/* Contenido de la stat card */
+.stat-card__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-card__label {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+}
+
+.stat-card__value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  margin: 0;
+  line-height: 1;
+}
+
+/* ============================================================================
+   4. LAYOUT GRID PRINCIPAL
+   ============================================================================ */
+
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.dashboard-main-column {
+  min-width: 0;
+}
+
+.dashboard-sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ============================================================================
+   5. WIDGET CARDS
+   ============================================================================ */
+
+.widget-card {
+  background: var(--card-background, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color, #e5e7eb);
+  overflow: hidden;
+}
+
+/* Header del widget */
+.widget-card__header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color, #f3f4f6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.widget-card__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary, #111827);
+  margin: 0;
+}
+
+.widget-card__badge {
+  background: var(--primary-color, #3b82f6);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Contenido del widget */
+.widget-card__content {
+  padding: 1rem 1.5rem;
+}
+
+/* Footer del widget */
+.widget-card__footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color, #f3f4f6);
+}
+
+.widget-card__link {
+  color: var(--primary-color, #3b82f6);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.widget-card__link:hover {
+  color: var(--primary-dark, #2563eb);
+}
+
+/* ============================================================================
+   6. TAREAS (TASK ITEMS)
+   ============================================================================ */
+
+.task-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  align-items: flex-start;
+}
+
+.task-item:not(:last-child) {
+  border-bottom: 1px solid var(--border-color, #f3f4f6);
+}
+
+.task-item__checkbox {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  accent-color: var(--primary-color, #3b82f6);
+}
+
+.task-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-item__title {
+  font-size: 0.875rem;
+  color: var(--text-primary, #111827);
+  margin: 0 0 0.25rem 0;
+  line-height: 1.4;
+}
+
+.task-item__meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #6b7280);
+  margin: 0;
+}
+
+/* ============================================================================
+   7. ANUNCIOS (ANNOUNCEMENT ITEMS)
+   ============================================================================ */
+
+.announcement-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  align-items: flex-start;
+}
+
+.announcement-item:not(:last-child) {
+  border-bottom: 1px solid var(--border-color, #f3f4f6);
+}
+
+/* Indicador de color */
+.announcement-item__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.announcement-item__dot--blue {
+  background: var(--primary-color, #3b82f6);
+}
+
+.announcement-item__dot--green {
+  background: var(--success-color, #10b981);
+}
+
+.announcement-item__dot--orange {
+  background: var(--warning-color, #f59e0b);
+}
+
+/* Contenido del anuncio */
+.announcement-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.announcement-item__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #111827);
+  margin: 0 0 0.25rem 0;
+}
+
+.announcement-item__text {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.5;
+}
+
+.announcement-item__meta {
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #9ca3af);
+  margin: 0;
+}
+
+/* ============================================================================
+   8. UTILIDADES
+   ============================================================================ */
+
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+/* ============================================================================
+   9. RESPONSIVE DESIGN
+   ============================================================================ */
+
+/* Tablets y pantallas medianas (≤1024px) */
+@media (max-width: 1024px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-sidebar-column {
+    order: 2;
+  }
+
+  .dashboard-main-column {
+    order: 1;
+  }
+}
+
+/* Móviles grandes (≤768px) */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .dashboard-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1.25rem;
+  }
+
+  .stat-card__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-card__value {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-title {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-subtitle {
+    font-size: 0.875rem;
+  }
+}
+
+/* Móviles pequeños (≤640px) */
+@media (max-width: 640px) {
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .widget-card__header,
+  .widget-card__content,
+  .widget-card__footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* ============================================================================
+   FIN DEL ARCHIVO
+   ============================================================================ */

@@ -19,6 +19,7 @@ export interface AuthResponse {
 
 export interface AuthContextType {
   user: User | null;
+  foto_perfil: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
