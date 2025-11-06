@@ -92,7 +92,7 @@ export const ActivityDetailsDialog: React.FC<ActivityDetailsDialogProps> = ({
       {actividad.responsable && (
         <div className="mb-4">
           <div className="flex items-center gap-2">
-            <UserAvatar userId={actividad.responsable.id} size="md" />
+            <UserAvatar userId={actividad.responsable.id} size="medium" />
             <span className="font-medium">Responsable:</span>
             <span>{actividad.responsable.nombre}</span>
           </div>

@@ -3,37 +3,34 @@
 import React, { useState } from 'react';
 import { Calendar, MapPin, Users, MoreVertical } from 'lucide-react';
 import { Menu } from 'primereact/menu';
+import { MenuItem } from 'primereact/menuitem';
 import { Actividad } from '../../../services/api/index';
 import { UserAvatar } from '../../common/UserAvatar';
 import { ActivityDetailsDialog } from '../../dialog/ActivityDetailsDialog/ActivityDetailsDialog';
 import { ActivityFormDialog } from '../../dialog/ActivityFormDialog/ActivityFormDialog';
 import { DeleteConfirmDialog } from '../../dialog/DeleteConfirmDialog/DeleteConfirmDialog';
 import { CreateTaskDialog } from '../../dialog/CreateTaskDialog/CreateTaskDialog';
+import { AddInvoiceDialog } from '../../dialog/AddInvoiceDialog/AddInvoiceDialog';
 import './ActivityCard.css';
 
 interface ActivityCardProps {
   actividad: Actividad;
   onUpdate?: () => void;
 }
-// src/components/cards/ActivityCard/ActivityCard.tsx
 
 export const ActivityCard: React.FC<ActivityCardProps> = ({ actividad, onUpdate }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showCreateTask, setShowCreateTask] = useState(false);
+  const [showAddInvoice, setShowAddInvoice] = useState(false);
   const menuRef = React.useRef<Menu>(null);
 
-  // ✅ Validación temprana - evitar crash
   if (!actividad) {
-    return (
-      <div className="activity-card">
-        <p className="text-gray-500 text-center py-4">Actividad no disponible</p>
-      </div>
-    );
+    return <div className="activity-card-empty">Actividad no disponible</div>;
   }
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       label: 'Ver detalles',
       icon: 'pi pi-eye',
@@ -45,9 +42,14 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({ actividad, onUpdate 
       command: () => setShowEdit(true),
     },
     {
-      label: 'Añadir tarea', // ✅ Nueva opción
+      label: 'Añadir tarea',
       icon: 'pi pi-check-square',
       command: () => setShowCreateTask(true),
+    },
+    {
+      label: 'Añadir factura',
+      icon: 'pi pi-euro',
+      command: () => setShowAddInvoice(true),
     },
     {
       separator: true,
@@ -60,13 +62,20 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({ actividad, onUpdate 
     },
   ];
 
-  // Formatear rango de fechas
+  // ==================== Formatear rango de fechas ====================
   const formatearRangoFechas = () => {
     const inicio = new Date(actividad.fecha_inicio);
     const fin = new Date(actividad.fecha_fin);
 
-    const horaInicio = inicio.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-    const horaFin = fin.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    const horaInicio = inicio.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const horaFin = fin.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
     const fechaInicio = inicio.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
@@ -81,14 +90,16 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({ actividad, onUpdate 
     if (fechaInicio === fechaFin) {
       return `${horaInicio} - ${horaFin} ${fechaInicio}`;
     }
+
     return `${horaInicio} ${fechaInicio} - ${horaFin} ${fechaFin}`;
   };
 
-  // Calcular duración
+  // ==================== Calcular duración ====================
   const calcularDuracion = () => {
     const inicio = new Date(actividad.fecha_inicio);
     const fin = new Date(actividad.fecha_fin);
     const diff = fin.getTime() - inicio.getTime();
+
     const horas = Math.floor(diff / (1000 * 60 * 60));
     const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
@@ -96,11 +107,12 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({ actividad, onUpdate 
       const dias = Math.floor(horas / 24);
       return `${dias}d ${horas % 24}h`;
     }
+
     return horas > 0 ? `${horas}h ${minutos}m` : `${minutos}m`;
   };
 
-  // Color según tipo
-  const getTipoColor = (tipo: string) => {
+  // ==================== Colores según tipo ====================
+  const getTipoColor = (tipo: string): string => {
     const colores: Record<string, string> = {
       Programación: 'bg-blue-100 text-blue-800 border-blue-300',
       Oración: 'bg-purple-100 text-purple-800 border-purple-300',
@@ -109,20 +121,22 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({ actividad, onUpdate 
       Reunión: 'bg-yellow-100 text-yellow-800 border-yellow-300',
       Formación: 'bg-pink-100 text-pink-800 border-pink-300',
     };
+
     return colores[tipo] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
 
-  // Color según sección
-  const getSeccionColor = (seccion: string) => {
+  // ==================== Colores según sección ====================
+  const getSeccionColor = (seccion: string): string => {
     const colores: Record<string, string> = {
       CJ: 'bg-indigo-100 text-indigo-800',
       Chiqui: 'bg-teal-100 text-teal-800',
       Ambas: 'bg-violet-100 text-violet-800',
     };
+
     return colores[seccion] || 'bg-gray-100 text-gray-800';
   };
 
-  // ✅ Usar optional chaining y valores por defecto
+  // ==================== Calcular total de participantes ====================
   const totalParticipantes =
     (actividad.animadores_ids?.length ?? 0) + (actividad.participantes_ids?.length ?? 0);
 
@@ -255,6 +269,17 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({ actividad, onUpdate 
         onHide={() => setShowCreateTask(false)}
         onSuccess={() => {
           setShowCreateTask(false);
+          onUpdate?.();
+        }}
+      />
+
+      <AddInvoiceDialog
+        visible={showAddInvoice}
+        actividadId={actividad.id}
+        actividadNombre={actividad.nombre}
+        onHide={() => setShowAddInvoice(false)}
+        onSuccess={() => {
+          setShowAddInvoice(false);
           onUpdate?.();
         }}
       />

@@ -49,7 +49,6 @@
 /* Dropdown Styling */
 .p-dropdown {
   background: var(--bg-primary) !important;
-  border: 1px solid var(--border-secondary) !important;
   border-radius: var(--border-radius-md) !important;
   transition: all var(--transition-normal) !important;
   min-height: var(--field-height) !important;

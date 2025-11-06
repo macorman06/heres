@@ -47,7 +47,7 @@ export interface Actividad {
 
 export interface CreateActividadDTO {
   nombre: string;
-  descripcion?: string;
+  descripcion: string;
   usuario_responsable_id: number;
   animadores_ids?: number[];
   participantes_ids?: number[];

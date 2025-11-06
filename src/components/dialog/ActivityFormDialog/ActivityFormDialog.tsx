@@ -1,19 +1,36 @@
 // src/components/dialog/ActivityFormDialog/ActivityFormDialog.tsx
+
 import React, { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
+import { Editor } from 'primereact/editor';
 import { Actividad, CreateActividadDTO, actividadesService } from '../../../services/api/index';
+import './ActivityFormDialog.css';
 
 interface ActivityFormDialogProps {
   visible: boolean;
   actividad?: Actividad | null;
   onHide: () => void;
   onSuccess: () => void;
+}
+
+interface FormDataType {
+  nombre: string;
+  descripcion: string;
+  tipo_actividad: string;
+  seccion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  ubicacion: string;
+  es_recurrente: boolean;
+  usuario_responsable_id: number;
+  animadores_ids: number[];
+  participantes_ids: number[];
+  visibilidad_roles: string[];
 }
 
 export const ActivityFormDialog: React.FC<ActivityFormDialogProps> = ({
@@ -29,7 +46,7 @@ export const ActivityFormDialog: React.FC<ActivityFormDialogProps> = ({
   // Obtener usuario actual del localStorage
   const currentUserId = parseInt(localStorage.getItem('userId') || '0');
 
-  const [formData, setFormData] = useState<Partial<CreateActividadDTO>>({
+  const [formData, setFormData] = useState<FormDataType>({
     nombre: '',
     descripcion: '',
     tipo_actividad: 'Actividad normal',
@@ -44,7 +61,7 @@ export const ActivityFormDialog: React.FC<ActivityFormDialogProps> = ({
     visibilidad_roles: [],
   });
 
-  // Resetear o cargar datos cuando el diálogo se abre/cierra
+  // ==================== Lifecycle ====================
   useEffect(() => {
     if (visible) {
       if (actividad) {
@@ -157,6 +174,7 @@ export const ActivityFormDialog: React.FC<ActivityFormDialogProps> = ({
           life: 3000,
         });
       }
+
       onSuccess();
       onHide();
     } catch (error: any) {
@@ -185,12 +203,13 @@ export const ActivityFormDialog: React.FC<ActivityFormDialogProps> = ({
       usuario_responsable_id: currentUserId,
       animadores_ids: [],
       participantes_ids: [],
+      visibilidad_roles: [],
     });
     setErrors({});
     onHide();
   };
 
-  // ==================== Opciones de dropdowns ====================
+  // ==================== Opciones de Dropdowns ====================
   const tiposActividad = [
     { label: 'Programación', value: 'Programación' },
     { label: 'Oración', value: 'Oración' },
@@ -206,157 +225,171 @@ export const ActivityFormDialog: React.FC<ActivityFormDialogProps> = ({
     { label: 'Ambas', value: 'Ambas' },
   ];
 
-  // ==================== Footer del diálogo ====================
+  // ==================== Footer del Diálogo ====================
   const footer = (
-    <div className="flex gap-2 justify-content-end align-items-center flex-row-reverse">
-      <Button
-        label={actividad ? 'Actualizar' : 'Crear'}
-        icon="pi pi-check"
-        onClick={handleSubmit}
-        loading={loading}
-        autoFocus
-        className="btn-primary"
-      />
+    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
       <Button
         label="Cancelar"
         icon="pi pi-times"
         onClick={handleCancel}
-        className="btn-secondary"
-        disabled={loading}
+        className="p-button-secondary"
+      />
+      <Button
+        label={actividad?.id ? 'Actualizar' : 'Crear'}
+        icon="pi pi-check"
+        onClick={handleSubmit}
+        loading={loading}
+        className="p-button-primary"
       />
     </div>
   );
 
+  // ==================== Render ====================
   return (
     <>
       <Toast ref={toast} />
       <Dialog
         visible={visible}
-        onHide={handleCancel}
-        header={actividad ? 'Editar Actividad' : 'Nueva Actividad'}
+        onHide={onHide}
+        header={actividad?.id ? 'Editar Actividad' : 'Nueva Actividad'}
         footer={footer}
-        style={{ width: '50vw' }}
-        breakpoints={{ '960px': '75vw', '641px': '95vw' }}
         modal
-        maskClassName="dialog-dark-mask"
+        className="activity-form-dialog"
+        style={{ width: '100%', maxWidth: '800px' }}
       >
-        <div className="p-fluid">
-          {/* Nombre */}
-          <div className="field">
-            <label htmlFor="nombre" className="font-semibold">
-              Nombre <span className="text-red-500">*</span>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* ==================== Nombre ==================== */}
+          <div className="form-field">
+            <label htmlFor="nombre" className="required">
+              Nombre
             </label>
             <InputText
               id="nombre"
-              value={formData.nombre || ''}
+              value={formData.nombre}
               onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-              className={errors.nombre ? 'p-invalid' : ''}
+              className={errors.nombre ? 'p-invalid w-full' : 'w-full'}
               placeholder="Ej: Reunión semanal del CJ"
             />
-            {errors.nombre && <small className="p-error">{errors.nombre}</small>}
+            {errors.nombre && <div className="error-message">{errors.nombre}</div>}
           </div>
 
-          {/* Descripción */}
-          <div className="field">
-            <label htmlFor="descripcion" className="font-semibold">
+          {/* ==================== Descripción con Editor ==================== */}
+          <div className="form-field">
+            <label htmlFor="descripcion" className="required">
               Descripción
             </label>
-            <InputTextarea
+            <Editor
               id="descripcion"
-              value={formData.descripcion || ''}
-              onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-              rows={3}
+              value={formData.descripcion}
+              onTextChange={(e) => setFormData({ ...formData, descripcion: e.htmlValue || '' })}
+              style={{ height: '320px' }}
               placeholder="Describe brevemente la actividad..."
             />
           </div>
 
-          {/* Tipo y Sección en la misma fila */}
-          <div className="formgrid grid">
-            <div className="field col-12 md:col-6">
-              <label htmlFor="tipo" className="font-semibold">
-                Tipo de Actividad <span className="text-red-500">*</span>
+          {/* ==================== Tipo y Sección (2 columnas) ==================== */}
+          <div className="form-row">
+            <div className="form-field">
+              <label htmlFor="tipo_actividad" className="required">
+                Tipo de Actividad
               </label>
               <Dropdown
-                id="tipo"
+                id="tipo_actividad"
                 value={formData.tipo_actividad}
-                options={tiposActividad}
                 onChange={(e) => setFormData({ ...formData, tipo_actividad: e.value })}
+                options={tiposActividad}
                 placeholder="Selecciona tipo"
-                className={errors.tipo_actividad ? 'p-invalid' : ''}
+                className={errors.tipo_actividad ? 'p-invalid w-full' : 'w-full'}
               />
-              {errors.tipo_actividad && <small className="p-error">{errors.tipo_actividad}</small>}
+              {errors.tipo_actividad && (
+                <div className="error-message">{errors.tipo_actividad}</div>
+              )}
             </div>
 
-            <div className="field col-12 md:col-6">
-              <label htmlFor="seccion" className="font-semibold">
-                Sección <span className="text-red-500">*</span>
+            <div className="form-field">
+              <label htmlFor="seccion" className="required">
+                Sección
               </label>
               <Dropdown
                 id="seccion"
                 value={formData.seccion}
-                options={seccionesOptions}
                 onChange={(e) => setFormData({ ...formData, seccion: e.value })}
+                options={seccionesOptions}
                 placeholder="Selecciona sección"
-                className={errors.seccion ? 'p-invalid' : ''}
+                className={errors.seccion ? 'p-invalid w-full' : 'w-full'}
               />
-              {errors.seccion && <small className="p-error">{errors.seccion}</small>}
+              {errors.seccion && <div className="error-message">{errors.seccion}</div>}
             </div>
           </div>
 
-          {/* Fechas en la misma fila */}
-          <div className="formgrid grid">
-            <div className="field col-12 md:col-6">
-              <label htmlFor="fecha_inicio" className="font-semibold">
-                Fecha de Inicio <span className="text-red-500">*</span>
+          {/* ==================== Fechas (2 columnas) ==================== */}
+          <div className="form-row">
+            <div className="form-field">
+              <label htmlFor="fecha_inicio" className="required">
+                Fecha de Inicio
               </label>
               <Calendar
                 id="fecha_inicio"
                 value={formData.fecha_inicio ? new Date(formData.fecha_inicio) : null}
                 onChange={(e) =>
-                  setFormData({ ...formData, fecha_inicio: e.value?.toISOString() || '' })
+                  setFormData({
+                    ...formData,
+                    fecha_inicio: e.value?.toISOString() || '',
+                  })
                 }
                 showTime
                 hourFormat="24"
+                stepMinute={15}
                 showIcon
                 dateFormat="dd/mm/yy"
-                className={errors.fecha_inicio ? 'p-invalid' : ''}
+                timeOnly={false}
+                appendTo={document.body}
+                className="calendar-pequeno"
+                inputClassName="calendar-input-pequeno"
               />
-              {errors.fecha_inicio && <small className="p-error">{errors.fecha_inicio}</small>}
+              {errors.fecha_inicio && <div className="error-message">{errors.fecha_inicio}</div>}
             </div>
 
-            <div className="field col-12 md:col-6">
-              <label htmlFor="fecha_fin" className="font-semibold">
-                Fecha de Fin <span className="text-red-500">*</span>
+            <div className="form-field">
+              <label htmlFor="fecha_fin" className="required">
+                Fecha de Fin
               </label>
               <Calendar
                 id="fecha_fin"
                 value={formData.fecha_fin ? new Date(formData.fecha_fin) : null}
                 onChange={(e) =>
-                  setFormData({ ...formData, fecha_fin: e.value?.toISOString() || '' })
+                  setFormData({
+                    ...formData,
+                    fecha_fin: e.value?.toISOString() || '',
+                  })
                 }
                 showTime
                 hourFormat="24"
+                stepMinute={15}
                 showIcon
                 dateFormat="dd/mm/yy"
-                className={errors.fecha_fin ? 'p-invalid' : ''}
+                timeOnly={false}
+                appendTo={document.body}
+                className="calendar-pequeno"
+                inputClassName="calendar-input-pequeno"
               />
-              {errors.fecha_fin && <small className="p-error">{errors.fecha_fin}</small>}
+              {errors.fecha_fin && <div className="error-message">{errors.fecha_fin}</div>}
             </div>
           </div>
 
-          {/* Ubicación */}
-          <div className="field">
-            <label htmlFor="ubicacion" className="font-semibold">
-              Ubicación <span className="text-red-500">*</span>
+          {/* ==================== Ubicación ==================== */}
+          <div className="form-field">
+            <label htmlFor="ubicacion" className="required">
+              Ubicación
             </label>
             <InputText
               id="ubicacion"
-              value={formData.ubicacion || ''}
+              value={formData.ubicacion}
               onChange={(e) => setFormData({ ...formData, ubicacion: e.target.value })}
-              className={errors.ubicacion ? 'p-invalid' : ''}
+              className={errors.ubicacion ? 'p-invalid w-full' : 'w-full'}
               placeholder="Ej: Sala principal, Online, etc."
             />
-            {errors.ubicacion && <small className="p-error">{errors.ubicacion}</small>}
+            {errors.ubicacion && <div className="error-message">{errors.ubicacion}</div>}
           </div>
         </div>
       </Dialog>

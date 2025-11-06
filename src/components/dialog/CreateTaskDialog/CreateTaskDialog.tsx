@@ -187,12 +187,12 @@ export const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({
   };
 
   const footer = (
-    <div className="flex justify-content-end gap-2">
+    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
       <Button
         label="Cancelar"
         icon="pi pi-times"
         onClick={onHide}
-        className="p-button-text"
+        className="p-button-secondary"
         disabled={loading}
       />
       <Button
@@ -201,6 +201,7 @@ export const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({
         onClick={handleSubmit}
         loading={loading}
         autoFocus
+        className="p-button-primary"
       />
     </div>
   );
