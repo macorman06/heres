@@ -25,16 +25,18 @@ export interface User {
   email?: string;
   rol_id: number;
   rol: string;
-  centro_juvenil?: CentroJuvenil; // ✅ Usar tipo de general.types
-  seccion?: Seccion[]; // ✅ Usar tipo de general.types
-  sexo?: Sexo; // ✅ Usar tipo de general.types
+  grupos?: number[];
+  grupo_nombre?: string;
+  centro_juvenil?: CentroJuvenil;
+  seccion?: Seccion[];
+  sexo?: Sexo;
   edad?: number;
   birthday?: string;
   direccion?: string;
   localidad?: string;
   telefono?: string;
   alergias?: string[];
-  talla?: Talla; // ✅ Usar tipo de general.types
+  talla?: Talla;
   fecha_creacion?: string;
   fecha_modificacion?: string;
   can_login?: boolean;
@@ -42,6 +44,7 @@ export interface User {
   codigo_postal?: string;
   fecha_nacimiento?: string;
   puntuacion?: number;
+  has_avatar?: boolean;
 }
 
 // ============================================
@@ -54,8 +57,10 @@ export interface UserFormData {
   email?: string;
   password?: string;
   rol_id: number;
+  grupo_id?: number | null;
   centro_juvenil?: CentroJuvenil;
   seccion?: Seccion[];
+  edad?: number;
   sexo?: Sexo;
   birthday?: string;
   direccion?: string;

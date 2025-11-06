@@ -1,0 +1,408 @@
+/* ============================================================================
+   TOPBAR STYLES
+   Barra superior de navegación con soporte para tema oscuro
+   ============================================================================ */
+
+/* ============================================================================
+   REGION: ESTILOS BASE DEL TOPBAR
+   ============================================================================ */
+
+/**
+ * Contenedor principal del topbar
+ * - Altura fija de 70px
+ * - Sticky para permanecer visible al hacer scroll
+ * - Usa variables CSS para adaptarse al tema (claro/oscuro)
+ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  min-height: 70px;
+  padding: 0 1.5rem;
+
+  /* Colores adaptables al tema */
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--surface-border);
+
+  /* Posicionamiento sticky */
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+  /* Transición suave al cambiar de tema */
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* ============================================================================
+   REGION: SECCIONES DEL TOPBAR (LEFT, CENTER, RIGHT)
+   ============================================================================ */
+
+/**
+ * Contenedores de las tres secciones principales
+ * - Left: Logo y título de página
+ * - Center: Buscador
+ * - Right: Notificaciones, tema, avatar
+ */
+.topbar-left,
+.topbar-center,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/**
+ * Sección central con buscador
+ * - Flex: 1 para ocupar espacio disponible
+ * - Max-width para no ocupar demasiado espacio
+ */
+.topbar-center {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 2rem;
+}
+
+/* ============================================================================
+   REGION: TÍTULO DE PÁGINA
+   ============================================================================ */
+
+/**
+ * Título de la página actual (Dashboard, Miembros, etc.)
+ */
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 !important;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+/* ============================================================================
+   REGION: BUSCADOR
+   ============================================================================ */
+
+/**
+ * Contenedor del input de búsqueda
+ */
+.search-container {
+  width: 100%;
+}
+
+/**
+ * Campo de búsqueda
+ * Heredará estilos de PrimeReact InputText
+ */
+.topbar-search {
+  width: 100%;
+}
+
+.topbar-search input {
+  background: var(--surface-ground);
+  border-color: var(--surface-border);
+  color: var(--text-color);
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.topbar-search input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem var(--primary-color-alpha-20);
+}
+
+/* ============================================================================
+   REGION: ICONOS Y NOTIFICACIONES
+   ============================================================================ */
+
+/**
+ * Wrapper para iconos (notificaciones, configuración, etc.)
+ */
+.topbar-icon-wrapper {
+  position: relative;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+  color: var(--text-color);
+}
+
+.topbar-icon-wrapper:hover {
+  background: var(--surface-hover);
+}
+
+.topbar-icon-wrapper i {
+  font-size: 1.25rem;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+/* ============================================================================
+   REGION: SECCIÓN DE USUARIO (AVATAR + INFO)
+   ============================================================================ */
+
+/**
+ * Contenedor del avatar y nombre de usuario
+ * - Hover effect para indicar que es clickeable
+ */
+.user-section,
+.topbar-avatar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+}
+
+.user-section:hover,
+.topbar-avatar-wrapper:hover {
+  background: var(--surface-hover);
+}
+
+/**
+ * Información del usuario (nombre + rol)
+ */
+.user-info,
+.topbar-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+/**
+ * Nombre del usuario
+ */
+.topbar-user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+/**
+ * Rol del usuario
+ */
+.topbar-user-role {
+  font-size: 0.75rem;
+  color: var(--text-color-secondary);
+  line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+/**
+ * Avatar del usuario (usando componente UserAvatar)
+ */
+.topbar-avatar {
+  flex-shrink: 0;
+}
+
+/**
+ * Icono de dropdown junto al usuario
+ */
+.topbar-dropdown-icon {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+  transition:
+    transform 0.2s ease,
+    color 0.3s ease;
+}
+
+.topbar-avatar-wrapper:hover .topbar-dropdown-icon {
+  color: var(--text-color);
+  transform: translateY(2px);
+}
+
+/* ============================================================================
+   REGION: MENÚ DESPLEGABLE DE USUARIO
+   ============================================================================ */
+
+/**
+ * Estilos para el menú desplegable de usuario
+ * (heredará estilos de PrimeReact Menu)
+ */
+.topbar-user-menu {
+  min-width: 200px;
+  margin-top: 0.5rem;
+}
+
+.topbar-user-menu .p-menuitem-link {
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.topbar-user-menu .p-menuitem-link:hover {
+  background: var(--surface-hover);
+}
+
+/* ============================================================================
+   REGION: MODO OSCURO - MEJORAS ESPECÍFICAS
+   ============================================================================ */
+
+/**
+ * Ajustes específicos para tema oscuro
+ * Mejora el contraste y la legibilidad
+ */
+.dark .topbar {
+  background: var(--surface-900);
+  border-bottom-color: var(--surface-700);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/**
+ * Texto más claro en modo oscuro
+ */
+.dark .page-title {
+  color: var(--gray-100);
+  margin: 0 !important;
+}
+
+.dark .user-name {
+  color: var(--gray-100);
+}
+
+.dark .topbar-user-role {
+  color: var(--gray-400);
+}
+
+/**
+ * Iconos más visibles en modo oscuro
+ */
+.dark .topbar-icon-wrapper i {
+  color: var(--gray-300);
+}
+
+.dark .topbar-icon-wrapper:hover i {
+  color: var(--gray-100);
+}
+
+/**
+ * Input de búsqueda en modo oscuro
+ */
+.dark .topbar-search input {
+  background: var(--surface-800);
+  border-color: var(--surface-600);
+  color: var(--gray-100);
+}
+
+.dark .topbar-search input::placeholder {
+  color: var(--gray-500);
+}
+
+.dark .topbar-search input:focus {
+  background: var(--surface-700);
+  border-color: var(--primary-color);
+}
+
+/**
+ * Hover states más sutiles en modo oscuro
+ */
+.dark .user-section:hover,
+.dark .topbar-avatar-wrapper:hover,
+.dark .topbar-icon-wrapper:hover {
+  background: var(--surface-800);
+}
+
+/* ============================================================================
+   REGION: RESPONSIVE
+   ============================================================================ */
+
+/**
+ * Tablets (max-width: 1024px)
+ * - Reducir padding
+ * - Ocultar texto del usuario, solo avatar
+ */
+@media (max-width: 1024px) {
+  .topbar {
+    padding: 0 1rem;
+  }
+
+  .topbar-center {
+    max-width: 300px;
+    margin: 0 1rem;
+  }
+
+  .topbar-user-info {
+    display: none;
+  }
+
+  .topbar-dropdown-icon {
+    display: none;
+  }
+}
+
+/**
+ * Móviles (max-width: 768px)
+ * - Ocultar buscador central
+ * - Reducir espaciado
+ */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0 0.75rem;
+  }
+
+  .topbar-center {
+    display: none;
+  }
+
+  .topbar-left,
+  .topbar-right {
+    gap: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 1.125rem;
+  }
+
+  .topbar-icon-wrapper {
+    padding: 0.375rem;
+  }
+}
+
+/**
+ * Móviles pequeños (max-width: 480px)
+ * - Ocultar título de página
+ * - Solo iconos esenciales
+ */
+@media (max-width: 480px) {
+  .page-title {
+    display: none;
+  }
+
+  .topbar-icon-wrapper i {
+    font-size: 1.125rem;
+  }
+}
+
+/* ============================================================================
+   REGION: ACCESIBILIDAD
+   ============================================================================ */
+
+/**
+ * Estados de focus visibles para navegación por teclado
+ */
+.topbar-icon-wrapper:focus-visible,
+.user-section:focus-visible,
+.topbar-avatar-wrapper:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/**
+ * Respetar preferencias de movimiento reducido
+ */
+@media (prefers-reduced-motion: reduce) {
+  .topbar,
+  .topbar-icon-wrapper,
+  .user-section,
+  .topbar-dropdown-icon,
+  .topbar-search input {
+    transition: none;
+  }
+}

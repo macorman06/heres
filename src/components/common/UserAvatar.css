@@ -1,0 +1,234 @@
+/* src/components/common/UserAvatar.css */
+
+/* ============================================================================
+   USER AVATAR COMPONENT STYLES
+   ============================================================================ */
+
+/* Base Avatar Container */
+.user-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* ✅ Hover effect con tooltip nativo */
+.user-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+/* Tooltip nativo mejorado */
+.user-avatar[title] {
+  cursor: help;
+}
+
+/* ============================================================================
+   SIZES - Tamaños del avatar
+   ============================================================================ */
+
+.user-avatar--small {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+}
+
+.user-avatar--medium {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+}
+
+.user-avatar--large {
+  width: 64px;
+  height: 64px;
+  font-size: 20px;
+}
+
+/* ============================================================================
+   IMAGEN dentro del avatar
+   ============================================================================ */
+
+.user-avatar__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* ============================================================================
+   INICIALES (fallback)
+   ============================================================================ */
+
+.user-avatar__initials {
+  line-height: 1;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* ============================================================================
+   LOADING STATE - Estado de carga
+   ============================================================================ */
+
+.user-avatar__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8em;
+}
+
+.user-avatar--loading {
+  background-color: #e5e7eb;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================================================
+   ANIMATIONS - Animaciones
+   ============================================================================ */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ============================================================================
+   AVATAR GROUP - Grupo de avatares superpuestos
+   ============================================================================ */
+
+.user-avatar-group {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar-group .user-avatar {
+  margin-left: -8px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar-group .user-avatar:first-child {
+  margin-left: 0;
+}
+
+.user-avatar-group .user-avatar:hover {
+  z-index: 20;
+  margin-left: -8px;
+  margin-right: 4px;
+}
+
+/* ============================================================================
+   RESPONSIVE - Mobile
+   ============================================================================ */
+
+@media (max-width: 640px) {
+  .user-avatar--small {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .user-avatar--medium {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .user-avatar--large {
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+  }
+
+  .user-avatar-group .user-avatar {
+    margin-left: -6px;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .user-avatar--loading {
+    background-color: #374151;
+  }
+
+  .user-avatar-group .user-avatar {
+    border-color: #1f2937;
+  }
+}
+
+/* ============================================================================
+   ESTADOS ADICIONALES
+   ============================================================================ */
+
+/* Avatar con borde (para destacar usuario activo) */
+.user-avatar--active {
+  border: 3px solid #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Avatar deshabilitado */
+.user-avatar--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+.user-avatar--disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Avatar con indicador online */
+.user-avatar--online::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 25%;
+  height: 25%;
+  background-color: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+/* Avatar con indicador offline */
+.user-avatar--offline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 25%;
+  height: 25%;
+  background-color: #9ca3af;
+  border: 2px solid white;
+  border-radius: 50%;
+}

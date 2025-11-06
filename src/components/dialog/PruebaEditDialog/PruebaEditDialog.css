@@ -1,0 +1,154 @@
+/* src/components/dialog/PruebaEditDialog/PruebaEditDialog.css */
+
+.prueba-edit-dialog .p-dialog-content {
+  padding: 0;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dialog-content {
+  padding: 1.5rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.field {
+  margin-bottom: 1.25rem;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.field-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 0.25rem;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f1f5f9;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Estilos para InputNumber buttons */
+.p-inputnumber .p-inputnumber-button {
+  width: 2rem;
+}
+
+/* Estilos para Chips */
+.p-chips .p-chips-multiple-container {
+  padding: 0.5rem;
+}
+
+.p-chips .p-chips-token {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  margin: 0.125rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+/* Scrollbar personalizado */
+.dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dialog-content {
+    padding: 1rem;
+  }
+
+  .section {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 0.9rem;
+  }
+
+  .field-group {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .dialog-footer {
+    padding: 0.75rem 1rem;
+    flex-direction: column-reverse;
+  }
+
+  .dialog-footer .p-button {
+    width: 100%;
+  }
+}

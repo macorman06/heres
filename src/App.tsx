@@ -100,6 +100,7 @@ function App() {
                   <Route path="/profile" element={<Pages.ProfilePage />} />
                   <Route path="/grupos" element={<Pages.Grupos />} />
                   <Route path="/ranking" element={<Pages.Ranking />} />
+                  <Route path="/tasks" element={<Pages.Tasks />} />
 
                   {/* Materiales */}
                   <Route path="/materiales" element={<Pages.Materials />} />
@@ -151,9 +152,7 @@ function App() {
                   <Route path="/materiales/juegos/otros" element={<Pages.OtrosJuegosPage />} />
 
                   {/* Pruebas */}
-                  <Route path="/materiales/pruebas" element={<Pages.PruebasIndex />} />
-                  <Route path="/materiales/pruebas/interior" element={<Pages.InteriorPage />} />
-                  <Route path="/materiales/pruebas/exterior" element={<Pages.ExteriorPage />} />
+                  <Route path="/materiales/pruebas" element={<Pages.PruebasPage />} />
 
                   {/* Oraciones */}
                   <Route path="/materiales/oraciones" element={<Pages.OracionesIndex />} />

@@ -1,0 +1,279 @@
+/* ==================== Dialog Container ==================== */
+.invoice-form-dialog {
+  width: 100%;
+  max-width: 600px;
+}
+
+.invoice-form-dialog :global(.p-dialog-header) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0;
+}
+
+.invoice-form-dialog :global(.p-dialog-header-title) {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.invoice-form-dialog :global(.p-dialog-header-close) {
+  color: white;
+  opacity: 0.8;
+}
+
+.invoice-form-dialog :global(.p-dialog-header-close:hover) {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ==================== Dialog Content ==================== */
+.invoice-form-dialog :global(.p-dialog-content) {
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+/* ==================== Activity Info ==================== */
+.invoice-activity-info {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border: 1px solid #667eea30;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.invoice-activity-label {
+  margin: 0 0 0.5rem 0;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.invoice-activity-name {
+  margin: 0;
+  color: #667eea;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* ==================== Form Fields ==================== */
+.form-field {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.form-field label.required::after {
+  content: ' *';
+  color: #e74c3c;
+  margin-left: 0.25rem;
+}
+
+/* ==================== Input Fields ==================== */
+.invoice-form-dialog :global(.p-inputtext) {
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.invoice-form-dialog :global(.p-inputtext:focus) {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+  outline: none;
+}
+
+.invoice-form-dialog :global(.p-inputtext.p-invalid) {
+  border-color: #e74c3c;
+}
+
+/* ==================== Input Number ==================== */
+.invoice-form-dialog :global(.p-inputnumber) {
+  width: 100%;
+}
+
+.invoice-form-dialog :global(.p-inputnumber .p-inputnumber-input) {
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+}
+
+.invoice-form-dialog :global(.p-inputnumber.p-invalid .p-inputnumber-input) {
+  border-color: #e74c3c;
+}
+
+/* ==================== Calendar ==================== */
+.invoice-form-dialog :global(.p-calendar) {
+  width: 100%;
+}
+
+.invoice-form-dialog :global(.p-calendar .p-inputtext) {
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
+/* ==================== Dropdown ==================== */
+.invoice-form-dialog :global(.p-dropdown) {
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  width: 100%;
+}
+
+.invoice-form-dialog :global(.p-dropdown.p-focus) {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+.invoice-form-dialog :global(.p-dropdown.p-invalid) {
+  border-color: #e74c3c;
+}
+
+/* ==================== File Upload ==================== */
+.invoice-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.invoice-form-dialog :global(.invoice-file-upload.p-fileupload) {
+  border: 2px dashed #667eea;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: white;
+}
+
+.invoice-form-dialog :global(.invoice-file-upload .p-fileupload-choose) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.invoice-form-dialog :global(.invoice-file-upload .p-fileupload-choose:hover) {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.invoice-file-info {
+  background-color: #f0f9f0;
+  border: 1px solid #90ee90;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.invoice-file-name {
+  margin: 0;
+  color: #2d5016;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ==================== Two Column Layout ==================== */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* ==================== Error Messages ==================== */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.error-message::before {
+  content: '⚠';
+  font-weight: bold;
+}
+
+/* ==================== Dialog Footer ==================== */
+.invoice-form-dialog :global(.p-dialog-footer) {
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* ==================== Buttons ==================== */
+.invoice-form-dialog :global(.p-button) {
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.invoice-form-dialog :global(.p-button-primary) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.invoice-form-dialog :global(.p-button-primary:hover) {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.invoice-form-dialog :global(.p-button-secondary) {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border: 1px solid #bdc3c7;
+}
+
+.invoice-form-dialog :global(.p-button-secondary:hover) {
+  background-color: #d5dbdb;
+}
+
+.invoice-form-dialog :global(.p-button:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 480px) {
+  .invoice-form-dialog {
+    max-width: 100%;
+  }
+
+  .invoice-form-dialog :global(.p-dialog-content) {
+    padding: 1.5rem 1rem;
+  }
+
+  .invoice-form-dialog :global(.p-dialog-footer) {
+    flex-direction: column-reverse;
+    padding: 1rem;
+  }
+
+  .invoice-form-dialog :global(.p-button) {
+    width: 100%;
+  }
+}

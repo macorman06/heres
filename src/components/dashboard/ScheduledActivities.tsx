@@ -1,143 +1,102 @@
-import React, { useState, useMemo } from 'react';
+// src/components/dashboard/ScheduledActivities.tsx
+
+import React, { useEffect, useState } from 'react';
 import { Card } from 'primereact/card';
-import { Dropdown } from 'primereact/dropdown';
-import { CalendarEvent, FILTER_OPTIONS, FilterOption } from '../../data';
-import { ActivityCard } from './ActivityCard';
+import { ActivityCard } from '../cards/ActivityCard/ActivityCard';
+import { actividadesService } from '../../services/api/index';
+import type { Actividad } from '../../services/api/index';
 
-interface ScheduledActivitiesProps {
-  events: CalendarEvent[];
-  loading?: boolean;
-  onActivityAction?: (eventId: string) => void;
-}
+// ✅ SIN PROPS - El componente carga sus propias actividades
+export const ScheduledActivities: React.FC = () => {
+  const [actividades, setActividades] = useState<Actividad[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export const ScheduledActivities: React.FC<ScheduledActivitiesProps> = ({
-  events,
-  loading = false,
-  onActivityAction,
-}) => {
-  const [selectedFilter, setSelectedFilter] = useState<FilterOption>('all');
+  const fetchActividades = async () => {
+    try {
+      setLoading(true);
+      const data = await actividadesService.listar();
+      // Filtrar solo próximas actividades (futuras)
+      const ahora = new Date();
+      const proximasActividades = data
+        .filter((act: Actividad) => new Date(act.fecha_inicio) >= ahora)
+        .sort(
+          (a: Actividad, b: Actividad) =>
+            new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime()
+        )
+        .slice(0, 5); // Solo las 5 próximas
 
-  // Filtrar eventos según la selección
-  const filteredEvents = useMemo(() => {
-    if (selectedFilter === 'all') {
-      return events;
-    }
-    return events.filter((event) => event.badge === selectedFilter);
-  }, [events, selectedFilter]);
-
-  if (loading) {
-    return (
-      <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="h-6 bg-gray-200 rounded w-48 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-40 animate-pulse"></div>
-          </div>
-          <div className="space-y-4">
-            {[...Array(3)].map((_, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4 animate-pulse">
-                <div className="flex">
-                  <div className="flex-shrink-0 text-center mr-4">
-                    <div className="h-4 bg-gray-200 rounded w-12 mb-2"></div>
-                    <div className="h-8 bg-gray-200 rounded w-12 mb-3"></div>
-                    <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto"></div>
-                  </div>
-                  <div className="flex-grow">
-                    <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-                    <div className="h-5 bg-gray-200 rounded w-full mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
-                    <div className="flex gap-1">
-                      <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
-                      <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
-                      <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Card>
-    );
-  }
-
-  const handleActivityAction = (eventId: string) => {
-    if (onActivityAction) {
-      onActivityAction(eventId);
+      setActividades(proximasActividades);
+    } catch (err) {
+      setError('Error al cargar las actividades');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getBadgeColor = (badge: string) => {
-    switch (badge) {
-      case 'Chiqui':
-        return 'bg-blue-100 text-blue-800';
-      case 'CJ':
-        return 'bg-red-100 text-red-800';
-      case 'Ambas':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  useEffect(() => {
+    fetchActividades();
+  }, []);
 
   return (
-    <Card className="border-0 shadow-md bg-white dark:bg-gray-800">
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-            Actividades Programadas
-          </h2>
-
-          {/* Dropdown Filter */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
-              Filtrar por:
-            </span>
-            <Dropdown
-              value={selectedFilter}
-              options={FILTER_OPTIONS}
-              onChange={(e) => setSelectedFilter(e.value)}
-              placeholder="Seleccionar filtro"
-              className="w-48"
-              panelClassName="shadow-lg"
-            />
-          </div>
+    <Card className="shadow-sm">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold text-gray-900">Próximas Actividades</h3>
+          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+            {actividades.length}
+          </span>
         </div>
 
-        {/* Contador de resultados */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-sm text-gray-600 dark:text-gray-300">
-            {filteredEvents.length === events.length
-              ? `Mostrando todas las actividades (${filteredEvents.length})`
-              : `Mostrando ${filteredEvents.length} de ${events.length} actividades`}
+        {loading && (
+          <div className="text-center py-8">
+            <i className="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+            <p className="text-gray-500 mt-2">Cargando actividades...</p>
           </div>
+        )}
 
-          {/* Leyenda de badges */}
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-gray-500 dark:text-gray-400">Leyenda:</span>
-            <span className={`px-2 py-1 rounded-full ${getBadgeColor('Chiqui')}`}>Chiqui</span>
-            <span className={`px-2 py-1 rounded-full ${getBadgeColor('CJ')}`}>CJ</span>
-            <span className={`px-2 py-1 rounded-full ${getBadgeColor('Ambas')}`}>Ambas</span>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          {filteredEvents.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-              <i className="pi pi-calendar text-4xl mb-4 block"></i>
-              <p className="text-lg mb-2">No hay actividades programadas</p>
-              <p className="text-sm">
-                {selectedFilter === 'all'
-                  ? 'No se encontraron actividades en el sistema.'
-                  : `No se encontraron actividades para "${FILTER_OPTIONS.find((opt) => opt.value === selectedFilter)?.label}".`}
-              </p>
+        {error && (
+          <div className="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200">
+            <div className="flex items-center gap-2">
+              <i className="pi pi-exclamation-triangle"></i>
+              <p className="font-medium">{error}</p>
             </div>
-          ) : (
-            filteredEvents.map((event) => (
-              <ActivityCard key={event.id} event={event} onMoreOptions={handleActivityAction} />
-            ))
-          )}
-        </div>
+          </div>
+        )}
+
+        {!loading && !error && actividades.length === 0 && (
+          <div className="text-center py-12">
+            <i className="pi pi-calendar text-4xl text-gray-300 mb-3"></i>
+            <p className="text-gray-500">No hay actividades programadas</p>
+          </div>
+        )}
+
+        {!loading && !error && actividades.length > 0 && (
+          <div className="space-y-3">
+            {actividades
+              .filter((actividad) => actividad != null)
+              .map((actividad) => (
+                <ActivityCard
+                  key={actividad.id}
+                  actividad={actividad}
+                  onUpdate={fetchActividades}
+                />
+              ))}
+          </div>
+        )}
+
+        {!loading && !error && actividades.length > 0 && (
+          <div className="pt-3 border-t border-gray-200">
+            <a
+              href="/activities"
+              className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center justify-center gap-2 transition-colors"
+            >
+              Ver todas las actividades
+              <i className="pi pi-arrow-right text-xs"></i>
+            </a>
+          </div>
+        )}
       </div>
     </Card>
   );

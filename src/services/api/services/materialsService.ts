@@ -1,7 +1,9 @@
 // src/services/api/services/materialsService.ts
+
 import { HttpClient } from '../core/httpClient';
 import { MaterialFormData, Material, MaterialFilters } from '../../../types/material.types';
 
+// ============ INTERFACES DE RESPUESTA ============
 export interface DownloadResponse {
   download_url: string;
   filename: string;
@@ -9,6 +11,36 @@ export interface DownloadResponse {
   expires_in: number;
 }
 
+export interface SearchResponse {
+  total: number;
+  materiales: Material[];
+}
+
+export interface MaterialUploadResponse {
+  id: number;
+  titulo: string;
+  mensaje: string;
+}
+
+export interface MaterialResponse {
+  mensaje: string;
+  material: Material;
+}
+
+export interface MaterialsByUserResponse {
+  materiales: Material[];
+  count: number;
+}
+
+export interface StorageUsageResponse {
+  total_objects: number;
+  total_size_gb: number;
+  limit_gb: number;
+  usage_percentage: number;
+  remaining_gb: number;
+}
+
+// ============ SERVICIO ============
 export class MaterialsService {
   constructor(private httpClient: HttpClient) {}
 
@@ -37,30 +69,25 @@ export class MaterialsService {
   /**
    * Obtiene materiales subidos por un usuario específico
    */
-  async getMaterialesByUser(userId: number): Promise<{ materiales: Material[]; count: number }> {
-    return this.httpClient.get<{ materiales: Material[]; count: number }>(
-      `/materiales/usuario/${userId}`
-    );
+  async getMaterialesByUser(userId: number): Promise<MaterialsByUserResponse> {
+    return this.httpClient.get<MaterialsByUserResponse>(`/materiales/usuario/${userId}`);
   }
 
   /**
    * Busca materiales por término de búsqueda
    */
-  async searchMateriales(searchTerm: string, centro_juvenil?: string): Promise<Material[]> {
+  async searchMateriales(searchTerm: string, centro_juvenil?: string): Promise<SearchResponse> {
     const params = new URLSearchParams({ q: searchTerm });
     if (centro_juvenil) {
       params.append('centro_juvenil', centro_juvenil);
     }
-    return this.httpClient.get<Material[]>(`/materiales/search?${params.toString()}`);
+    return this.httpClient.get<SearchResponse>(`/materiales/search?${params.toString()}`);
   }
 
   /**
-   * Sube un material con archivo a R2
+   * Sube un material con archivo
    */
-  async uploadMaterial(
-    data: MaterialFormData,
-    userId: number // <-- AÑADIR ESTE PARÁMETRO
-  ): Promise<{ id: number; titulo: string; mensaje: string }> {
+  async uploadMaterial(data: MaterialFormData, userId: number): Promise<MaterialUploadResponse> {
     const formData = new FormData();
 
     // Añadir archivo
@@ -87,11 +114,9 @@ export class MaterialsService {
       formData.append('visible_para_grupos', data.visible_para_grupos.join(','));
     }
 
-    return this.httpClient.post<{ id: number; titulo: string; mensaje: string }>(
-      '/materiales/upload',
-      formData
-    );
+    return this.httpClient.post<MaterialUploadResponse>('/materiales/upload', formData);
   }
+
   /**
    * Obtiene URL firmada para descargar archivo
    */
@@ -102,11 +127,8 @@ export class MaterialsService {
   /**
    * Actualiza un material existente
    */
-  async updateMaterial(
-    id: number,
-    data: Partial<MaterialFormData>
-  ): Promise<{ mensaje: string; material: Material }> {
-    return this.httpClient.put<{ mensaje: string; material: Material }>(`/materiales/${id}`, data);
+  async updateMaterial(id: number, data: Partial<MaterialFormData>): Promise<MaterialResponse> {
+    return this.httpClient.put<MaterialResponse>(`/materiales/${id}`, data);
   }
 
   /**
@@ -117,15 +139,12 @@ export class MaterialsService {
   }
 
   /**
-   * Obtiene uso de storage R2
+   * Obtiene uso de storage
    */
-  async getStorageUsage(): Promise<{
-    total_objects: number;
-    total_size_gb: number;
-    limit_gb: number;
-    usage_percentage: number;
-    remaining_gb: number;
-  }> {
-    return this.httpClient.get('/materiales/storage/usage');
+  async getStorageUsage(): Promise<StorageUsageResponse> {
+    return this.httpClient.get<StorageUsageResponse>('/materiales/storage/usage');
   }
 }
+
+// Re-exportar tipos de material desde su ubicación original
+export type { Material, MaterialFormData, MaterialFilters };

@@ -32,14 +32,12 @@
   color: var(--text-secondary) !important;
 }
 
-.p-card-body {
+.grupo-card .p-card-content {
   padding: 0 !important;
 }
 
-.p-card .p-card-footer {
-  padding: 1rem 1.5rem !important;
-  border-top: 1px solid var(--border-primary) !important;
-  background: var(--dark-bg-primary) !important;
+.p-card-body {
+  padding: 0 !important;
 }
 
 /* Dark Mode */

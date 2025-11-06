@@ -1,0 +1,335 @@
+/* ==================== Dialog Container ==================== */
+.activity-form-dialog {
+  width: 100%;
+  max-width: 600px;
+}
+
+.activity-form-dialog :global(.p-dialog-header) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0;
+}
+
+.activity-form-dialog :global(.p-dialog-header-title) {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.activity-form-dialog :global(.p-dialog-header-close) {
+  color: white;
+  opacity: 0.8;
+}
+
+.activity-form-dialog :global(.p-dialog-header-close:hover) {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ==================== Dialog Content ==================== */
+.activity-form-dialog :global(.p-dialog-content) {
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+/* ==================== Form Fields ==================== */
+.form-field {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  margin-bottom: 0.5rem;
+  color: #1a252f;
+  font-size: 0.95rem;
+}
+
+.form-field label.required::after {
+  content: ' *';
+  color: #e74c3c;
+  margin-left: 0.25rem;
+}
+
+/* ==================== Input Fields ==================== */
+.activity-form-dialog :global(.p-inputtext) {
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.activity-form-dialog :global(.p-inputtext:focus) {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+  outline: none;
+}
+
+.activity-form-dialog :global(.p-inputtext.p-invalid) {
+  border-color: #e74c3c;
+}
+
+/* ==================== Editor Enriquecido ==================== */
+.activity-form-dialog :global(.p-editor-toolbar) {
+  background-color: #f0f1f5;
+  border: 1px solid #e0e0e0;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 0.75rem;
+}
+
+.activity-form-dialog :global(.p-editor-toolbar button) {
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.activity-form-dialog :global(.p-editor-toolbar button:hover) {
+  background-color: #e0e0e0;
+}
+
+.activity-form-dialog :global(.p-editor-content) {
+  min-height: 200px;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 0 0 6px 6px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.activity-form-dialog :global(.ql-editor) {
+  padding: 1rem;
+  min-height: 200px;
+}
+
+.activity-form-dialog :global(.ql-editor.ql-blank::before) {
+  color: #bdc3c7;
+  font-style: italic;
+}
+
+/* ==================== Calendar ==================== */
+.activity-form-dialog :global(.p-calendar) {
+  width: 100%;
+}
+
+.activity-form-dialog :global(.p-calendar .p-inputtext) {
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
+/* ==================== Two Column Layout ==================== */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 0 !important;
+}
+
+.form-row-full {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* ==================== Error Messages ==================== */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.error-message::before {
+  content: '⚠';
+  font-weight: bold;
+}
+
+/* ==================== Dialog Footer ==================== */
+.activity-form-dialog :global(.p-dialog-footer) {
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* ==================== Buttons ==================== */
+.activity-form-dialog :global(.p-button) {
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.activity-form-dialog :global(.p-button-primary) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.activity-form-dialog :global(.p-button-primary:hover) {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.activity-form-dialog :global(.p-button-secondary) {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border: 1px solid #bdc3c7;
+}
+
+.activity-form-dialog :global(.p-button-secondary:hover) {
+  background-color: #d5dbdb;
+}
+
+.activity-form-dialog :global(.p-button-danger) {
+  background-color: #e74c3c;
+  border: none;
+}
+
+.activity-form-dialog :global(.p-button-danger:hover) {
+  background-color: #c0392b;
+}
+
+.activity-form-dialog :global(.p-button:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 480px) {
+  .activity-form-dialog {
+    max-width: 100%;
+  }
+
+  .activity-form-dialog :global(.p-dialog-content) {
+    padding: 1.5rem 1rem;
+  }
+
+  .activity-form-dialog :global(.p-dialog-footer) {
+    flex-direction: column-reverse;
+    padding: 1rem;
+  }
+
+  .activity-form-dialog :global(.p-button) {
+    width: 100%;
+  }
+}
+
+/* ==================== Calendar pequeno ==================== */
+.calendar-pequeno.p-calendar {
+  width: 100%;
+}
+
+.calendar-input-pequeno {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+}
+
+.calendar-input-pequeno:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+  outline: none;
+}
+
+/* Icono del calendario pequeno */
+.calendar-pequeno :global(.p-datepicker-trigger) {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background-color: #f0f1f5;
+  border: 1px solid #e0e0e0;
+  color: #667eea;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-pequeno :global(.p-datepicker-trigger:hover) {
+  background-color: #e0e0e0;
+}
+
+/* Panel del calendario (más compacto) */
+.calendar-pequeno :global(.p-datepicker) {
+  width: 320px;
+  min-width: 320px;
+}
+
+.calendar-pequeno :global(.p-datepicker-header) {
+  padding: 0.5rem;
+  background-color: #667eea;
+  color: white;
+}
+
+.calendar-pequeno :global(.p-datepicker-header button) {
+  color: white;
+  padding: 0.4rem;
+}
+
+/* Tabla de fechas más compacta */
+.calendar-pequeno :global(.p-datepicker-calendar) {
+  font-size: 0.85rem;
+}
+
+.calendar-pequeno :global(.p-datepicker-calendar td) {
+  padding: 0.3rem;
+}
+
+.calendar-pequeno :global(.p-datepicker-calendar a) {
+  padding: 0.4rem;
+  border-radius: 4px;
+}
+
+/* Selector de hora (5 en 5 minutos) */
+.calendar-pequeno :global(.p-timepicker) {
+  padding: 0.75rem;
+}
+
+.calendar-pequeno :global(.p-timepicker-minute) {
+  font-size: 0.85rem;
+}
+
+/* Selector de minutos - incremento de 5 */
+.calendar-pequeno :global(.p-timepicker-minute input) {
+  width: 50px;
+  text-align: center;
+}
+
+/* Pie del calendario */
+.calendar-pequeno :global(.p-datepicker-footer) {
+  padding: 0.75rem;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.calendar-pequeno :global(.p-datepicker-footer button) {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .calendar-pequeno :global(.p-datepicker) {
+    width: 100%;
+    max-width: 320px;
+  }
+}

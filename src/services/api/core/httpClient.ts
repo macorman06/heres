@@ -106,6 +106,13 @@ export class HttpClient {
     });
   }
 
+  async patch<T = any, D = any>(url: string, data?: D): Promise<T> {
+    return this.deduplication.executeUniqueRequest('PATCH', url, data, async () => {
+      const response: AxiosResponse<T> = await this.api.patch(url, data);
+      return response.data;
+    });
+  }
+
   getEnvironmentInfo() {
     return {
       apiUrl: API_CONFIG.BASE_URL,
@@ -113,5 +120,10 @@ export class HttpClient {
       isDevelopment: IS_DEVELOPMENT,
       version: '1.0.0',
     };
+  }
+
+  // ✅ Método para obtener la baseURL (necesario para UserAvatar)
+  getBaseUrl(): string {
+    return API_CONFIG.BASE_URL;
   }
 }
